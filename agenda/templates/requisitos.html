@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+{% block cabecalho %}
+	<title>{{titulo}}</title>
+	{% endblock %}
+</head>
+
+<body>
+{{corpo}}
+
+<br/><br/>
+
+Agendador de espaço físico do CCS.<br/>
+Administração = admin & admin<br/>
+<br/><br/>
+Objetivo:<br/>
+Criar um software que ajude a gerenciar e agendar os espaços físicos do CCS que são reservados pediódicamente via e-mail ou então formulários web do CCS.<br/>
+<br/><br/>
+Software web<br/>
+Tecnologias: PHP, MySQL, HTML, CCS, Zend Framework.<br/>
+Update: Python + Django + MySQL<br/>
+<br/><br/>
+Levantamento de requisitos:<br/><br/>
+
+- Página de abertura;<br/>
+- Listar espaços físicos;<br/>
+- Formulário de reserva para cada espaço físico;<br/>
+- Formulário para cancelar reserva de espaço físico;<br/>
+- Controle de choque de horários e prioridades;<br/>
+- Área de administração;<br/>
+- E-mail de confirmação de reserva;<br/>
+- Definir quais tipos de eventos acontecem em quais locais;<br/>
+- ...<br/>
+<br/>
+
+Elementos de persistencia:<br/>
+<br/>
+RESERVA<br/>
+- id<br/>
+- data_uso_inicio<br/>
+- data_uso_fim<br/>
+- data_reseva<br/>
+- local<br/>
+- tipo<br/>
+- usuário<br/>
+- ramal<br/>
+- departamento<br/>
+- finalidade<br/>
+<br/>
+USUARIO<br/>
+- nome_completo<br/>
+- e-mail<br/>
+- vinculo<br/>
+<br/>
+TIPOS_EVENTO<br/>
+- id<br/>
+- nome<br/>
+- descricao<br/>
+<br/>
+DEPARTAMENTO/PROGRAMA/SETOR<br/>
+- id<br/>
+- sigla<br/>
+- nome_completo<br/>
+<br/>
+LOCAL<br/>
+- id<br/>
+- nome<br/>
+- descricao<br/>
+<br/>
+
+
+Usuários: serão retirados do IdUFSC(convesando com Setic)<br/>
+Tipos de eventos:<br/>
+- Defesa TCC<br/>
+- Defesa Dissertação<br/>
+- Defesa Tese<br/>
+- Concurso Publico<br/>
+- Reunião pedagogica<br/>
+- Aula<br/>
+- Reunião colegiado<br/>
+- Reunião grupo pesqusia<br/>
+- Capacitação<br/>
+- Tutoria<br/>
+- Seminario<br/>
+<br/>
+Locais:<br/>
+- Conselhos<br/>
+- sl 922<br/>
+- tecnicas alternativas<br/>
+- labinfo<br/>
+- auditorio-grad<br/>
+- auditorio-pos<br/>
+- sl 1 H<br/>
+- sl 2 H<br/>
+- sl 3 H<br/>
+- sl 4 H<br/>
+- sl reunião labinfo<br/>
+<br/>
+29/09/2014<br/>
+<br/>
+prioridades passadas pelo Sergio<br/>
+<br/>
+-> 30 dias para confirmação.<br/>
+-> reserva, mas só confirma com 30 dias.<br/>
+-> Eventos nacionais e internacionais de grande porte marcados cm antecedencia.<br/>
+-> Agendamentos no maximo de 6 meses.<br/>
+<br/>
+Prioridades:<br/>
+<br/>
+Auditório graduação<br/>
+- Eventos graduação/Geral<br/>
+- Apresentação de TCC<br/>
+- Monografia<br/>
+- Dissertação e Tese<br/>
+- Reuniões colegiados<br/>
+<br/>
+Auditório Pós-graduação<br/>
+- Eventos de Pós-graduação <br/>
+- Cursos com convidadeos externos<br/>
+- Defesa de Tese<br/>
+- Atividades Auditório graduação<br/>
+<br/>
+
+LabInfo<br/>
+- Aula com recurso computacional, preferencialemnte pratica<br/>
+- Curso capacitação professor ou STA<br/>
++ Restrição tem que ter realizado o curso<br/>
+<br/>
+Sala Conselhos<br/>
+- Reunião centro de ensino<br/>
+- Reunião departamento<br/>
+- Reunião coordenação de curso<br/>
+- Reunião coordenação de ensino/pesquisa/extensão<br/>
+- Reunião administrativas em geral<br/>
+<br/>
+SLs H<br/>
+- Aula pos-graduação<br/>
+- Disciplinas obrigatórias<br/>
+- Disciplinas eletivas<br/>
+- Disciplinas optativas<br/>
+<br/>
+SL reuniões salas de aula<br/>
++ maximo de 12 pessoas<br/>
+
+
+
+</body>
+</html> 
