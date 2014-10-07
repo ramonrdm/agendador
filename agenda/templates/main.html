@@ -11,7 +11,7 @@
             {% if month.current %}"current"{% endif %}
             {% if not month.current %}"month"{% endif %} >
                 {% if month.entry %}<b>{% endif %}
-                <a href="{% url 'agenda.views.month' year month.n %}">{{ month.name }}</a>
+                <p><a href="{% url 'agenda.views.month' year month.n %}">{{ month.name }}</a></p>
                 {% if month.entry %}</b>{% endif %}
             </div>
 

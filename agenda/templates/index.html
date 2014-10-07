@@ -1,13 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-{% block cabecalho %}
-	<title>{{titulo}}</title>
-	{% endblock %}
-</head>
+{% extends "base.html" %}
 
-<body>
+{% block nav-global %}
+{% endblock %}
+
+{% block content %}
+
 {{corpo}}
 <br/><br/>Disponibilidade de espaço<br/><br/>Agendar espaço físico
-</body>
-</html> 
+
+{% endblock %}
