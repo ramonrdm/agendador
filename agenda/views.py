@@ -18,7 +18,7 @@ from django.template import RequestContext
 
 from agenda.models import *
 
-mnames = "January February March April May June July August September October November December"
+mnames = "Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubro Novembro Dezembro"
 mnames = mnames.split()
 
 # Create your views here.
@@ -28,17 +28,17 @@ def index(request):
 	corpo = "Bem vindo ao Agendador de espaço físico do CCS"
 	return render_to_response("index.html",{'corpo':corpo,"titulo":titulo})
 
-def requisitos(request):
+def sobre(request):
 	titulo = "Requisitos do Agendador CCS"
-	return render_to_response("requisitos.html", {'titulo':titulo})
+	return render_to_response("sobre.html", {'titulo':titulo})
 
-#calendario
-def calendar(request, year, month):
-  my_workouts = Workouts.objects.order_by('my_date').filter(
-    my_date__year=year, my_date__month=month
-  )
-  cal = WorkoutCalendar(my_workouts).formatmonth(year, month)
-  return render_to_response('my_template.html', {'calendar': mark_safe(cal),})
+# #calendario
+# def calendar(request, year, month):
+#   my_workouts = Workouts.objects.order_by('my_date').filter(
+#     my_date__year=year, my_date__month=month
+#   )
+#   cal = WorkoutCalendar(my_workouts).formatmonth(year, month)
+#   return render_to_response('my_template.html', {'calendar': mark_safe(cal),})
 
 #@login_required
 def main(request, year=None):
@@ -93,8 +93,8 @@ def month(request, year, month, change=None):
         entries = current = False   # are there entries for this day; current day?
         if day:
             entries = Entry.objects.filter(date__year=year, date__month=month, date__day=day)
-            if not _show_users(request):
-                entries = entries.filter(creator=request.user)
+            #if not _show_users(request):
+            #    entries = entries.filter(creator=request.user)
             if day == nday and year == nyear and month == nmonth:
                 current = True
 
@@ -103,4 +103,7 @@ def month(request, year, month, change=None):
             lst.append([])
             week += 1
 
-    return render_to_response("month.html", dict(year=year, month=month, user=request.user, month_days=lst, mname=mnames[month-1], reminders=reminders(request)))
+    return render_to_response("month.html", dict(year=year, month=month, user=request.user, month_days=lst, mname=mnames[month-1]))
+
+def day(request):
+	render_to_response("main.html")

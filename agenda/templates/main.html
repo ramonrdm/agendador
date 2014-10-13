@@ -2,9 +2,9 @@
 {% block content %}
 <a href="{% url 'agenda.views.main' year|add:'-3' %}">&lt;&lt; Prev</a>
 <a href="{% url 'agenda.views.main' year|add:'3' %}">Next &gt;&gt;</a>
-
+<div align="center">
     {% for year, months in years %}
-        <div class="clear"></div>
+        <br><div class="clear"> </div><br>
         <h4>{{ year }}</h4>
         {% for month in months %}
             <div class=
@@ -15,7 +15,9 @@
                 {% if month.entry %}</b>{% endif %}
             </div>
 
-            {% if month.n == 6 %}<br />{% endif %}
+            {% if month.n == 6 %}<br /><br/>{% endif %}
         {% endfor %}
+        <br/>
     {% endfor %}
 {% endblock %}
+</div>

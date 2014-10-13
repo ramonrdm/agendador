@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="month" align="center">
+
+<a href= "{% url 'agenda.views.month' year month "prev" %}"> < < Anterior</a> | | 
+<a href= "{% url 'agenda.views.month' year month "next" %}">Proximo > > </a>
+<h4>{{ mname }} {{ year }}</h4>
+
+
+    <table>
+
+    <tr>
+        <td class="empty">Segunda</td>
+        <td class="empty">Terça</td>
+        <td class="empty">Quarta</td>
+        <td class="empty">Quinta</td>
+        <td class="empty">Sexta</td>
+        <td class="empty">Sabado</td>
+        <td class="empty">Domingo</td>
+    </tr>
+
+    {% for week in month_days %}
+        <tr>
+        {% for day, entries, current in week %}
+
+            <!-- TD style: empty | day | current; onClick handler and highlight  -->
+            <td class= {% if day == 0 %}"empty"{% endif %}
+            {% if day != 0 and not current %}"day"{% endif %}
+            {% if day != 0 and current %}"current"{% endif %}
+            {% if day != 0 %}
+                onClick="parent.location='{% url 'agenda.views.day' year month day %}'"
+                onMouseOver="this.bgColor='#eeeeee';"
+                onMouseOut="this.bgColor='white';"
+            {% endif %} >
+
+            <!-- Day number and entry snippets -->
+            {% if day != 0 %}
+                {{ day }}
+                {% for entry in entries %}
+                    <br />
+                    <b>{{ entry.creator }}</b>: {{ entry.short|safe }}
+                {% endfor %}
+            {% endif %}
+            </td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+    </table>
+
+    <div class="clear"></div>
+</div>
+
+{% endblock %}

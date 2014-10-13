@@ -7,10 +7,31 @@
 	p {
     	border-style: solid;
     	border-width: 1px;
+    	float: left;
+    	width: 100px;
+    	height: 100px;
+    	text-align: center;
 	}
+	boby{
+		text-align: center;
+		
+	}
+	.current{
+		background-color: Yellow;
+		color: Blue;
+		border-color: Blue;
+
+
+
+	}
+	a {
+    color: blue;
+    text-decoration: none;
+    
+}
 	</style>
 </head>
-<body>
+<body >
     <div id="sidebar">
     {% block sidebar %} {% endblock %} 
     </div>
@@ -20,7 +41,8 @@
                 <h3>Opções</h3>
                 
                 <a href="{% url 'agenda.views.index' %}">Inicial</a> <br/>
-                <a href="{% url 'agenda.views.main' %}">agenda</a>
+                <a href="{% url 'agenda.views.main' %}">Agenda</a> <br/>
+                <a href="{% url 'agenda.views.sobre' %}">Sobre</a><br/>
               	<br/><br/>
             {% block nav-global %}
             {% endblock %}

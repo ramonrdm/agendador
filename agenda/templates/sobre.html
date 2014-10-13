@@ -1,16 +1,7 @@
+{% extends "base.html" %}
 <!DOCTYPE html>
-<html>
-<head>
-{% block cabecalho %}
-	<title>{{titulo}}</title>
-	{% endblock %}
-</head>
 
-<body>
-{{corpo}}
-
-<br/><br/>
-
+{% block content %}
 Agendador de espaço físico do CCS.<br/>
 Administração = admin & admin<br/>
 <br/><br/>
@@ -144,6 +135,5 @@ SL reuniões salas de aula<br/>
 + maximo de 12 pessoas<br/>
 
 
+{% endblock %}
 
-</body>
-</html> 
