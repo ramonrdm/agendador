@@ -1,23 +1,24 @@
 {% extends "base.html" %}
+{% block title %}{% endblock %}
 {% block content %}
+<!-- <div align="center">
 <a href="{% url 'agenda.views.main' year|add:'-3' %}">&lt;&lt; Prev</a>
 <a href="{% url 'agenda.views.main' year|add:'3' %}">Next &gt;&gt;</a>
-<div align="center">
+</div>
+-->
+<div align="center" style="width: 700px;">
     {% for year, months in years %}
-        <br><div class="clear"> </div><br>
-        <h4>{{ year }}</h4>
+        <div class="ano" style="width: 750px;" ><br/>{{ year }}</div>
         {% for month in months %}
             <div class=
-            {% if month.current %}"current"{% endif %}
+            {% if month.current %}"mes-current"{% endif %}
             {% if not month.current %}"month"{% endif %} >
                 {% if month.entry %}<b>{% endif %}
-                <p><a href="{% url 'agenda.views.month' year month.n %}">{{ month.name }}</a></p>
+                <a href="{% url 'agenda.views.month' year month.n %}"><br/>{{ month.name }}</a>
                 {% if month.entry %}</b>{% endif %}
             </div>
-
-            {% if month.n == 6 %}<br /><br/>{% endif %}
+            {% if month.n == 6 %}{% endif %}
         {% endfor %}
-        <br/>
     {% endfor %}
 {% endblock %}
 </div>

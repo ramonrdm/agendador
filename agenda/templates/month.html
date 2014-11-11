@@ -1,22 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="month" align="center">
+<div  align="center" wihth="750">
 
 <a href= "{% url 'agenda.views.month' year month "prev" %}"> < < Anterior</a> | | 
 <a href= "{% url 'agenda.views.month' year month "next" %}">Proximo > > </a>
 <h4>{{ mname }} {{ year }}</h4>
 
 
-    <table>
+    <table align="center" width="750">
 
-    <tr>
-        <td class="empty">Segunda</td>
-        <td class="empty">Terça</td>
-        <td class="empty">Quarta</td>
-        <td class="empty">Quinta</td>
-        <td class="empty">Sexta</td>
-        <td class="empty">Sabado</td>
-        <td class="empty">Domingo</td>
+    <tr >
+        <td class="day">Segunda</td>
+        <td class="day">Terça</td>
+        <td class="day">Quarta</td>
+        <td class="day">Quinta</td>
+        <td class="day">Sexta</td>
+        <td class="day">Sabado</td>
+        <td class="day">Domingo</td>
     </tr>
 
     {% for week in month_days %}
@@ -24,7 +24,7 @@
         {% for day, entries, current in week %}
 
             <!-- TD style: empty | day | current; onClick handler and highlight  -->
-            <td class= {% if day == 0 %}"empty"{% endif %}
+            <td class= 
             {% if day != 0 and not current %}"day"{% endif %}
             {% if day != 0 and current %}"current"{% endif %}
             {% if day != 0 %}
@@ -35,7 +35,7 @@
 
             <!-- Day number and entry snippets -->
             {% if day != 0 %}
-                {{ day }}
+                {{ day }} 
                 {% for entry in entries %}
                     <br />
                     <b>{{ entry.creator }}</b>: {{ entry.short|safe }}

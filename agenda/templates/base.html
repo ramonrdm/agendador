@@ -9,50 +9,119 @@
     	border-width: 1px;
     	float: left;
     	width: 100px;
-    	height: 100px;
+    	height: 50px;
     	text-align: center;
 	}
-	boby{
+	.day {
 		text-align: center;
-		
+    	border-style: solid;
+    	border-width: 2px;
+    	float: left;
+    	width: 100px;
+    	height: 50px;
+    	text-align: center;
 	}
+
 	.current{
 		background-color: Yellow;
 		color: Blue;
 		border-color: Blue;
+		text-align: center;
+    	border-style: solid;
+    	border-width: 2px;
+    	float: left;
+    	width: 100px;
+    	height: 50px;
 
+	}
+	.mes-current{
+		background-color: Yellow;
+		color: Blue;
+		border-color: Blue;
+		text-align: center;
+    	border-style: solid;
+    	border-width: 2px;
+    	float: left;
+    	width: 100px;
+    	height: 50px;
 
+	}
+	.ano{
+		text-align: center;
+    	border-style: solid;
+    	border-width: 1px;
+    	float: left;
+    	width: 100%;
+    	height: 50px;
+    	text-align: center;
+	}
+	.month {
+		text-align: center;
+    	border-style: solid;
+    	border-width: 2px;
+    	float: left;
+    	width: 100px;
+    	height: 50px;
 
+	}
+	body{
+		
+		
 	}
 	a {
     color: blue;
     text-decoration: none;
-    
-}
+	}
+	header {
+	    background-color: #eeeeee;
+	    color:white;
+	    text-align:center;
+	    padding:5px;
+		
+    	
+	}
+	nav {
+	    line-height:30px;
+	    background-color:#eeeeee;
+	    height:500px;
+	    width:8%;
+	    float:left;
+	    padding:5px;
+	}
+	section {
+	    width:75%;
+	    float:left;
+	    padding:10px;
+	}
+	footer {
+	    background-color:black;
+	    color:white;
+	    clear:both;
+	    text-align:center;
+	    padding:5px;
+	}
 	</style>
 </head>
 <body >
-    <div id="sidebar">
-    {% block sidebar %} {% endblock %} 
-    </div>
-    <div id="container">
-        <div id="menu">
-        <!-- MENU -->
-                <h3>Opções</h3>
-                
-                <a href="{% url 'agenda.views.index' %}">Inicial</a> <br/>
-                <a href="{% url 'agenda.views.main' %}">Agenda</a> <br/>
-                <a href="{% url 'agenda.views.sobre' %}">Sobre</a><br/>
-              	<br/><br/>
-            {% block nav-global %}
-            {% endblock %}
-        </div>
+	<header>
+		{% load staticfiles %}
+		<img src="{% static "logoccs.jpg" %}">
+	</header>
+	<nav>
+		<a href="{% url 'agenda.views.index' %}">Inicial</a> <br/>
+		<a href="{% url 'agenda.views.main' %}">Agenda</a> <br/>
+		<a href="{% url 'agenda.views.sobre' %}">Sobre</a><br/>
+	</nav>
+	
+	<section>
+		{% block content %}
+        {% endblock %}
+	</section>
+	
+	<footer>
+		CCS/UFSC
+	</footer>
 
-        <div id="content">
-            {% block content %}
-            {% endblock %}
-        </div>
-    </div>
 
 </body>
 </html>

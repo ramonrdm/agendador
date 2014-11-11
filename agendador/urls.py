@@ -1,4 +1,6 @@
 from django.conf.urls import patterns, include, url
+from django.conf import settings
+from django.conf.urls.static import static
 
 from django.contrib import admin
 admin.autodiscover()
@@ -19,4 +21,4 @@ urlpatterns = patterns('',
     #url(r"^settings/$", "agenda.views.settings"),
     url(r'^main/(\d+)/$', "agenda.views.main", name='main'),
     url(r'^main/', "agenda.views.main", name='main'),    
-)
+) + static(settings.STATIC_URL, document_root=settings.STATIC_URL)
