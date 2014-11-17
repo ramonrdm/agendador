@@ -15,6 +15,9 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.core.context_processors import csrf
 from django.forms.models import modelformset_factory
 from django.template import RequestContext
+from django.core.urlresolvers import reverse
+from django.core.context_processors import csrf
+from django.forms.models import modelformset_factory
 
 from agenda.models import *
 
@@ -105,5 +108,34 @@ def month(request, year, month, change=None):
 
     return render_to_response("month.html", dict(year=year, month=month, user=request.user, month_days=lst, mname=mnames[month-1]))
 
-def day(request):
-	render_to_response("main.html")
+
+def dia(request, year, month, day):
+    """Entries for the day."""
+    EntriesFormset = modelformset_factory(Entry, extra=1, exclude=("creator", "date"), can_delete=True)
+
+    if request.method == 'POST':
+        formset = EntriesFormset(request.POST)
+        if formset.is_valid():
+            # add current user and date to each entry & save
+            entries = formset.save(commit=False)
+            for entry in entries:
+                entry.creator = request.user
+                entry.date = date(int(year), int(month), int(day))
+                entry.save()
+            return HttpResponseRedirect(reverse("dbe.cal.views.month", args=(year, month)))
+
+    else:
+        # display formset for existing enties and one extra form
+        formset = EntriesFormset(queryset=Entry.objects.filter(date__year=year, date__month=month, date__day=day, creator="1"))
+        return render_to_response("dia.html", add_csrf(request, entries=formset, year=year, month=month, day=day))
+
+
+def add_csrf(request, ** kwargs):
+    """Add CSRF and user to dictionary."""
+    d = dict(user=request.user, ** kwargs)
+    d.update(csrf(request))
+    return d
+
+def espacos(request):
+	espacos1 = EspacoFisico.objects.all()
+	return render_to_response("espacos.html", {'espacos' : espacos1})

@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
-<div  align="center" wihth="750">
+<div  align="center" >
 
 <a href= "{% url 'agenda.views.month' year month "prev" %}"> < < Anterior</a> | | 
 <a href= "{% url 'agenda.views.month' year month "next" %}">Proximo > > </a>
 <h4>{{ mname }} {{ year }}</h4>
 
 
-    <table align="center" width="750">
+    <table align="center" border="0">
 
     <tr >
         <td class="day">Segunda</td>
@@ -24,11 +24,11 @@
         {% for day, entries, current in week %}
 
             <!-- TD style: empty | day | current; onClick handler and highlight  -->
-            <td class= 
+            <td class= {% if day == 0 %}"empty"{% endif %}
             {% if day != 0 and not current %}"day"{% endif %}
             {% if day != 0 and current %}"current"{% endif %}
             {% if day != 0 %}
-                onClick="parent.location='{% url 'agenda.views.day' year month day %}'"
+                onClick="parent.location='{% url 'agenda.views.dia' year month day %}'"
                 onMouseOver="this.bgColor='#eeeeee';"
                 onMouseOut="this.bgColor='white';"
             {% endif %} >
