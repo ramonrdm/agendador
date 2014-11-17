@@ -14,7 +14,7 @@
             {% if month.current %}"mes-current"{% endif %}
             {% if not month.current %}"month"{% endif %} >
                 {% if month.entry %}<b>{% endif %}
-                <a href="{% url 'agenda.views.month' year month.n %}"><br/>{{ month.name }}</a>
+                <a href="{% url 'agenda.views.month' 1 year month.n %}"><br/>{{ month.name }}</a>
                 {% if month.entry %}</b>{% endif %}
             </div>
             {% if month.n == 6 %}{% endif %}

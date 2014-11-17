@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
+<div align="center">
 	{% for espaco in espacos %}
-		{{ espaco.nome }} <br>
+		
+	<a href="{% url 'agenda.views.month' espaco.id ano mes %}"><br/><h3>{{ espaco.nome }} <br/></h3></a>
+		{{espaco.descricao}}<br/>
 	{% endfor %}
+</div>
 {% endblock %}

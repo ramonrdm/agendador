@@ -44,7 +44,7 @@ def sobre(request):
 #   return render_to_response('my_template.html', {'calendar': mark_safe(cal),})
 
 #@login_required
-def main(request, year=None):
+def main(request, espaco=None ,year=None):
     """Main listing, years and months; three years per page."""
     # prev / next years
     if year: year = int(year)
@@ -68,12 +68,12 @@ def main(request, year=None):
                 current = True
             mlst.append(dict(n=n+1, name=month, entry=entry, current=current))
         lst.append((y, mlst))
+    espacofisico = EspacoFisico.objects.filter(id=espaco)
+    return render_to_response("main.html", dict(espaco=espacofisico, years=lst, user=request.user, year=year))
 
-    return render_to_response("main.html", dict(years=lst, user=request.user, year=year))
-
-def month(request, year, month, change=None):
+def month(request, espaco, year, month, change=None):
     """Listing of days in `month`."""
-    year, month = int(year), int(month)
+    espaco, year, month = int(espaco), int(year), int(month)
 
     # apply next / previous change
     if change in ("next", "prev"):
@@ -105,11 +105,11 @@ def month(request, year, month, change=None):
         if len(lst[week]) == 7:
             lst.append([])
             week += 1
+    espacofisico = EspacoFisico.objects.get(id=espaco)
+    return render_to_response("month.html", dict(espaco=espacofisico, year=year, month=month, user=request.user, month_days=lst, mname=mnames[month-1]))
 
-    return render_to_response("month.html", dict(year=year, month=month, user=request.user, month_days=lst, mname=mnames[month-1]))
 
-
-def dia(request, year, month, day):
+def dia(request, espaco, year, month, day):
     """Entries for the day."""
     EntriesFormset = modelformset_factory(Entry, extra=1, exclude=("creator", "date"), can_delete=True)
 
@@ -137,5 +137,7 @@ def add_csrf(request, ** kwargs):
     return d
 
 def espacos(request):
-	espacos1 = EspacoFisico.objects.all()
-	return render_to_response("espacos.html", {'espacos' : espacos1})
+	espacos1 = EspacoFisico.objects.order_by("nome").all()
+	ano = time.localtime()[0]
+	mes = time.localtime()[1]
+	return render_to_response("espacos.html", ano=ano, mes=mes, espacos=espacos1)
