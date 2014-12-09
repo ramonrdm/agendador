@@ -96,7 +96,7 @@ def month(request, espaco, year, month, change=None):
     for day in month_days:
         entries = current = False   # are there entries for this day; current day?
         if day:
-        	entries = Reserva.objects.filter(dataUsoInicio__year=year, dataUsoInicio__month=month, dataUsoInicio__day=day)
+        	entries = Reserva.objects.filter(dataUsoInicio__year=year, dataUsoInicio__month=month, dataUsoInicio__day=day, espacoFisico=espaco)
         	##entries.filter(dataUsoInicio__day=day)
         	#entries = Entry.objects.filter(year=year, date__month=month, date__day=day)
             #entries = Reserva.objects.filter(dataUsoInicio=datetime(year,month,day))
