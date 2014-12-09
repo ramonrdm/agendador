@@ -2,7 +2,8 @@
 {% block content %}
 <b>{{espaco.nome}}</b> Data:  <br>
 <a href="{% url 'agenda.views.month' espaco.id anovisualizacao mesvisualizacao %}" >Voltar ao mes</a><br>
-
+<br/>
+<a href="#"> Adicionar reserva de espaço físico</a>  <br/>
 <br/>
 {% if reservas %}
 	{% for reserva in reservas %}
