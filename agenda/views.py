@@ -89,17 +89,24 @@ def month(request, espaco, year, month, change=None):
     nyear, nmonth, nday = time.localtime()[:3]
     lst = [[]]
     week = 0
-
+    #entries = False
+    #entries = Reserva.objects.filter(dataUsoInicio__year=year, dataUsoInicio__month=month, dataUsoInicio__day=day)
     # make month lists containing list of days for each week
     # each day tuple will contain list of entries and 'current' indicator
     for day in month_days:
         entries = current = False   # are there entries for this day; current day?
         if day:
-            entries = Entry.objects.filter(date__year=year, date__month=month, date__day=day)
-            #if not _show_users(request):
+        	entries = Reserva.objects.filter(dataUsoInicio__year=year, dataUsoInicio__month=month, dataUsoInicio__day=day)
+        	##entries.filter(dataUsoInicio__day=day)
+        	#entries = Entry.objects.filter(year=year, date__month=month, date__day=day)
+            #entries = Reserva.objects.filter(dataUsoInicio=datetime(year,month,day))
+           	#if not _show_users(request):
             #    entries = entries.filter(creator=request.user)
-            if day == nday and year == nyear and month == nmonth:
-                current = True
+        if day == nday and year == nyear and month == nmonth:
+            current = True
+        if entries:
+        	print entries[0].dataUsoInicio
+        
 
         lst[week].append((day, entries, current))
         if len(lst[week]) == 7:
@@ -140,4 +147,4 @@ def espacos(request):
 	espacos1 = EspacoFisico.objects.order_by("nome").all()
 	ano = time.localtime()[0]
 	mes = time.localtime()[1]
-	return render_to_response("espacos.html", ano=ano, mes=mes, espacos=espacos1)
+	return render_to_response("espacos.html", {'ano': ano, 'mes': mes, 'espacos': espacos1})

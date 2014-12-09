@@ -2,21 +2,22 @@
 {% block content %}
 <div  align="center" >
 
-<a href= "{% url 'agenda.views.month' 0 year month "prev" %}"> < < Anterior</a> | | 
-<a href= "{% url 'agenda.views.month' 0 year month "next" %}">Proximo > > </a>
-<h4>{{ mname }} {{ year }}  - {{ espaco.nome }} </h4>
+<a href= "{% url 'agenda.views.month' espaco.id year month "prev" %}"> < < Anterior</a> 
+| {{ mname }} {{ year }}  - {{ espaco.nome }}  | 
+<a href= "{% url 'agenda.views.month' espaco.id year month "next" %}">Proximo > > </a>
+<br/><br/>
 
 
     <table align="center" border="0">
 
     <tr >
-        <td class="day">Segunda</td>
-        <td class="day">Terça</td>
-        <td class="day">Quarta</td>
-        <td class="day">Quinta</td>
-        <td class="day">Sexta</td>
-        <td class="day">Sabado</td>
-        <td class="day">Domingo</td>
+        <td class="day-titulo">Segunda</td>
+        <td class="day-titulo">Terça</td>
+        <td class="day-titulo">Quarta</td>
+        <td class="day-titulo">Quinta</td>
+        <td class="day-titulo">Sexta</td>
+        <td class="day-titulo">Sabado</td>
+        <td class="day-titulo">Domingo</td>
     </tr>
 
     {% for week in month_days %}
@@ -35,11 +36,11 @@
 
             <!-- Day number and entry snippets -->
             {% if day != 0 %}
-                {{ day }} 
+                {{ day }} <p class="txt-reserva-mes">
                 {% for entry in entries %}
-                    <br />
-                    <b>{{ entry.creator }}</b>: {{ entry.short|safe }}
+                    {{ entry.finalidade}}/{{ entry.departamento}}
                 {% endfor %}
+                </p>
             {% endif %}
             </td>
         {% endfor %}

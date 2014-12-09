@@ -4,7 +4,7 @@
 <head>
 	<title>{% block title %}Agendador{% endblock %}</title>
 	<style type="text/css">
-	p {
+/*	p {
     	border-style: solid;
     	border-width: 1px;
     	float: left;
@@ -12,16 +12,28 @@
     	height: 50px;
     	text-align: center;
 	}
+	*/
+	.txt-reserva-mes{
+		font-size: 12px;
+	}
 	.day {
 		text-align: center;
     	border-style: solid;
     	border-width: 2px;
     	float: left;
-    	width: 100px;
-    	height: 50px;
+    	width: 120px;
+    	height: 100px;
     	text-align: center;
 	}
-
+	.day-titulo {
+		text-align: center;
+    	border-style: solid;
+    	border-width: 2px;
+    	float: left;
+    	width: 120px;
+    	height: 30px;
+    	text-align: center;
+	}
 	.current{
 		background-color: Yellow;
 		color: Blue;
@@ -30,8 +42,8 @@
     	border-style: solid;
     	border-width: 2px;
     	float: left;
-    	width: 100px;
-    	height: 50px;
+    	width: 120px;
+    	height: 100px;
 
 	}
 	.empty{
@@ -39,8 +51,8 @@
     	border-style: solid;
     	border-width: 2px;
     	float: left;
-    	width: 100px;
-    	height: 50px;
+    	width: 120px;
+    	height: 100px;
     	text-align: center;
 	}
 	.mes-current{
@@ -114,9 +126,10 @@
 <body >
 	<header>
 		{% load staticfiles %}
-		<img src="{% static "logoccs.jpg" %}">
+		<!-- <img src="{% static "logoccs.jpg" %}"> -->
 	</header>
 	<nav>
+	<img src="{% static "logoccs.jpg" %}" width="80%">
 		<a href="{% url 'agenda.views.index' %}">Inicial</a> <br/>
 		<a href="{% url 'agenda.views.main' %}">Agenda</a> <br/>
 		<a href="{% url 'agenda.views.espacos' %}">Locais</a><br/>

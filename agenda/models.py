@@ -15,6 +15,7 @@ class EspacoFisico(models.Model):
 	id = models.AutoField(primary_key=True)
 	nome = models.TextField()
 	descricao = models.TextField()
+	capacidade = models.PositiveSmallIntegerField()
 
 	def __unicode__(self):
 		return self.nome
@@ -46,6 +47,11 @@ class Reserva(models.Model):
 	ramal = models.PositiveSmallIntegerField()
 	departamento = models.ForeignKey(Departamento)
 	finalidade = models.TextField()
+	
+	def __unicode__(self):
+		return self.finalidade
+
+
 
 class Entry(models.Model):
     title = models.CharField(max_length=40)
