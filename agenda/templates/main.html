@@ -6,16 +6,20 @@
 <a href="{% url 'agenda.views.main' year|add:'3' %}">Next &gt;&gt;</a>
 </div>
 -->
-<div align="center" style="width: 700px;">
+<div align="center" style="width: 1100px;">
     {% for year, months in years %}
-        <div class="ano" style="width: 750px;" ><br/>{{ year }}</div>
+        <div align="center" class="ano" style="width: 1100px;" ><br/>{{ year }}</div>
         {% for month in months %}
             <div class=
             {% if month.current %}"mes-current"{% endif %}
             {% if not month.current %}"month"{% endif %} >
+
                 {% if month.entry %}<b>{% endif %}
-                <a href="{% url 'agenda.views.month' 1 year month.n %}"><br/>{{ month.name }}</a>
+                {{ month.name }}<br>
                 {% if month.entry %}</b>{% endif %}
+                    {% for espaco in espacosfisicos %}
+                    <a href="{% url 'agenda.views.month' espaco.id year month.n %}">{{espaco.nome}}</a><br>
+                    {% endfor %}
             </div>
             {% if month.n == 6 %}{% endif %}
         {% endfor %}

@@ -24,9 +24,7 @@ from agenda.models import *
 mnames = "Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubro Novembro Dezembro"
 mnames = mnames.split()
 
-# Create your views here.
 def index(request):
-
 	titulo = "Agendador de espaço físico do CCS"
 	corpo = "Bem vindo ao Agendador de espaço físico do CCS"
 	return render_to_response("index.html",{'corpo':corpo,"titulo":titulo})
@@ -34,14 +32,6 @@ def index(request):
 def sobre(request):
 	titulo = "Requisitos do Agendador CCS"
 	return render_to_response("sobre.html", {'titulo':titulo})
-
-# #calendario
-# def calendar(request, year, month):
-#   my_workouts = Workouts.objects.order_by('my_date').filter(
-#     my_date__year=year, my_date__month=month
-#   )
-#   cal = WorkoutCalendar(my_workouts).formatmonth(year, month)
-#   return render_to_response('my_template.html', {'calendar': mark_safe(cal),})
 
 #@login_required
 def main(request, espaco=None ,year=None):
@@ -68,8 +58,10 @@ def main(request, espaco=None ,year=None):
                 current = True
             mlst.append(dict(n=n+1, name=month, entry=entry, current=current))
         lst.append((y, mlst))
+    espacosfisicos = EspacoFisico.objects.all()
     espacofisico = EspacoFisico.objects.filter(id=espaco)
-    return render_to_response("main.html", dict(espaco=espacofisico, years=lst, user=request.user, year=year))
+
+    return render_to_response("main.html", dict(espaco=espacofisico, years=lst, user=request.user, year=year, espacosfisicos=espacosfisicos))
 
 def month(request, espaco, year, month, change=None):
     """Listing of days in `month`."""
@@ -118,6 +110,12 @@ def month(request, espaco, year, month, change=None):
 
 def dia(request, espaco, year, month, day):
     """Entries for the day."""
+    nyear, nmonth, nday = time.localtime()[:3]
+    espacofisico = EspacoFisico.objects.get(id=espaco)
+    reservas = Reserva.objects.filter(dataUsoInicio__year=year, dataUsoInicio__month=month, dataUsoInicio__day=day, espacoFisico=espaco)
+    return render_to_response("dia.html", dict(reservas=reservas, espaco=espacofisico, anovisualizacao=year ,mesvisualizacao=month))
+
+    ## 	ANTIGO ##
     EntriesFormset = modelformset_factory(Entry, extra=1, exclude=("creator", "date"), can_delete=True)
 
     if request.method == 'POST':

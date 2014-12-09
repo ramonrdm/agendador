@@ -1,3 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
+<b>{{espaco.nome}}</b> Data:  <br>
+<a href="{% url 'agenda.views.month' espaco.id anovisualizacao mesvisualizacao %}" >Voltar ao mes</a><br>
+
+<br/>
+{% if reservas %}
+	{% for reserva in reservas %}
+		{{ reserva.dataUsoInicio|date:"H:i"}} - {{reserva.tipoEvento}}/{{reserva.departamento}} | {{reserva.usuario}} -- {{reserva.finalidade }} <br/>
+	{% endfor %}
+{% else %}
+	<br> <b>Sem reservas para este dia </b>
+{% endif %}
+
+
 {% endblock %}

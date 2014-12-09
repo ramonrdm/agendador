@@ -29,7 +29,7 @@
             {% if day != 0 and not current %}"day"{% endif %}
             {% if day != 0 and current %}"current"{% endif %}
             {% if day != 0 %}
-                onClick="parent.location='{% url 'agenda.views.dia' 0 year month day %}'"
+                onClick="parent.location='{% url 'agenda.views.dia' espaco.id year month day %}'"
                 onMouseOver="this.bgColor='#eeeeee';"
                 onMouseOut="this.bgColor='white';"
             {% endif %} >
@@ -38,7 +38,7 @@
             {% if day != 0 %}
                 {{ day }} <p class="txt-reserva-mes">
                 {% for entry in entries %}
-                    {{ entry.finalidade}}/{{ entry.departamento}}
+                    {{ entry.dataUsoInicio|date:"H:i" }} {{ entry.tipoEvento}}/{{ entry.departamento}}<br/>
                 {% endfor %}
                 </p>
             {% endif %}

@@ -34,6 +34,8 @@ class Usuario(models.Model):
 	nome_completo = models.TextField()
 	email = models.CharField(max_length=50)
 	vinculo = models.PositiveSmallIntegerField()
+	def __unicode__(self):
+		return self.nome_completo
 
 class Reserva(models.Model):
 	id = models.AutoField(primary_key=True)
