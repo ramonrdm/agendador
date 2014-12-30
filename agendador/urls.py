@@ -22,5 +22,6 @@ urlpatterns = patterns('',
     #url(r"^settings/$", "agenda.views.settings"),
     url(r'^main/(\d+)/$', "agenda.views.main", name='main'),
     url(r'^main/(\d+)/(\d+)/$', "agenda.views.main", name='main'),
-    url(r'^main/', "agenda.views.main", name='main'),    
+    url(r'^main/', "agenda.views.main", name='main'),
+    url(r'^addreserva/', "agenda.views.addreserva", name='addreserva'),
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_URL)

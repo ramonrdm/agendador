@@ -20,6 +20,7 @@ from django.core.context_processors import csrf
 from django.forms.models import modelformset_factory
 
 from agenda.models import *
+from forms import FormReserva
 
 mnames = "Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubro Novembro Dezembro"
 mnames = mnames.split()
@@ -146,3 +147,7 @@ def espacos(request):
 	ano = time.localtime()[0]
 	mes = time.localtime()[1]
 	return render_to_response("espacos.html", {'ano': ano, 'mes': mes, 'espacos': espacos1})
+
+def addreserva(request):
+    form = FormReserva()
+    return render_to_response("addreserva.html", {'form': form})
