@@ -20,7 +20,8 @@ from django.core.context_processors import csrf
 from django.forms.models import modelformset_factory
 
 from agenda.models import *
-from forms import FormReserva
+from agenda.forms import FormReserva
+
 
 mnames = "Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubro Novembro Dezembro"
 mnames = mnames.split()
@@ -149,5 +150,15 @@ def espacos(request):
 	return render_to_response("espacos.html", {'ano': ano, 'mes': mes, 'espacos': espacos1})
 
 def addreserva(request):
-    form = FormReserva()
-    return render_to_response("addreserva.html", {'form': form})
+    if request.method == "POST":
+        form = FormReserva(request.POST, request.FILES)
+        if form.is_valid():
+            form.fields['estado'] = 0
+            #form.fields['dataReserva'] = '00'
+            form.fields['usuario'] = 'ramon'
+
+            form.save()
+            return render_to_response("espacos")
+    else:
+        form = FormReserva()
+    return render_to_response("addreserva.html", {'form': form}, context_instance=RequestContext(request))
