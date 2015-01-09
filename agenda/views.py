@@ -21,6 +21,8 @@ from django.forms.models import modelformset_factory
 
 from agenda.models import *
 from agenda.forms import FormReserva
+from django import forms
+
 
 
 mnames = "Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubro Novembro Dezembro"
@@ -151,14 +153,23 @@ def espacos(request):
 
 def addreserva(request):
     if request.method == "POST":
+        request.POST = request.POST.copy()
+        request.POST['estado'] = 1
+        #request.POST['dataReserva'] = time.localtime()
         form = FormReserva(request.POST, request.FILES)
         if form.is_valid():
-            form.fields['estado'] = 0
+            #NADA AQUI DEU CERTO
+            #print form.fields['usuario']
+            #form.fields['estado'] = forms.CharField(widget=forms.TextInput)
+            #form.cleaned_data['ramal'] = 1
+            #form.is_valid()
+            #form.fields['estado'] = 0
             #form.fields['dataReserva'] = '00'
-            form.fields['usuario'] = 'ramon'
-
+            #form.fields['usuario'] = 'ramon'
             form.save()
-            return render_to_response("espacos")
+            return render_to_response("espacos.html",{}, context_instance=RequestContext(request))
     else:
         form = FormReserva()
+        form.fields['estado'].widget = forms.HiddenInput()
+        form.fields['dataReserva'].widget = forms.HiddenInput()
     return render_to_response("addreserva.html", {'form': form}, context_instance=RequestContext(request))

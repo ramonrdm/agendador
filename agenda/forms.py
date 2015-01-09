@@ -14,10 +14,11 @@ class FormReserva(forms.ModelForm):
 	#dataUsoInicio = forms.DateTimeField(widget = widgets.AdminSplitDateTime())
 	dataUsoInicio = forms.SplitDateTimeField(initial=datetime.datetime.now)
 	dataUsoFim = forms.SplitDateTimeField(initial=datetime.datetime.now)
-	dataReserva = forms.SplitDateTimeField(initial=datetime.datetime.now)
+	#dataReserva = forms.SplitDateTimeField(initial=datetime.datetime.now)
+	dataReserva = forms.DateTimeField(initial=datetime.datetime.now)
 	class Meta:
 		model = Reserva
-		#exclude = ['estado', 'dataReserva', 'usuario']
+		#exclude = ['estado']
 	#def __init__(self, *args, **kwargs):
 		#super(FormReserva, self).__init__(*args, **kwargs)
 		#self.fields['dataUsoInicio'].widget = widgets.AdminSplitDateTime()
