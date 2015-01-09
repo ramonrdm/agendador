@@ -7,7 +7,7 @@
 <br/>
 
 {% for reserva in reservas %}
-	{{ reserva.dataUsoInicio|date:"H:i"}} - {{reserva.tipoEvento}}/{{reserva.departamento}} | {{reserva.usuario}} -- {{reserva.finalidade }} <br/>
+	{{ reserva.dataUsoInicio|date:"H:i"}} até {{ reserva.dataUsoFim|date:"H:i" }} - {{reserva.tipoEvento}}/{{reserva.departamento}} | {{reserva.usuario}} -- {{reserva.finalidade }} <br/>
 {% empty %}
 	<br> <b>Sem reservas para este dia </b>
 {% endfor %}

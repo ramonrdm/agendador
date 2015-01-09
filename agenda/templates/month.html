@@ -38,7 +38,7 @@
             {% if day != 0 %}
                 {{ day }} <p class="txt-reserva-mes">
                 {% for entry in entries %}
-                    {{ entry.dataUsoInicio|date:"H:i" }} {{ entry.tipoEvento}}/{{ entry.departamento}}<br/>
+                    {{ entry.dataUsoInicio|date:"H:i" }} até {{ entry.dataUsoFim|date:"H:i" }} {{ entry.tipoEvento}}/{{ entry.departamento}}<br/>
                 {% endfor %}
                 </p>
             {% endif %}

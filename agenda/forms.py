@@ -12,8 +12,12 @@ class FormReserva(forms.ModelForm):
 	#dataUsoFim = forms.DateTimeField()
 	#dataUsoInicio = forms.DateTimeField(initial=datetime.datetime.now())
 	#dataUsoInicio = forms.DateTimeField(widget = widgets.AdminSplitDateTime())
-	dataUsoInicio = forms.SplitDateTimeField(initial=datetime.datetime.now)
-	dataUsoFim = forms.SplitDateTimeField(initial=datetime.datetime.now)
+	#dataa = datetime.datetime.now()
+	#dataa = dataa.strftime('%Y/%m/%d %H:%M')
+	#print dataa
+	#dataUsoInicio = forms.SplitDateTimeField(initial=datetime.datetime.now, input_time_formats=['%H:%M'])
+	dataUsoInicio = forms.SplitDateTimeField(input_time_formats=['%H:%M'], label='Data e hora inicial')
+	dataUsoFim = forms.SplitDateTimeField(initial=datetime.datetime.now, label='Data e hora final')
 	#dataReserva = forms.SplitDateTimeField(initial=datetime.datetime.now)
 	dataReserva = forms.DateTimeField(initial=datetime.datetime.now)
 	class Meta:

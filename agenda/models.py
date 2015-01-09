@@ -40,6 +40,7 @@ class Usuario(models.Model):
 class Reserva(models.Model):
 	id = models.AutoField(primary_key=True)
 	estado = models.CharField(max_length=1)
+	#idufsc = models.CharField(max_length=100)
 	dataUsoInicio = models.DateTimeField()
 	dataUsoFim = models.DateTimeField()
 	dataReserva  = models.DateTimeField()

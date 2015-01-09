@@ -167,7 +167,7 @@ def addreserva(request):
             #form.fields['dataReserva'] = '00'
             #form.fields['usuario'] = 'ramon'
             form.save()
-            return render_to_response("espacos.html",{}, context_instance=RequestContext(request))
+            return render_to_response("salvo.html",{})
     else:
         form = FormReserva()
         form.fields['estado'].widget = forms.HiddenInput()
