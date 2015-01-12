@@ -34,6 +34,7 @@ class Usuario(models.Model):
 	nome_completo = models.TextField()
 	email = models.CharField(max_length=50)
 	vinculo = models.PositiveSmallIntegerField()
+	idufsc = models.CharField(max_length=100)
 	def __unicode__(self):
 		return self.nome_completo
 
@@ -55,7 +56,7 @@ class Reserva(models.Model):
 		return self.finalidade
 
 
-
+"""
 class Entry(models.Model):
     title = models.CharField(max_length=40)
     snippet = models.CharField(max_length=150, blank=True)
@@ -88,3 +89,5 @@ class EntryAdmin(admin.ModelAdmin):
     list_display = ["creator", "date", "title", "snippet"]
     search_fields = ["title", "snippet"]
     list_filter = ["creator"]
+
+"""

@@ -46,22 +46,27 @@ def main(request, espaco=None ,year=None):
 
     nowy, nowm = time.localtime()[:2]
     lst = []
-
+    
     # create a list of months for each year, indicating ones that contain entries and current
     for y in [year, year+1, year+2]:
         mlst = []
         for n, month in enumerate(mnames):
             entry = current = False   # are there entry(s) for this month; current month?
-            entries = Entry.objects.filter(date__year=y, date__month=n+1)
+            #entries = Entry.objects.filter(date__year=y, date__month=n+1)
             #if not _show_users(request):
             #    entries = entries.filter(creator=request.user)
-
+            """
             if entries:
                 entry = True
             if y == nowy and n+1 == nowm:
                 current = True
             mlst.append(dict(n=n+1, name=month, entry=entry, current=current))
+            """
+            if y == nowy and n+1 == nowm:
+                current = True
+            mlst.append(dict(n=n+1, name=month, current=current))
         lst.append((y, mlst))
+    
     espacosfisicos = EspacoFisico.objects.all()
     espacofisico = EspacoFisico.objects.filter(id=espaco)
 
@@ -118,7 +123,7 @@ def dia(request, espaco, year, month, day):
     espacofisico = EspacoFisico.objects.get(id=espaco)
     reservas = Reserva.objects.filter(dataUsoInicio__year=year, dataUsoInicio__month=month, dataUsoInicio__day=day, espacoFisico=espaco)
     return render_to_response("dia.html", dict(reservas=reservas, espaco=espacofisico, anovisualizacao=year ,mesvisualizacao=month))
-
+    """
     ## 	ANTIGO ##
     EntriesFormset = modelformset_factory(Entry, extra=1, exclude=("creator", "date"), can_delete=True)
 
@@ -137,7 +142,7 @@ def dia(request, espaco, year, month, day):
         # display formset for existing enties and one extra form
         formset = EntriesFormset(queryset=Entry.objects.filter(date__year=year, date__month=month, date__day=day, creator="1"))
         return render_to_response("dia.html", add_csrf(request, entries=formset, year=year, month=month, day=day))
-
+"""
 
 def add_csrf(request, ** kwargs):
     """Add CSRF and user to dictionary."""
