@@ -27,3 +27,14 @@ class FormReserva(forms.ModelForm):
 		#super(FormReserva, self).__init__(*args, **kwargs)
 		#self.fields['dataUsoInicio'].widget = widgets.AdminSplitDateTime()
 		#self.fields['dataUsoInicio'].widget = widgets.AdminDateWidget()
+	def choque(self, p):
+		print p.cleaned_data['dataUsoInicio']
+		#reservas = Reserva.objects.filter(dataUsoInicio=p.fields['dataUsoInicio'], espacoFisico=p.fields['espacoFisico'], dataUsoInicio__month=month, dataUsoInicio__day=day)
+		reservas = Reserva.objects.filter(espacoFisico=p.cleaned_data['espacoFisico'])
+		print "reservas:"
+		print reservas
+		for r in reservas:
+			if (r.dataUsoInicio > p.cleaned_data['dataUsoInicio'] and r.dataUsoFim < p.cleaned_data['dataUsoFim']) or (r.dataUsoInicio < p.cleaned_data['dataUsoInicio'] and r.dataUsoFim > p.cleaned_data['dataUsoInicio']):
+				return True
+		return False
+		

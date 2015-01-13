@@ -171,8 +171,10 @@ def addreserva(request):
             #form.fields['estado'] = 0
             #form.fields['dataReserva'] = '00'
             #form.fields['usuario'] = 'ramon'
+            if form.choque(form):
+                return render_to_response("salvo.html",{'mensagem':"Erro: Já existe reserva neste horário"})
             form.save()
-            return render_to_response("salvo.html",{})
+            return render_to_response("salvo.html",{'mensagem': "Reserva realizada com sucesso!"})
     else:
         form = FormReserva()
         form.fields['estado'].widget = forms.HiddenInput()

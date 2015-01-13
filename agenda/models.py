@@ -56,6 +56,7 @@ class Reserva(models.Model):
 		return self.finalidade
 
 
+
 """
 class Entry(models.Model):
     title = models.CharField(max_length=40)
