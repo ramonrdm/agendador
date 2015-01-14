@@ -121,7 +121,7 @@ def dia(request, espaco, year, month, day):
     """Entries for the day."""
     nyear, nmonth, nday = time.localtime()[:3]
     espacofisico = EspacoFisico.objects.get(id=espaco)
-    reservas = Reserva.objects.filter(dataUsoInicio__year=year, dataUsoInicio__month=month, dataUsoInicio__day=day, espacoFisico=espaco)
+    reservas = Reserva.objects.filter(dataUsoInicio__year=year, dataUsoInicio__month=month, dataUsoInicio__day=day, espacoFisico=espaco).order_by("dataUsoInicio")
     return render_to_response("dia.html", dict(reservas=reservas, espaco=espacofisico, anovisualizacao=year ,mesvisualizacao=month))
     """
     ## 	ANTIGO ##

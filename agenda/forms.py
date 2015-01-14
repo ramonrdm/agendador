@@ -34,7 +34,13 @@ class FormReserva(forms.ModelForm):
 		print "reservas:"
 		print reservas
 		for r in reservas:
-			if (r.dataUsoInicio > p.cleaned_data['dataUsoInicio'] and r.dataUsoFim < p.cleaned_data['dataUsoFim']) or (r.dataUsoInicio < p.cleaned_data['dataUsoInicio'] and r.dataUsoFim > p.cleaned_data['dataUsoInicio']):
+			if  (
+				(p.cleaned_data['dataUsoFim']  > r.dataUsoInicio and p.cleaned_data['dataUsoFim'] < r.dataUsoFim) or 
+				(p.cleaned_data['dataUsoInicio'] > r.dataUsoInicio and p.cleaned_data['dataUsoInicio'] < r.dataUsoFim ) or 
+				(p.cleaned_data['dataUsoInicio'] == r.dataUsoInicio and p.cleaned_data['dataUsoFim'] == r.dataUsoFim) or
+				(r.dataUsoInicio > p.cleaned_data['dataUsoInicio'] and r.dataUsoInicio < p.cleaned_data['dataUsoFim']) or
+				(p.cleaned_data['dataUsoInicio'] < r.dataUsoFim < p.cleaned_data['dataUsoFim'])
+				):
 				return True
 		return False
 		
