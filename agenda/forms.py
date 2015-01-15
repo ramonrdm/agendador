@@ -31,8 +31,6 @@ class FormReserva(forms.ModelForm):
 		print p.cleaned_data['dataUsoInicio']
 		#reservas = Reserva.objects.filter(dataUsoInicio=p.fields['dataUsoInicio'], espacoFisico=p.fields['espacoFisico'], dataUsoInicio__month=month, dataUsoInicio__day=day)
 		reservas = Reserva.objects.filter(espacoFisico=p.cleaned_data['espacoFisico'])
-		print "reservas:"
-		print reservas
 		for r in reservas:
 			if  (
 				(p.cleaned_data['dataUsoFim']  > r.dataUsoInicio and p.cleaned_data['dataUsoFim'] < r.dataUsoFim) or 
