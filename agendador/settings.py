@@ -48,6 +48,15 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'django_cas_ng.backends.CASBackend',
+)
+
+CAS_SERVER_URL= 'https://sistemas.ufsc.br'
+CAS_IGNORE_REFERER=True
+CAS_LOGOUT_COMPLETELY=True
+
 ROOT_URLCONF = 'agendador.urls'
 
 WSGI_APPLICATION = 'agendador.wsgi.application'
