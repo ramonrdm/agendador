@@ -156,6 +156,7 @@ def espacos(request):
 
 @login_required
 def addreserva(request):
+    usuario = request.user.username
     if request.method == "POST":
         request.POST = request.POST.copy()
         request.POST['estado'] = 1
@@ -178,4 +179,4 @@ def addreserva(request):
         form = FormReserva()
         form.fields['estado'].widget = forms.HiddenInput()
         form.fields['dataReserva'].widget = forms.HiddenInput()
-    return render_to_response("addreserva.html", {'form': form}, context_instance=RequestContext(request))
+    return render_to_response("addreserva.html", {'form': form, "usuario": usuario }, context_instance=RequestContext(request))

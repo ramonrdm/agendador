@@ -24,6 +24,6 @@ urlpatterns = patterns('',
     url(r'^main/(\d+)/(\d+)/$', "agenda.views.main", name='main'),
     url(r'^main/', "agenda.views.main", name='main'),
     url(r'^addreserva/', "agenda.views.addreserva", name='addreserva'),
-    (r'^accounts/login/', 'django_cas_ng.views.login'),
-    (r'^accounts/logout$', 'django_cas_ng.views.logout'),
+    (r'^accounts/login/$', 'django_cas_ng.views.login'),
+    (r'^accounts/logout/$', 'django_cas_ng.views.logout'),
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_URL)
