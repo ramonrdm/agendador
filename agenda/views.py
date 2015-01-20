@@ -23,8 +23,6 @@ from agenda.models import *
 from agenda.forms import FormReserva
 from django import forms
 
-
-
 mnames = "Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubro Novembro Dezembro"
 mnames = mnames.split()
 
@@ -156,6 +154,7 @@ def espacos(request):
 	mes = time.localtime()[1]
 	return render_to_response("espacos.html", {'ano': ano, 'mes': mes, 'espacos': espacos1})
 
+@login_required
 def addreserva(request):
     if request.method == "POST":
         request.POST = request.POST.copy()
