@@ -40,7 +40,10 @@
 <link rel="stylesheet" type="text/css" href="/media/admin/css/widgets.css"/>
 -->
 <div align="center">
-{{usuario}} <br/><br/>
+id user: {{usuario}} <br/>
+dados: {{dados}} <br/>
+<a href="{% url 'django_cas_ng.views.logout' %}" >LOYOUT</a><br>
+<br/>
 Reserva:<br/>
 	<form action="" method="post">
 		{% csrf_token %}

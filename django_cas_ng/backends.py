@@ -216,6 +216,69 @@ def _verify_cas2_saml(ticket, service):
     finally:
         page.close()
 
+def _verify_cas3_saml(ticket, service):
+    """CAS3 + SAML"""
+    
+    try:
+        from xml.etree import ElementTree
+    except ImportError:
+        from elementtree import ElementTree
+
+    # We do the SAML validation
+    headers = {
+        'soapaction': 'http://www.oasis-open.org/committees/security',
+        'cache-control': 'no-cache',
+        'pragma': 'no-cache',
+        'accept': 'text/xml',
+        'connection': 'keep-alive',
+        'content-type': 'text/xml; charset=utf-8',
+    }
+    params = [('ticket', ticket), ('service', service), ('TARGET', service)]
+
+    saml_validat_url = urllib_parse.urljoin(
+        settings.CAS_SERVER_URL, 'samlValidate',
+    )
+    # teste
+    #saml_validat_url = urllib_parse.urljoin(settings.CAS_SERVER_URL, 'proxyValidate',)
+    
+    url = Request(
+        saml_validat_url + '?' + urllib_parse.urlencode(params),
+        '',
+        headers,
+    )
+    page = urlopen(url, data=get_saml_assertion(ticket))
+
+    try:
+        user = None
+        attributes = {}
+        response = page.read()
+        tree = ElementTree.fromstring(response)
+        print response
+        # Find the authentication status
+        success = tree.find('.//' + SAML_1_0_PROTOCOL_NS + 'StatusCode')
+        if success is not None and success.attrib['Value'] == 'samlp:Success':
+            # User is validated
+            attrs = tree.findall('.//' + SAML_1_0_ASSERTION_NS + 'Attribute')
+            for at in attrs:
+                print "---"
+                print at.attrib.values()
+                if 'idPessoa' in list(at.attrib.values()):
+                    user = at.find(SAML_1_0_ASSERTION_NS + 'AttributeValue').text
+                    attributes['idPessoa'] = user
+                    #user = attributes['idPessoa']
+                    values = at.findall(SAML_1_0_ASSERTION_NS + 'AttributeValue')
+                    if len(values) > 1:
+                        values_array = []
+                        for v in values:
+                            values_array.append(v.text)
+                            attributes[at.attrib['AttributeName']] = values_array
+                    else:
+                        attributes[at.attrib['AttributeName']] = values[0].text
+        return user, attributes
+    finally:
+        page.close()
+
+
 
 _PROTOCOLS = {
     '1': _verify_cas1,
@@ -236,7 +299,15 @@ class CASBackend(object):
 
     def authenticate(self, ticket, service, request):
         """Verifies CAS ticket and gets or creates User object"""
-        username, attributes = _verify(ticket, service)
+        #username, attributes = _verify(ticket, service)
+        #username2, attributes2 = _verify_cas2_saml(ticket, service)
+        username, attributes = _verify_cas3_saml(ticket, service)
+
+        print "dados"
+        print attributes
+        print "user:"
+        print username
+
         if attributes:
             request.session['attributes'] = attributes
         if not username:

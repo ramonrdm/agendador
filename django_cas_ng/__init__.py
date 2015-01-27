@@ -15,7 +15,7 @@ _DEFAULTS = {
     'CAS_REDIRECT_URL': '/',
     'CAS_RETRY_LOGIN': False,
     'CAS_SERVER_URL': None,
-    'CAS_VERSION': '2',
+    'CAS_VERSION': '3',
 }
 
 for key, value in _DEFAULTS.items():
