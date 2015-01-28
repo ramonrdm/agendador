@@ -41,4 +41,8 @@ class FormReserva(forms.ModelForm):
 				):
 				return True
 		return False
+	def set_usuario(self, id_usuario):
+		#usuario = self.fields['usuario'] = id_usuario
+		usuario = forms.CharField(initial=id_usuario)
+
 		

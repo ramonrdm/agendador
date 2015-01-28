@@ -162,8 +162,10 @@ def addreserva(request):
     if request.method == "POST":
         request.POST = request.POST.copy()
         request.POST['estado'] = 1
+        request.POST['usuario'] = request.user.id
         #request.POST['dataReserva'] = time.localtime()
         form = FormReserva(request.POST, request.FILES)
+        #form.set_usuario(request.user.id)
         if form.is_valid():
             #NADA AQUI DEU CERTO
             #print form.fields['usuario']
@@ -179,6 +181,8 @@ def addreserva(request):
             return render_to_response("salvo.html",{'mensagem': "Reserva realizada com sucesso!"})
     else:
         form = FormReserva()
+        #form.set_usuario(request.user.id)
+        form.fields['usuario'] = forms.CharField(initial=request.user.id)
         form.fields['estado'].widget = forms.HiddenInput()
         form.fields['dataReserva'].widget = forms.HiddenInput()
     return render_to_response("addreserva.html", {'form': form, "usuario": usuario, 'dados': dados }, context_instance=RequestContext(request))
