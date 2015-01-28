@@ -253,18 +253,18 @@ def _verify_cas3_saml(ticket, service):
         attributes = {}
         response = page.read()
         tree = ElementTree.fromstring(response)
-        print response
+        #print response
         # Find the authentication status
         success = tree.find('.//' + SAML_1_0_PROTOCOL_NS + 'StatusCode')
         if success is not None and success.attrib['Value'] == 'samlp:Success':
             # User is validated
             attrs = tree.findall('.//' + SAML_1_0_ASSERTION_NS + 'Attribute')
             for at in attrs:
-                print "---"
-                print at.attrib.values()
-                if 'idPessoa' in list(at.attrib.values()):
+                attributes[at.attrib['AttributeName']] = at.find(SAML_1_0_ASSERTION_NS + 'AttributeValue').text
+                """
+                if 'login' in list(at.attrib.values()):
                     user = at.find(SAML_1_0_ASSERTION_NS + 'AttributeValue').text
-                    attributes['idPessoa'] = user
+                    attributes['login'] = user
                     #user = attributes['idPessoa']
                     values = at.findall(SAML_1_0_ASSERTION_NS + 'AttributeValue')
                     if len(values) > 1:
@@ -274,7 +274,8 @@ def _verify_cas3_saml(ticket, service):
                             attributes[at.attrib['AttributeName']] = values_array
                     else:
                         attributes[at.attrib['AttributeName']] = values[0].text
-        return user, attributes
+                """                        
+        return attributes['login'], attributes
     finally:
         page.close()
 
@@ -321,7 +322,9 @@ class CASBackend(object):
             if not create:
                 return None
             # user will have an "unusable" password
-            user = User.objects.create_user(username, '')
+            user = User.objects.create_user(username, attributes["email"], '')
+            user.first_name = attributes["personName"]
+            user.last_name = attributes["idPessoa"]
             user.save()
             created = True
 

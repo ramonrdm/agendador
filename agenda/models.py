@@ -29,15 +29,6 @@ class TipoEvento(models.Model):
 	def __unicode__(self):
 		return self.nome
 
-class Usuario(models.Model):
-	id = models.AutoField(primary_key=True)
-	nome_completo = models.TextField()
-	email = models.CharField(max_length=50)
-	vinculo = models.PositiveSmallIntegerField()
-	idufsc = models.CharField(max_length=100)
-	def __unicode__(self):
-		return self.nome_completo
-
 class Reserva(models.Model):
 	id = models.AutoField(primary_key=True)
 	estado = models.CharField(max_length=1)
@@ -47,7 +38,7 @@ class Reserva(models.Model):
 	dataReserva  = models.DateTimeField()
 	espacoFisico = models.ForeignKey(EspacoFisico)
 	tipoEvento = models.ForeignKey(TipoEvento)
-	usuario = models.ForeignKey(Usuario)
+	usuario = models.ForeignKey(User)
 	ramal = models.PositiveSmallIntegerField()
 	departamento = models.ForeignKey(Departamento)
 	finalidade = models.TextField()
