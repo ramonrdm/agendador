@@ -175,6 +175,7 @@ def addreserva(request):
             #form.fields['estado'] = 0
             #form.fields['dataReserva'] = '00'
             #form.fields['usuario'] = 'ramon'
+            form.fields['usuario'] = forms.CharField(initial=request.user.id)
             if form.choque(form):
                 return render_to_response("salvo.html",{'mensagem':"Erro: Já existe reserva neste horário"})
             form.save()
@@ -182,7 +183,7 @@ def addreserva(request):
     else:
         form = FormReserva()
         #form.set_usuario(request.user.id)
-        form.fields['usuario'] = forms.CharField(initial=request.user.id)
+        form.fields['usuario'].widget = forms.HiddenInput()
         form.fields['estado'].widget = forms.HiddenInput()
         form.fields['dataReserva'].widget = forms.HiddenInput()
     return render_to_response("addreserva.html", {'form': form, "usuario": usuario, 'dados': dados }, context_instance=RequestContext(request))
