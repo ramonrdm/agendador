@@ -35,7 +35,6 @@ def sobre(request):
 	titulo = "Requisitos do Agendador CCS"
 	return render_to_response("sobre.html", {'titulo':titulo})
 
-#@login_required
 def main(request, espaco=None ,year=None):
     """Main listing, years and months; three years per page."""
     # prev / next years
@@ -178,6 +177,8 @@ def addreserva(request):
             form.fields['usuario'] = forms.CharField(initial=request.user.id)
             if form.choque(form):
                 return render_to_response("salvo.html",{'mensagem':"Erro: Já existe reserva neste horário"})
+            if form.maisUmDia():
+                return render_to_response("salvo.html",{'mensagem':"Erro: Você só pode agendar um dia por vez!"})
             form.save()
             return render_to_response("salvo.html",{'mensagem': "Reserva realizada com sucesso!"})
     else:

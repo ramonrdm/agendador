@@ -41,8 +41,15 @@ class FormReserva(forms.ModelForm):
 				):
 				return True
 		return False
-	def set_usuario(self, id_usuario):
-		#usuario = self.fields['usuario'] = id_usuario
-		usuario = forms.CharField(initial=id_usuario)
-
 		
+	def maisUmDia(self):
+		"""verifica se está agendadno para somente um dia"""
+		print "data somente:"
+		#print self.fields['dataUsoInicio'].date
+		print self.cleaned_data['dataUsoInicio'].strftime("%Y-%m-%d")
+		print self.cleaned_data['dataUsoFim'].strftime("%Y-%m-%d")
+		#self.cleaned_data['dataUsoInicio'] == self.cleaned_data['dataUsoFim']
+		if self.cleaned_data['dataUsoInicio'].strftime("%Y-%m-%d") == self.cleaned_data['dataUsoFim'].strftime("%Y-%m-%d"):
+			return False
+		else:
+			return True
