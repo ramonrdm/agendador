@@ -301,13 +301,7 @@ class CASBackend(object):
     def authenticate(self, ticket, service, request):
         """Verifies CAS ticket and gets or creates User object"""
         #username, attributes = _verify(ticket, service)
-        #username2, attributes2 = _verify_cas2_saml(ticket, service)
         username, attributes = _verify_cas3_saml(ticket, service)
-
-        print "dados"
-        print attributes
-        print "user:"
-        print username
 
         if attributes:
             request.session['attributes'] = attributes

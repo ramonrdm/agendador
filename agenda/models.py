@@ -11,33 +11,32 @@ class Departamento(models.Model):
 	def __unicode__(self):
 		return self.sigla
 
+class TipoEvento(models.Model):
+	id  = models.AutoField(primary_key=True)
+	nome = models.CharField(max_length=30)
+	descricao = models.TextField()
+
+	def __unicode__(self):
+		return self.nome
+
 class EspacoFisico(models.Model):
 	id = models.AutoField(primary_key=True)
 	nome = models.TextField()
 	descricao = models.TextField()
 	capacidade = models.PositiveSmallIntegerField()
+	eventosPermitidos = models.ManyToManyField(TipoEvento)
 
 	def __unicode__(self):
 		return self.nome
-
-
-class TipoEvento(models.Model):
-	id  = models.AutoField(primary_key=True)
-	nome = models.TextField()
-	descricao = models.TextField()
-
-	def __unicode__(self):
-		return self.nome
-
+		
 class Reserva(models.Model):
 	id = models.AutoField(primary_key=True)
 	estado = models.CharField(max_length=1)
-	#idufsc = models.CharField(max_length=100)
 	dataUsoInicio = models.DateTimeField()
 	dataUsoFim = models.DateTimeField()
-	dataReserva  = models.DateTimeField()
+	dataReserva  = models.DateTimeField(auto_now_add=True)
 	espacoFisico = models.ForeignKey(EspacoFisico)
-	tipoEvento = models.ForeignKey(TipoEvento)
+	evento = models.ForeignKey(TipoEvento)
 	usuario = models.ForeignKey(User)
 	ramal = models.PositiveSmallIntegerField()
 	departamento = models.ForeignKey(Departamento)
@@ -46,40 +45,3 @@ class Reserva(models.Model):
 	def __unicode__(self):
 		return self.finalidade
 
-
-
-"""
-class Entry(models.Model):
-    title = models.CharField(max_length=40)
-    snippet = models.CharField(max_length=150, blank=True)
-    body = models.TextField(max_length=10000, blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-    date = models.DateField(blank=True)
-    creator = models.ForeignKey(User, blank=True, null=True)
-    remind = models.BooleanField(default=False)
-
-    def __unicode__(self):
-        if self.title:
-            return unicode(self.creator) + u" - " + self.title
-        else:
-            return unicode(self.creator) + u" - " + self.snippet[:40]
-
-    def short(self):
-        if self.snippet:
-            return u"<i>%s</i> - %s" % (self.title, self.snippet)
-        else:
-            return self.title
-    short.allow_tags = True
-
-    class Meta:
-        verbose_name_plural = "entries"
-
-
-### Admin
-
-class EntryAdmin(admin.ModelAdmin):
-    list_display = ["creator", "date", "title", "snippet"]
-    search_fields = ["title", "snippet"]
-    list_filter = ["creator"]
-
-"""

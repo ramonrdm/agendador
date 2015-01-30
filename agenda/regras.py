@@ -1,8 +1,5 @@
 #regras para reservar
 
-
-
-
 class regras():
 
 	# Usar os IdUFSC para permitir agendamento automático.

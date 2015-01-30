@@ -1,8 +1,10 @@
-agendador
+Agendador
 =========
 
 Agendador de espaço físico
 
-Usar apache + Django + Modulo python 
+ + Apache + Modulo python 
+ + Django 
+ + Django-cas-ng
 
 Administração = admin & admin
