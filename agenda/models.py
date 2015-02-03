@@ -38,7 +38,7 @@ class Reserva(models.Model):
 	espacoFisico = models.ForeignKey(EspacoFisico)
 	evento = models.ForeignKey(TipoEvento)
 	usuario = models.ForeignKey(User)
-	ramal = models.PositiveSmallIntegerField()
+	ramal = models.PositiveIntegerField()
 	departamento = models.ForeignKey(Departamento)
 	finalidade = models.TextField()
 	
