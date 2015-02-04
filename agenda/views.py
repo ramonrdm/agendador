@@ -18,7 +18,7 @@ from django import forms
 mnames = "Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubro Novembro Dezembro"
 labinfo = "alcibia.maia alcides.milton alexandra.boing arakawa.aline alyne.cardoso angela.rbs celia.campos claudia.colussi claudia.regina danielle.antes elaine.santos lemos.senna eleonora.dorsi felipe.daltoe francilene.vieira francis.tourinho fulvio.nedel janaina.neves joao.bastos juliana.balbinot j.gazzola karina.mary keyla.n l.bernardes luciana.m.rosa maria.assis elena.guanilo maria.isabel rita.pimenta terezinha.zeferino patricia.di.pietro patricia.haas renata.scharlach roberta.costa rodrigo.alves.lima rogerio.gondak selma.regina suely.grosseman v.m.laura"
 mnames = mnames.split()
-#labinfo = labinfo.split()
+
 
 def index(request):
 	titulo = "Agendador de espaço físico do CCS"
@@ -155,8 +155,11 @@ def addreserva(request):
         form = FormReserva(request.POST, request.FILES)
         if form.is_valid():
             form.fields['usuario'] = forms.CharField(initial=request.user.id)
-            if ((labinfo.find(request.user.username)==-1) and (request.POST['espacoFisico']==3)):
+            print not request.user.username in labinfo
+            print request.POST['espacoFisico']=='3'
+            if ((not request.user.username in labinfo) and (request.POST['espacoFisico']=='3')):
                 return render_to_response("salvo.html",{'mensagem':"Erro: Você não realizaou o curso para utilizar o labinfo "})
+            
             if form.choque():
                 return render_to_response("salvo.html",{'mensagem':"Erro: Já existe reserva neste horário"})
             form.save()
