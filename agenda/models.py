@@ -43,5 +43,5 @@ class Reserva(models.Model):
 	finalidade = models.TextField()
 	
 	def __unicode__(self):
-		return self.finalidade
+		return self.usuario.username+"/"+self.departamento.sigla+" - "+self.evento.nome
 

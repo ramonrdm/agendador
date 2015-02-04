@@ -29,7 +29,7 @@ CREATE TABLE `agenda_departamento` (
   `sigla` varchar(5) NOT NULL,
   `descricao` longtext NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,7 +38,7 @@ CREATE TABLE `agenda_departamento` (
 
 LOCK TABLES `agenda_departamento` WRITE;
 /*!40000 ALTER TABLE `agenda_departamento` DISABLE KEYS */;
-INSERT INTO `agenda_departamento` VALUES (1,'NFR','Departamento de Enfermagem'),(2,'CIF','Departamento de Fármacia'),(3,'NTR','Departamento de Nutrição'),(4,'SEC','Secretaria do CCS');
+INSERT INTO `agenda_departamento` VALUES (1,'NFR','Enfermagem'),(2,'CIF','Ciências Farmacêuticas'),(3,'NTR','Departamento de Nutrição'),(4,'SEC','Secretaria do CCS'),(5,'ACL','Análises Clínicas'),(6,'PTL','Patologia'),(7,'CLC','Cirurgia'),(8,'PDT','Pediatria'),(9,'CLM','Clínica Médica'),(10,'DTO','Ginecologia e Obstetrícia'),(11,'ODT','Odontologia'),(12,'FONO','Coordenadoria Especial de Fonoaudiologia');
 /*!40000 ALTER TABLE `agenda_departamento` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -64,7 +64,7 @@ CREATE TABLE `agenda_espacofisico` (
 
 LOCK TABLES `agenda_espacofisico` WRITE;
 /*!40000 ALTER TABLE `agenda_espacofisico` DISABLE KEYS */;
-INSERT INTO `agenda_espacofisico` VALUES (1,'Auditório CCS Graduação','Auditório do CCS destinado as atividades gerais e de graduação.',0),(2,'Auditório CCS pós','Auditório do CCS da pós graduação, destinado as atividades da pós graduação.',0),(3,'LabInfo','Laboratório de Informática, local reservado a atividades que necessitam de computadores, 35 computadores.',35),(4,'Sala dos conselhos','Sala dos conselheiros destinado somente atividades administrativas.',0),(5,'Sala 922','Uma sala multiuso',0),(6,'Sala Técnicas alternativas','Uma sala com amplo espaço e colchetes.',0),(7,'Sala pos H1','Sala de pós graduação',0),(8,'Sala pos H2','uma sala no bloco H',0),(9,'Sala pos H3','Sala do bloco H',0),(10,'Sala pos H4','Sala multiuso bl H',0),(11,'Sala Reunião labinfo','Uma pequena sala de reuniões no bloco B',12);
+INSERT INTO `agenda_espacofisico` VALUES (1,'Auditório CCS Graduação','Auditório do CCS destinado as atividades gerais e de graduação.',120),(2,'Auditório CCS pós','Auditório do CCS da pós graduação, destinado as atividades da pós graduação.',150),(3,'LabInfo','Laboratório de Informática, local reservado a atividades que necessitam de computadores, 33 computadores para alunos e 1 para professor.',34),(4,'Sala dos conselhos','Sala dos conselheiros destinado somente atividades administrativas.',30),(5,'Sala 922','Uma sala multiuso',40),(6,'Sala Técnicas alternativas','Uma sala com amplo espaço e colchetes.\r\nA sala é adaptada para técnicas pedagógicas especiais, isto é, vivências, discussões, grupos de atividades didáticas ou psicopedagógicas. pelas características da sala e de seus equipamentos, é proibido a entrada de mesas ou cadeiras e reservas para reuniões que não tenham o perfil já descritos. ',12),(7,'Sala pos H1','Sala de pós graduação',15),(8,'Sala pos H2','uma sala no bloco H',45),(9,'Sala pos H3','Sala do bloco H',45),(10,'Sala pos H4','Sala multiuso bl H',20),(11,'Sala Reunião labinfo','Uma pequena sala de reuniões no bloco B',12);
 /*!40000 ALTER TABLE `agenda_espacofisico` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -85,7 +85,7 @@ CREATE TABLE `agenda_espacofisico_eventosPermitidos` (
   KEY `agenda_espacofisico_eventosPermitidos_ec3d0b1c` (`tipoevento_id`),
   CONSTRAINT `espacofisico_id_refs_id_d9aee2b7` FOREIGN KEY (`espacofisico_id`) REFERENCES `agenda_espacofisico` (`id`),
   CONSTRAINT `tipoevento_id_refs_id_688121d9` FOREIGN KEY (`tipoevento_id`) REFERENCES `agenda_tipoevento` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=163 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -94,6 +94,7 @@ CREATE TABLE `agenda_espacofisico_eventosPermitidos` (
 
 LOCK TABLES `agenda_espacofisico_eventosPermitidos` WRITE;
 /*!40000 ALTER TABLE `agenda_espacofisico_eventosPermitidos` DISABLE KEYS */;
+INSERT INTO `agenda_espacofisico_eventosPermitidos` VALUES (21,1,1),(22,1,2),(20,1,3),(24,1,9),(23,1,11),(25,2,1),(26,2,2),(27,2,3),(28,2,6),(29,2,9),(30,2,11),(19,3,6),(18,3,9),(2,4,5),(3,4,7),(1,4,8),(4,5,1),(5,5,2),(6,5,3),(7,5,4),(8,5,5),(9,5,6),(10,5,7),(11,5,8),(12,5,9),(13,5,10),(14,5,11),(17,6,6),(15,6,9),(16,6,11),(127,7,1),(128,7,2),(129,7,3),(130,7,4),(131,7,5),(132,7,6),(133,7,7),(134,7,8),(135,7,9),(136,7,10),(137,7,11),(138,7,12),(103,8,1),(104,8,2),(105,8,3),(106,8,4),(107,8,5),(108,8,6),(109,8,7),(110,8,8),(111,8,9),(112,8,10),(113,8,11),(114,8,12),(115,9,1),(116,9,2),(117,9,3),(118,9,4),(119,9,5),(120,9,6),(121,9,7),(122,9,8),(123,9,9),(124,9,10),(125,9,11),(126,9,12),(139,10,1),(140,10,2),(141,10,3),(142,10,4),(143,10,5),(144,10,6),(145,10,7),(146,10,8),(147,10,9),(148,10,10),(149,10,11),(150,10,12),(151,11,1),(152,11,2),(153,11,3),(154,11,4),(155,11,5),(156,11,6),(157,11,7),(158,11,8),(159,11,9),(160,11,10),(161,11,11),(162,11,12);
 /*!40000 ALTER TABLE `agenda_espacofisico_eventosPermitidos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -125,7 +126,7 @@ CREATE TABLE `agenda_reserva` (
   CONSTRAINT `evento_id_refs_id_f89e9eb4` FOREIGN KEY (`evento_id`) REFERENCES `agenda_tipoevento` (`id`),
   CONSTRAINT `departamento_id_refs_id_abc178a5` FOREIGN KEY (`departamento_id`) REFERENCES `agenda_departamento` (`id`),
   CONSTRAINT `espacoFisico_id_refs_id_d5470331` FOREIGN KEY (`espacoFisico_id`) REFERENCES `agenda_espacofisico` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -134,7 +135,7 @@ CREATE TABLE `agenda_reserva` (
 
 LOCK TABLES `agenda_reserva` WRITE;
 /*!40000 ALTER TABLE `agenda_reserva` DISABLE KEYS */;
-INSERT INTO `agenda_reserva` VALUES (2,'1','2015-01-01','08:00:00','09:00:00','2015-02-04 08:58:25',3,1,2,96187533,1,'adf'),(3,'1','2015-01-01','09:00:00','10:00:00','2015-02-04 09:19:13',3,1,2,1,1,'choque');
+INSERT INTO `agenda_reserva` VALUES (2,'1','2015-01-01','08:00:00','09:00:00','2015-02-04 08:58:25',3,1,2,96187533,1,'adf'),(3,'1','2015-01-01','09:00:00','10:00:00','2015-02-04 09:19:13',3,1,2,1,1,'choque'),(4,'1','2015-01-01','02:00:00','03:00:00','2015-02-04 09:59:54',3,6,2,1,1,'adsf'),(5,'1','2015-01-01','02:00:00','03:00:00','2015-02-04 10:03:10',1,1,2,1,1,'1'),(6,'1','2015-01-02','09:00:00','10:00:00','2015-02-04 10:44:43',3,6,2,1,4,'fiz curso');
 /*!40000 ALTER TABLE `agenda_reserva` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -150,7 +151,7 @@ CREATE TABLE `agenda_tipoevento` (
   `nome` varchar(30) NOT NULL,
   `descricao` longtext NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -159,7 +160,7 @@ CREATE TABLE `agenda_tipoevento` (
 
 LOCK TABLES `agenda_tipoevento` WRITE;
 /*!40000 ALTER TABLE `agenda_tipoevento` DISABLE KEYS */;
-INSERT INTO `agenda_tipoevento` VALUES (1,'Defesa TCC','Defesa de Trabalho de Conclusão de Curso ou monografia.'),(2,'Defesa Dissertação','Defesa de Dissertação nivel mestrado.'),(3,'Defesa de Tese','Defesa de Tese de Doutorado.'),(4,'Concurso Publico','Concurso Publico'),(5,'Reunião pedagogica','Reunião pedagogica'),(6,'Aula','Aula'),(7,'Reunião colegiado','Reunião colegiado'),(8,'Reunião grupo pesqusia','Reunião grupo pesqusia'),(9,'Capacitação','Capacitação'),(10,'Tutoria','Tutoria'),(11,'Seminario','Seminario');
+INSERT INTO `agenda_tipoevento` VALUES (1,'Defesa TCC','Defesa de Trabalho de Conclusão de Curso ou monografia.'),(2,'Defesa Dissertação','Defesa de Dissertação nivel mestrado.'),(3,'Defesa de Tese','Defesa de Tese de Doutorado.'),(4,'Concurso Publico','Concurso Publico'),(5,'Reunião pedagogica','Reunião pedagogica'),(6,'Aula','Aula'),(7,'Reunião colegiado','Reunião colegiado'),(8,'Reunião grupo pesqusia','Reunião grupo pesqusia'),(9,'Capacitação','Capacitação'),(10,'Tutoria','Tutoria'),(11,'Seminario','Seminario'),(12,'outro','outros, favor descrever');
 /*!40000 ALTER TABLE `agenda_tipoevento` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -275,7 +276,7 @@ CREATE TABLE `auth_user` (
 
 LOCK TABLES `auth_user` WRITE;
 /*!40000 ALTER TABLE `auth_user` DISABLE KEYS */;
-INSERT INTO `auth_user` VALUES (1,'pbkdf2_sha256$15000$f4FbOMGZEQdE$MOvyY4UqHOwfhxCuxpVctn+kq6pwl5pD+G4q86FLg2E=','2015-02-04 08:51:36',1,'admin','','','ramon.rdm@ufsc.br',1,1,'2015-02-04 08:51:36'),(2,'pbkdf2_sha256$15000$VBcxPsqhsvRU$Bc0kS108tBEN7hJmaQvzpbrJVfiyc1imIop/8o566bQ=','2015-02-04 08:52:10',0,'ramon.rdm','Ramon Dutra Miranda','100000000276770','ramon.rdm@ufsc.br',0,1,'2015-02-04 08:51:48');
+INSERT INTO `auth_user` VALUES (1,'pbkdf2_sha256$15000$f4FbOMGZEQdE$MOvyY4UqHOwfhxCuxpVctn+kq6pwl5pD+G4q86FLg2E=','2015-02-04 10:09:50',1,'admin','','','ramon.rdm@ufsc.br',1,1,'2015-02-04 08:51:36'),(2,'pbkdf2_sha256$15000$VBcxPsqhsvRU$Bc0kS108tBEN7hJmaQvzpbrJVfiyc1imIop/8o566bQ=','2015-02-04 10:44:08',0,'ramon.rdm','Ramon Dutra Miranda','100000000276770','ramon.rdm@ufsc.br',0,1,'2015-02-04 08:51:48');
 /*!40000 ALTER TABLE `auth_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -358,7 +359,7 @@ CREATE TABLE `django_admin_log` (
   KEY `django_admin_log_e8701ad4` (`user_id`),
   CONSTRAINT `django_admin_log_user_id_52fdd58701c5f563_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`),
   CONSTRAINT `djang_content_type_id_697914295151027a_fk_django_content_type_id` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -367,6 +368,7 @@ CREATE TABLE `django_admin_log` (
 
 LOCK TABLES `django_admin_log` WRITE;
 /*!40000 ALTER TABLE `django_admin_log` DISABLE KEYS */;
+INSERT INTO `django_admin_log` VALUES (1,'2015-02-04 10:11:39','4','Sala dos conselhos',2,'Modificado capacidade e eventosPermitidos.',9,1),(2,'2015-02-04 10:12:54','5','Sala 922',2,'Modificado capacidade e eventosPermitidos.',9,1),(3,'2015-02-04 10:14:20','6','Sala Técnicas alternativas',2,'Modificado descricao, capacidade e eventosPermitidos.',9,1),(4,'2015-02-04 10:15:24','3','LabInfo',2,'Modificado descricao, capacidade e eventosPermitidos.',9,1),(5,'2015-02-04 10:16:32','1','Auditório CCS Graduação',2,'Modificado capacidade e eventosPermitidos.',9,1),(6,'2015-02-04 10:17:04','2','Auditório CCS pós',2,'Modificado capacidade e eventosPermitidos.',9,1),(7,'2015-02-04 10:17:29','7','Sala pos H1',2,'Modificado capacidade e eventosPermitidos.',9,1),(8,'2015-02-04 10:17:51','8','Sala pos H2',2,'Modificado capacidade e eventosPermitidos.',9,1),(9,'2015-02-04 10:18:09','9','Sala pos H3',2,'Modificado capacidade e eventosPermitidos.',9,1),(10,'2015-02-04 10:18:31','10','Sala pos H4',2,'Modificado capacidade e eventosPermitidos.',9,1),(11,'2015-02-04 10:18:42','7','Sala pos H1',2,'Modificado eventosPermitidos.',9,1),(12,'2015-02-04 10:19:16','12','outro',1,'',8,1),(13,'2015-02-04 10:19:20','9','Sala pos H3',2,'Modificado eventosPermitidos.',9,1),(14,'2015-02-04 10:19:36','10','Sala pos H4',2,'Modificado eventosPermitidos.',9,1),(15,'2015-02-04 10:24:28','7','Sala pos H1',2,'Modificado eventosPermitidos.',9,1),(16,'2015-02-04 10:24:47','8','Sala pos H2',2,'Modificado eventosPermitidos.',9,1),(17,'2015-02-04 10:24:52','9','Sala pos H3',2,'Nenhum campo modificado.',9,1),(18,'2015-02-04 10:24:56','7','Sala pos H1',2,'Nenhum campo modificado.',9,1),(19,'2015-02-04 10:25:03','10','Sala pos H4',2,'Modificado eventosPermitidos.',9,1),(20,'2015-02-04 10:25:33','11','Sala Reunião labinfo',2,'Modificado eventosPermitidos.',9,1),(21,'2015-02-04 10:27:25','5','ACL',1,'',7,1),(22,'2015-02-04 10:28:03','2','CIF',2,'Modificado descricao.',7,1),(23,'2015-02-04 10:28:24','6','PTL',1,'',7,1),(24,'2015-02-04 10:29:05','7','CLC',1,'',7,1),(25,'2015-02-04 10:29:42','8','PDT',1,'',7,1),(26,'2015-02-04 10:30:06','9','CLM',1,'',7,1),(27,'2015-02-04 10:30:37','1','NFR',2,'Modificado descricao.',7,1),(28,'2015-02-04 10:30:54','10','ODT',1,'',7,1),(29,'2015-02-04 10:31:16','10','DTO',2,'Modificado sigla.',7,1),(30,'2015-02-04 10:31:21','11','ODT',1,'',7,1),(31,'2015-02-04 10:31:38','12','FONO',1,'',7,1);
 /*!40000 ALTER TABLE `django_admin_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -445,7 +447,7 @@ CREATE TABLE `django_session` (
 
 LOCK TABLES `django_session` WRITE;
 /*!40000 ALTER TABLE `django_session` DISABLE KEYS */;
-INSERT INTO `django_session` VALUES ('coauw2octxvxjpfrmih3xk3j6jfq8dci','OGFlZjRhOGU5MTQxNzI2ODVlYTJhOGVjMzc4NGExYTY2NTFmMGFhYjp7ImF0dHJpYnV0ZXMiOnsidXNlclR5cGUiOiJwYWRyYW8iLCJub21lU29jaWFsIjoiUmFtb24gRHV0cmEgTWlyYW5kYSIsIm5vbWUiOiJSYW1vbiBEdXRyYSBNaXJhbmRhIiwiY3BmIjoiMTAyMDIzNjk3MyIsImVtYWlsIjoicmFtb24ucmRtQHVmc2MuYnIiLCJwZXJzb25OYW1lIjoiUmFtb24gRHV0cmEgTWlyYW5kYSIsImNhZGFzdHJvVmVyaWZpY2FkbyI6InRydWUiLCJsb2dpbiI6InJhbW9uLnJkbSIsImRhdGFOYXNjaW1lbnRvIjoiMTk4ODEwMDEiLCJ1c2VyVHlwZU5hbWUiOiJQZXNzb2EiLCJpZFBlc3NvYSI6IjEwMDAwMDAwMDI3Njc3MCIsImRhZG9zQWRpY2lvbmFpcyI6Int9In0sIl9hdXRoX3VzZXJfaGFzaCI6ImEwM2U0OTljZDg3YTk2ZTgxMjZlZmJjZDBmZTllYmZhM2NkNGZkNzAiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ29fY2FzX25nLmJhY2tlbmRzLkNBU0JhY2tlbmQiLCJfYXV0aF91c2VyX2lkIjoyfQ==','2015-02-18 08:52:10');
+INSERT INTO `django_session` VALUES ('j1dkwc7zro92r88k5joekmlryhc428k6','OGFlZjRhOGU5MTQxNzI2ODVlYTJhOGVjMzc4NGExYTY2NTFmMGFhYjp7ImF0dHJpYnV0ZXMiOnsidXNlclR5cGUiOiJwYWRyYW8iLCJub21lU29jaWFsIjoiUmFtb24gRHV0cmEgTWlyYW5kYSIsIm5vbWUiOiJSYW1vbiBEdXRyYSBNaXJhbmRhIiwiY3BmIjoiMTAyMDIzNjk3MyIsImVtYWlsIjoicmFtb24ucmRtQHVmc2MuYnIiLCJwZXJzb25OYW1lIjoiUmFtb24gRHV0cmEgTWlyYW5kYSIsImNhZGFzdHJvVmVyaWZpY2FkbyI6InRydWUiLCJsb2dpbiI6InJhbW9uLnJkbSIsImRhdGFOYXNjaW1lbnRvIjoiMTk4ODEwMDEiLCJ1c2VyVHlwZU5hbWUiOiJQZXNzb2EiLCJpZFBlc3NvYSI6IjEwMDAwMDAwMDI3Njc3MCIsImRhZG9zQWRpY2lvbmFpcyI6Int9In0sIl9hdXRoX3VzZXJfaGFzaCI6ImEwM2U0OTljZDg3YTk2ZTgxMjZlZmJjZDBmZTllYmZhM2NkNGZkNzAiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ29fY2FzX25nLmJhY2tlbmRzLkNBU0JhY2tlbmQiLCJfYXV0aF91c2VyX2lkIjoyfQ==','2015-02-18 10:44:08');
 /*!40000 ALTER TABLE `django_session` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -458,4 +460,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-02-04  9:24:36
+-- Dump completed on 2015-02-04 11:06:42
