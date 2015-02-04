@@ -1,24 +1,16 @@
 # -*- coding: utf-8 -*-
-
-from django.shortcuts import render, render_to_response
-from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404, render_to_response
 from django.utils.safestring import mark_safe
-##
 import time
 import calendar
 from datetime import date, datetime, timedelta
-
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import get_object_or_404, render_to_response
 from django.core.context_processors import csrf
 from django.forms.models import modelformset_factory
 from django.template import RequestContext
-from django.core.urlresolvers import reverse
 from django.core.context_processors import csrf
-from django.forms.models import modelformset_factory
-
 from agenda.models import *
 from agenda.forms import FormReserva
 from django import forms
@@ -96,7 +88,7 @@ def month(request, espaco, year, month, change=None):
     for day in month_days:
         entries = current = False   # are there entries for this day; current day?
         if day:
-        	entries = Reserva.objects.filter(dataUsoInicio__year=year, dataUsoInicio__month=month, dataUsoInicio__day=day, espacoFisico=espaco)
+        	entries = Reserva.objects.filter(data__year=year, data__month=month, data__day=day, espacoFisico=espaco)
         	##entries.filter(dataUsoInicio__day=day)
         	#entries = Entry.objects.filter(year=year, date__month=month, date__day=day)
             #entries = Reserva.objects.filter(dataUsoInicio=datetime(year,month,day))
@@ -104,9 +96,6 @@ def month(request, espaco, year, month, change=None):
             #    entries = entries.filter(creator=request.user)
         if day == nday and year == nyear and month == nmonth:
             current = True
-        if entries:
-        	print entries[0].dataUsoInicio
-        
 
         lst[week].append((day, entries, current))
         if len(lst[week]) == 7:
@@ -120,7 +109,7 @@ def dia(request, espaco, year, month, day):
     """Entries for the day."""
     nyear, nmonth, nday = time.localtime()[:3]
     espacofisico = EspacoFisico.objects.get(id=espaco)
-    reservas = Reserva.objects.filter(dataUsoInicio__year=year, dataUsoInicio__month=month, dataUsoInicio__day=day, espacoFisico=espaco).order_by("dataUsoInicio")
+    reservas = Reserva.objects.filter(data__year=year, data__month=month, data__day=day, espacoFisico=espaco).order_by("horaInicio")
     return render_to_response("dia.html", dict(reservas=reservas, espaco=espacofisico, anovisualizacao=year ,mesvisualizacao=month))
     """
     ## 	ANTIGO ##
@@ -159,35 +148,21 @@ def espacos(request):
 def addreserva(request):
     usuario = request.user.username
     dados = request.session.get('attributes')
-    #dados = request.session['attributes']
     if request.method == "POST":
         request.POST = request.POST.copy()
         request.POST['estado'] = 1
         request.POST['usuario'] = request.user.id
-        #request.POST['dataReserva'] = time.localtime()
         form = FormReserva(request.POST, request.FILES)
-        #form.set_usuario(request.user.id)
         if form.is_valid():
-            #NADA AQUI DEU CERTO
-            #print form.fields['usuario']
-            #form.fields['estado'] = forms.CharField(widget=forms.TextInput)
-            #form.cleaned_data['ramal'] = 1
-            #form.is_valid()
-            #form.fields['estado'] = 0
-            #form.fields['dataReserva'] = '00'
-            #form.fields['usuario'] = 'ramon'
             form.fields['usuario'] = forms.CharField(initial=request.user.id)
             if ((labinfo.find(request.user.username)==-1) and (request.POST['espacoFisico']==3)):
                 return render_to_response("salvo.html",{'mensagem':"Erro: Você não realizaou o curso para utilizar o labinfo "})
-            if form.choque(form):
+            if form.choque():
                 return render_to_response("salvo.html",{'mensagem':"Erro: Já existe reserva neste horário"})
-            if form.maisUmDia():
-                return render_to_response("salvo.html",{'mensagem':"Erro: Você só pode agendar um dia por vez!"})
             form.save()
             return render_to_response("salvo.html",{'mensagem': "Reserva realizada com sucesso!"})
     else:
         form = FormReserva()
-        #form.set_usuario(request.user.id)
         form.fields['usuario'].widget = forms.HiddenInput()
         form.fields['estado'].widget = forms.HiddenInput()
         form.fields['dataReserva'].widget = forms.HiddenInput()

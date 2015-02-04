@@ -1,5 +1,5 @@
-CREATE DATABASE  IF NOT EXISTS `reservasccs` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `reservasccs`;
+CREATE DATABASE  IF NOT EXISTS `agendador` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `agendador`;
 -- MySQL dump 10.13  Distrib 5.5.41, for debian-linux-gnu (x86_64)
 --
 -- Host: 127.0.0.1    Database: agendador
@@ -107,13 +107,14 @@ DROP TABLE IF EXISTS `agenda_reserva`;
 CREATE TABLE `agenda_reserva` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `estado` varchar(1) NOT NULL,
-  `dataUsoInicio` datetime NOT NULL,
-  `dataUsoFim` datetime NOT NULL,
+  `data` date NOT NULL,
+  `horaInicio` time NOT NULL,
+  `horaFim` time NOT NULL,
   `dataReserva` datetime NOT NULL,
   `espacoFisico_id` int(11) NOT NULL,
   `evento_id` int(11) NOT NULL,
   `usuario_id` int(11) NOT NULL,
-  `ramal` smallint(5) unsigned NOT NULL,
+  `ramal` int(10) unsigned NOT NULL,
   `departamento_id` int(11) NOT NULL,
   `finalidade` longtext NOT NULL,
   PRIMARY KEY (`id`),
@@ -121,10 +122,10 @@ CREATE TABLE `agenda_reserva` (
   KEY `agenda_reserva_80d1c397` (`evento_id`),
   KEY `agenda_reserva_c69e2c81` (`usuario_id`),
   KEY `agenda_reserva_cad1d7f2` (`departamento_id`),
-  CONSTRAINT `espacoFisico_id_refs_id_d5470331` FOREIGN KEY (`espacoFisico_id`) REFERENCES `agenda_espacofisico` (`id`),
+  CONSTRAINT `evento_id_refs_id_f89e9eb4` FOREIGN KEY (`evento_id`) REFERENCES `agenda_tipoevento` (`id`),
   CONSTRAINT `departamento_id_refs_id_abc178a5` FOREIGN KEY (`departamento_id`) REFERENCES `agenda_departamento` (`id`),
-  CONSTRAINT `evento_id_refs_id_f89e9eb4` FOREIGN KEY (`evento_id`) REFERENCES `agenda_tipoevento` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+  CONSTRAINT `espacoFisico_id_refs_id_d5470331` FOREIGN KEY (`espacoFisico_id`) REFERENCES `agenda_espacofisico` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -133,7 +134,7 @@ CREATE TABLE `agenda_reserva` (
 
 LOCK TABLES `agenda_reserva` WRITE;
 /*!40000 ALTER TABLE `agenda_reserva` DISABLE KEYS */;
-INSERT INTO `agenda_reserva` VALUES (1,'1','2015-01-29 12:00:00','2015-01-29 22:57:29','2015-01-29 22:57:52',3,1,2,1,1,'123');
+INSERT INTO `agenda_reserva` VALUES (2,'1','2015-01-01','08:00:00','09:00:00','2015-02-04 08:58:25',3,1,2,96187533,1,'adf'),(3,'1','2015-01-01','09:00:00','10:00:00','2015-02-04 09:19:13',3,1,2,1,1,'choque');
 /*!40000 ALTER TABLE `agenda_reserva` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -274,7 +275,7 @@ CREATE TABLE `auth_user` (
 
 LOCK TABLES `auth_user` WRITE;
 /*!40000 ALTER TABLE `auth_user` DISABLE KEYS */;
-INSERT INTO `auth_user` VALUES (1,'pbkdf2_sha256$12000$Rhivb6g4gbT4$0JfcPGCWBjeNlOS6C2XqM4Xe66OQvsF7ACxigxEyqtw=','2015-01-29 23:03:11',1,'admin','','','ramon.rdm@ufsc.br',1,1,'2015-01-29 22:53:11'),(2,'pbkdf2_sha256$12000$vz5WKBCwodRM$LW59+xewxkWmwOu634BWsXkb+2Le7DVNmVOfKdOu25E=','2015-01-29 23:01:00',0,'ramon.rdm','Ramon Dutra Miranda','100000000276770','ramon.rdm@ufsc.br',0,1,'2015-01-29 22:57:29');
+INSERT INTO `auth_user` VALUES (1,'pbkdf2_sha256$15000$f4FbOMGZEQdE$MOvyY4UqHOwfhxCuxpVctn+kq6pwl5pD+G4q86FLg2E=','2015-02-04 08:51:36',1,'admin','','','ramon.rdm@ufsc.br',1,1,'2015-02-04 08:51:36'),(2,'pbkdf2_sha256$15000$VBcxPsqhsvRU$Bc0kS108tBEN7hJmaQvzpbrJVfiyc1imIop/8o566bQ=','2015-02-04 08:52:10',0,'ramon.rdm','Ramon Dutra Miranda','100000000276770','ramon.rdm@ufsc.br',0,1,'2015-02-04 08:51:48');
 /*!40000 ALTER TABLE `auth_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -418,7 +419,7 @@ CREATE TABLE `django_migrations` (
 
 LOCK TABLES `django_migrations` WRITE;
 /*!40000 ALTER TABLE `django_migrations` DISABLE KEYS */;
-INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2015-01-29 22:52:55'),(2,'auth','0001_initial','2015-01-29 22:52:57'),(3,'admin','0001_initial','2015-01-29 22:52:58'),(4,'sessions','0001_initial','2015-01-29 22:52:58');
+INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2015-02-04 08:51:18'),(2,'auth','0001_initial','2015-02-04 08:51:18'),(3,'admin','0001_initial','2015-02-04 08:51:18'),(4,'sessions','0001_initial','2015-02-04 08:51:18');
 /*!40000 ALTER TABLE `django_migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -444,7 +445,7 @@ CREATE TABLE `django_session` (
 
 LOCK TABLES `django_session` WRITE;
 /*!40000 ALTER TABLE `django_session` DISABLE KEYS */;
-INSERT INTO `django_session` VALUES ('e06feo5mn0vqo2q8syjvnmoi897gi1ea','ZTQwYzA1MjEyMDQwZjAxYTI1YzEzNDAwOGI1MDVmYjNhZGNlNTExMjp7Il9hdXRoX3VzZXJfaGFzaCI6IjdiOWVjYWEzOWM1M2QyYTJmNDhlMDY1YTQwZGU5NjJiNWJkNWVmYjciLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOjF9','2015-02-12 23:03:11');
+INSERT INTO `django_session` VALUES ('coauw2octxvxjpfrmih3xk3j6jfq8dci','OGFlZjRhOGU5MTQxNzI2ODVlYTJhOGVjMzc4NGExYTY2NTFmMGFhYjp7ImF0dHJpYnV0ZXMiOnsidXNlclR5cGUiOiJwYWRyYW8iLCJub21lU29jaWFsIjoiUmFtb24gRHV0cmEgTWlyYW5kYSIsIm5vbWUiOiJSYW1vbiBEdXRyYSBNaXJhbmRhIiwiY3BmIjoiMTAyMDIzNjk3MyIsImVtYWlsIjoicmFtb24ucmRtQHVmc2MuYnIiLCJwZXJzb25OYW1lIjoiUmFtb24gRHV0cmEgTWlyYW5kYSIsImNhZGFzdHJvVmVyaWZpY2FkbyI6InRydWUiLCJsb2dpbiI6InJhbW9uLnJkbSIsImRhdGFOYXNjaW1lbnRvIjoiMTk4ODEwMDEiLCJ1c2VyVHlwZU5hbWUiOiJQZXNzb2EiLCJpZFBlc3NvYSI6IjEwMDAwMDAwMDI3Njc3MCIsImRhZG9zQWRpY2lvbmFpcyI6Int9In0sIl9hdXRoX3VzZXJfaGFzaCI6ImEwM2U0OTljZDg3YTk2ZTgxMjZlZmJjZDBmZTllYmZhM2NkNGZkNzAiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ29fY2FzX25nLmJhY2tlbmRzLkNBU0JhY2tlbmQiLCJfYXV0aF91c2VyX2lkIjoyfQ==','2015-02-18 08:52:10');
 /*!40000 ALTER TABLE `django_session` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -457,4 +458,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-01-29 23:06:40
+-- Dump completed on 2015-02-04  9:24:36

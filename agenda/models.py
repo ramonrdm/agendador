@@ -32,8 +32,9 @@ class EspacoFisico(models.Model):
 class Reserva(models.Model):
 	id = models.AutoField(primary_key=True)
 	estado = models.CharField(max_length=1)
-	dataUsoInicio = models.DateTimeField()
-	dataUsoFim = models.DateTimeField()
+	data = models.DateField()
+	horaInicio = models.TimeField()
+	horaFim = models.TimeField()
 	dataReserva  = models.DateTimeField(auto_now_add=True)
 	espacoFisico = models.ForeignKey(EspacoFisico)
 	evento = models.ForeignKey(TipoEvento)
