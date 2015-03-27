@@ -5,4 +5,7 @@ from models import *
 admin.site.register(Departamento)
 admin.site.register(EspacoFisico)
 admin.site.register(TipoEvento)
-admin.site.register(Reserva)
+class ReservaAdmin(admin.ModelAdmin):
+	list_display = ('usuario', 'departamento', 'espacoFisico', 'data', 'ramal', 'finalidade')
+	search_fields = ['finalidade', 'usuario__username']
+admin.site.register(Reserva, ReservaAdmin)
