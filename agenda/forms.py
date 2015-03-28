@@ -4,29 +4,14 @@ from agenda.models import Reserva
 from django import forms
 from django.contrib.admin import widgets
 import datetime
+from django.core.mail import send_mail
 
 
 class FormReserva(forms.ModelForm):
 	"""Formulário de reservas CCS"""
-	#horaInicio = forms.DateTimeField(widget=DateTimeWidget(format= '%d/%m/%Y %H:%M',input_formats=['%d/%m/%Y %H:%M']))
-	#horaFim = forms.DateTimeField()
-	#horaInicio = forms.DateTimeField(initial=datetime.datetime.now())
-	#horaInicio = forms.DateTimeField(widget = widgets.AdminSplitDateTime())
-	#dataa = datetime.datetime.now()
-	#dataa = dataa.strftime('%Y/%m/%d %H:%M')
-	#print dataa
-	#horaInicio = forms.SplitDateTimeField(initial=datetime.datetime.now, input_time_formats=['%H:%M'])
-	#horaInicio = forms.SplitDateTimeField(input_time_formats=['%H:%M'], label='Data e hora inicial')
-	#horaFim = forms.SplitDateTimeField(initial=datetime.datetime.now, label='Data e hora final')
-	#dataReserva = forms.SplitDateTimeField(initial=datetime.datetime.now)
 	dataReserva = forms.DateTimeField(initial=datetime.datetime.now)
 	class Meta:
 		model = Reserva
-		#exclude = ['estado']
-	#def __init__(self, *args, **kwargs):
-		#super(FormReserva, self).__init__(*args, **kwargs)
-		#self.fields['horaInicio'].widget = widgets.AdminSplitDateTime()
-		#self.fields['horaInicio'].widget = widgets.AdminDateWidget()
 	def choque(self):
 		reservas = Reserva.objects.filter(espacoFisico=self.cleaned_data['espacoFisico'], data=self.cleaned_data['data'])
 		for r in reservas:
@@ -40,9 +25,6 @@ class FormReserva(forms.ModelForm):
 				return True
 		return False
 		
-#	def maisUmDia(self):
-#		"""verifica se está agendadno para somente um dia"""
-#		if self.cleaned_data['horaInicio'].strftime("%Y-%m-%d") == self.cleaned_data['horaFim'].strftime("%Y-%m-%d"):
-#			return False
-#		else:
-#			return True
+	def enviarEmail(self, mail):
+		mensagem_email="Reserva de espaço físico "+str(self.cleaned_data['horaInicio'])+'/'+str(self.cleaned_data['horaFim'])+' '+str(self.cleaned_data['data'])+' - '+str(self.cleaned_data['espacoFisico'])+", realizada com sucesso"
+		send_mail('Reserva CCS - '+str(self.cleaned_data['espacoFisico'])+' - '+str(self.cleaned_data['data']), mensagem_email, 'reservas.ccs@sistemas.ufsc.br', [mail], fail_silently=False)

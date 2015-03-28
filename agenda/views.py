@@ -169,6 +169,7 @@ def addreserva(request):
             if form.choque():
                 return render_to_response("salvo.html",{'mensagem':"Erro: Já existe reserva neste horário"})
             form.save()
+            form.enviarEmail(request.user.email)
             return render_to_response("salvo.html",{'mensagem': "Reserva realizada com sucesso!"})
     else:
         form = FormReserva()

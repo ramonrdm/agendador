@@ -94,3 +94,9 @@ USE_L10N = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+EMAIL_HOST="smtp.sistemas.ufsc.br"
+EMAIL_PORT=465
+EMAIL_HOST_USER="reservas.ccs@sistemas.ufsc.br"
+EMAIL_HOST_PASSWORD=""
+EMAIL_USE_SSL=True
