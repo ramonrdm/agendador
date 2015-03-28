@@ -14,6 +14,7 @@ from django.core.context_processors import csrf
 from agenda.models import *
 from agenda.forms import FormReserva
 from django import forms
+from datetime import date
 
 mnames = "Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubro Novembro Dezembro"
 labinfo = "alcibia.maia alcides.milton ramon.rdm alexandra.boing arakawa.aline alyne.cardoso angela.rbs celia.campos claudia.colussi claudia.regina danielle.antes elaine.santos lemos.senna eleonora.dorsi felipe.daltoe francilene.vieira francis.tourinho fulvio.nedel janaina.neves joao.bastos juliana.balbinot j.gazzola karina.mary keyla.n l.bernardes luciana.m.rosa maria.assis elena.guanilo maria.isabel rita.pimenta terezinha.zeferino patricia.di.pietro patricia.haas renata.scharlach roberta.costa rodrigo.alves.lima rogerio.gondak selma.regina suely.grosseman v.m.laura"
@@ -177,3 +178,7 @@ def addreserva(request):
         form.fields['estado'].widget = forms.HiddenInput()
         form.fields['dataReserva'].widget = forms.HiddenInput()
     return render_to_response("addreserva.html", {'form': form, "usuario": usuario, 'dados': dados }, context_instance=RequestContext(request))
+@login_required
+def minhasreservas(request):
+    reservas = Reserva.objects.filter(usuario=request.user.id)
+    return render_to_response("minhasreservas.html",{"reservas":reservas})

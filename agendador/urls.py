@@ -12,6 +12,7 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', 'agenda.views.index', name='index'),
+    url(r'^minhasreservas$', 'agenda.views.minhasreservas', name='minhasreservas'),
     url(r'^requisitos', 'agenda.views.sobre', name='requisitos'),
     url(r'^espacos/$', 'agenda.views.espacos', name='espacos'),
     #url(r'^calendar/(\d+)/(\d+)', 'agenda.views.calendar', name='calendar'),
