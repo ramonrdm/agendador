@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
+Sua lista de Reservas:
+
 <div align="center">
-	{% for espaco in reservas %}
-		
-	<a href=""><br/><h3>{{ espaco.data }} <br/></h3></a>
-	{% endfor %}
+	{% for reserva in reservas %}
+		{{ reserva.espacoFisico }} - {{reserva.evento}}  - {{ reserva.data }} | {{reserva.horaInicio}} / {{reserva.horaFim}}
+		- - - <a href="/remover/{{reserva.id}}">Remover</a><br/>
+	{% endfor %}<br/>
 </div>
 {% endblock %}

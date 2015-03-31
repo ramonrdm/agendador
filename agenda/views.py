@@ -180,5 +180,15 @@ def addreserva(request):
     return render_to_response("addreserva.html", {'form': form, "usuario": usuario, 'dados': dados }, context_instance=RequestContext(request))
 @login_required
 def minhasreservas(request):
-    reservas = Reserva.objects.filter(usuario=request.user.id)
+    reservas = Reserva.objects.filter(usuario=request.user.id).order_by("data")
     return render_to_response("minhasreservas.html",{"reservas":reservas})
+
+@login_required
+def remover(request, reserva):
+    reservaRemover = get_object_or_404(Reserva, usuario=request.user, id=reserva)
+    print reservaRemover
+    if request.method == "POST":
+        reservaRemover.delete()
+        return render_to_response("salvo.html", {'mensagem': "Reserva removida com sucesso!"})
+
+    return render_to_response("remover.html", {'reserva': reservaRemover},context_instance=RequestContext(request))

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Remover</h1>
+
+<form action="" method="post">
+  {% csrf_token %}
+  <h2>{{ reserva.espacoFisico }} - {{reserva.evento}}</h2>
+  <p>{{ reserva.data|date:'d/m/Y' }} - {{ reserva.horaInicio }} / {{ reserva.horaFim }}</p>
+  <pre>{{ reserva.finalidade }}</pre>
+  <p><button type="submit">Remover</button> ou <a href="/minhasreservas">cancelar</a></p
+</form>
+{% endblock %}
