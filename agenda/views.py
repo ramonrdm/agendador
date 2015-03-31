@@ -169,9 +169,16 @@ def addreserva(request):
             
             if form.choque():
                 return render_to_response("salvo.html",{'mensagem':"Erro: Já existe reserva neste horário"})
+            
+            """Permite somente idufsc do grupo CCS:"""
+            if(not request.user.groups.filter(name="CCS").exists()):
+                return render_to_response("salvo.html",{'mensagem':"Erro: Você não é membro do grupo CCS! Fale com o Mario!"})
+
             form.save()
             form.enviarEmail(request.user.email)
             return render_to_response("salvo.html",{'mensagem': "Reserva realizada com sucesso!"})
+
+
     else:
         form = FormReserva()
         form.fields['usuario'].widget = forms.HiddenInput()
@@ -192,3 +199,12 @@ def remover(request, reserva):
         return render_to_response("salvo.html", {'mensagem': "Reserva removida com sucesso!"})
 
     return render_to_response("remover.html", {'reserva': reservaRemover},context_instance=RequestContext(request))
+
+def updateusers(request):
+    from django.contrib.auth.models import Group, User
+    g = Group.objects.get(name='CCS')
+    users = User.objects.all()
+    for u in users:
+        g.user_set.add(u)
+
+    return render_to_response("salvo.html", {'mensagem': "user esta updateusers!"})
