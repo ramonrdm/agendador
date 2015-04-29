@@ -17,9 +17,7 @@ from django import forms
 from datetime import date
 
 mnames = "Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubro Novembro Dezembro"
-labinfo = "alcibia.maia alcides.milton ramon.rdm alexandra.boing arakawa.aline alyne.cardoso angela.rbs celia.campos claudia.colussi claudia.regina danielle.antes elaine.santos lemos.senna eleonora.dorsi felipe.daltoe francilene.vieira francis.tourinho fulvio.nedel janaina.neves joao.bastos juliana.balbinot j.gazzola karina.mary keyla.n l.bernardes luciana.m.rosa maria.assis elena.guanilo maria.isabel rita.pimenta terezinha.zeferino patricia.di.pietro patricia.haas renata.scharlach roberta.costa rodrigo.alves.lima rogerio.gondak selma.regina suely.grosseman v.m.laura"
 mnames = mnames.split()
-
 
 def index(request):
 	titulo = "Agendador de espaço físico do CCS"
@@ -35,25 +33,13 @@ def main(request, espaco=None ,year=None):
     # prev / next years
     if year: year = int(year)
     else:    year = time.localtime()[0]
-
     nowy, nowm = time.localtime()[:2]
     lst = []
-    
     # create a list of months for each year, indicating ones that contain entries and current
     for y in [year, year+1, year+2]:
         mlst = []
         for n, month in enumerate(mnames):
-            entry = current = False   # are there entry(s) for this month; current month?
-            #entries = Entry.objects.filter(date__year=y, date__month=n+1)
-            #if not _show_users(request):
-            #    entries = entries.filter(creator=request.user)
-            """
-            if entries:
-                entry = True
-            if y == nowy and n+1 == nowm:
-                current = True
-            mlst.append(dict(n=n+1, name=month, entry=entry, current=current))
-            """
+            entry = current = False
             if y == nowy and n+1 == nowm:
                 current = True
             mlst.append(dict(n=n+1, name=month, current=current))
@@ -82,19 +68,10 @@ def month(request, espaco, year, month, change=None):
     nyear, nmonth, nday = time.localtime()[:3]
     lst = [[]]
     week = 0
-    #entries = False
-    #entries = Reserva.objects.filter(dataUsoInicio__year=year, dataUsoInicio__month=month, dataUsoInicio__day=day)
-    # make month lists containing list of days for each week
-    # each day tuple will contain list of entries and 'current' indicator
     for day in month_days:
-        entries = current = False   # are there entries for this day; current day?
+        entries = current = False
         if day:
         	entries = Reserva.objects.filter(data__year=year, data__month=month, data__day=day, espacoFisico=espaco)
-        	##entries.filter(dataUsoInicio__day=day)
-        	#entries = Entry.objects.filter(year=year, date__month=month, date__day=day)
-            #entries = Reserva.objects.filter(dataUsoInicio=datetime(year,month,day))
-           	#if not _show_users(request):
-            #    entries = entries.filter(creator=request.user)
         if day == nday and year == nyear and month == nmonth:
             current = True
 
@@ -112,32 +89,6 @@ def dia(request, espaco, year, month, day):
     espacofisico = EspacoFisico.objects.get(id=espaco)
     reservas = Reserva.objects.filter(data__year=year, data__month=month, data__day=day, espacoFisico=espaco).order_by("horaInicio")
     return render_to_response("dia.html", dict(reservas=reservas, espaco=espacofisico, anovisualizacao=year ,mesvisualizacao=month))
-    """
-    ## 	ANTIGO ##
-    EntriesFormset = modelformset_factory(Entry, extra=1, exclude=("creator", "date"), can_delete=True)
-
-    if request.method == 'POST':
-        formset = EntriesFormset(request.POST)
-        if formset.is_valid():
-            # add current user and date to each entry & save
-            entries = formset.save(commit=False)
-            for entry in entries:
-                entry.creator = request.user
-                entry.date = date(int(year), int(month), int(day))
-                entry.save()
-            return HttpResponseRedirect(reverse("dbe.cal.views.month", args=(year, month)))
-
-    else:
-        # display formset for existing enties and one extra form
-        formset = EntriesFormset(queryset=Entry.objects.filter(date__year=year, date__month=month, date__day=day, creator="1"))
-        return render_to_response("dia.html", add_csrf(request, entries=formset, year=year, month=month, day=day))
-"""
-
-def add_csrf(request, ** kwargs):
-    """Add CSRF and user to dictionary."""
-    d = dict(user=request.user, ** kwargs)
-    d.update(csrf(request))
-    return d
 
 def espacos(request):
 	espacos1 = EspacoFisico.objects.order_by("nome").all()
@@ -164,7 +115,7 @@ def addreserva(request):
                  request.POST['espacoFisico']== '10'):
                 return render_to_response("salvo.html",{'mensagem':"Erro: Salas pos graduação estão temporariamente bloqueadas. "})
 
-            if ((not request.user.username in labinfo) and (request.POST['espacoFisico']=='3')):
+            if ((not request.user.groups.filter(name="LABINFO").exists()) and (request.POST['espacoFisico']=='3')):
                 return render_to_response("salvo.html",{'mensagem':"Erro: Você não realizaou o curso para utilizar o labinfo "})
             
             if form.choque():
@@ -177,8 +128,6 @@ def addreserva(request):
             form.save()
             form.enviarEmail(request.user.email)
             return render_to_response("salvo.html",{'mensagem': "Reserva realizada com sucesso!"})
-
-
     else:
         form = FormReserva()
         form.fields['usuario'].widget = forms.HiddenInput()
@@ -199,12 +148,3 @@ def remover(request, reserva):
         return render_to_response("salvo.html", {'mensagem': "Reserva removida com sucesso!"})
 
     return render_to_response("remover.html", {'reserva': reservaRemover},context_instance=RequestContext(request))
-
-def updateusers(request):
-    from django.contrib.auth.models import Group, User
-    g = Group.objects.get(name='CCS')
-    users = User.objects.all()
-    for u in users:
-        g.user_set.add(u)
-
-    return render_to_response("salvo.html", {'mensagem': "user esta updateusers!"})
