@@ -5,6 +5,8 @@ from django import forms
 from django.contrib.admin import widgets
 import datetime
 from django.core.mail import send_mail
+from django.forms.extras.widgets import SelectDateWidget
+from django.forms import ModelForm, Form
 
 
 class FormReserva(forms.ModelForm):
@@ -12,6 +14,16 @@ class FormReserva(forms.ModelForm):
 	dataReserva = forms.DateTimeField(initial=datetime.datetime.now)
 	class Meta:
 		model = Reserva
+	#horaInicio = forms.DateTimeField(label="Data Inicio: (24:59)", initial="24:59")
+	def __init__(self, *args, **kwargs):
+		super(FormReserva, self).__init__(*args, **kwargs)
+		self.fields['data'].widget = widgets.AdminDateWidget()
+		self.fields['horaInicio'].widget = widgets.AdminTimeWidget()
+		self.fields['horaInicio'].initial = "24:00"
+		self.fields['horaFim'].widget = widgets.AdminTimeWidget()
+
+
+
 	def choque(self):
 		reservas = Reserva.objects.filter(espacoFisico=self.cleaned_data['espacoFisico'], data=self.cleaned_data['data'])
 		for r in reservas:

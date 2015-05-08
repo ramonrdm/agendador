@@ -124,14 +124,16 @@
 	<header>
 		{% load staticfiles %}
 		<!-- <img src="{% static "logoccs.jpg" %}"> -->
+
 	</header>
 	<nav>
-	<img src="{% static "logoccs.jpg" %}" width="80%">
+	<a href="/"><img src="{% static "logoccs.jpg" %}" width="80%"></a>
 		<a href="{% url 'agenda.views.index' %}">Inicial</a> <br/>
 		<a href="{% url 'agenda.views.main' %}">Agenda</a> <br/>
 		<a href="{% url 'agenda.views.espacos' %}">Locais</a><br/>
 		<a href="{% url 'agenda.views.minhasreservas' %}">Minhas Reservas</a><br/>
 		<a href="{% url 'agenda.views.sobre' %}">Sobre</a><br/>
+		<a href="/admin"> Admin </a>
 	</nav>
 	
 	<section>
