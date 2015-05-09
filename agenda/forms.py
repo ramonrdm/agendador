@@ -19,7 +19,7 @@ class FormReserva(forms.ModelForm):
 		super(FormReserva, self).__init__(*args, **kwargs)
 		self.fields['data'].widget = widgets.AdminDateWidget()
 		self.fields['horaInicio'].widget = widgets.AdminTimeWidget()
-		self.fields['horaInicio'].initial = "24:00"
+		#self.fields['horaInicio'].initial = "24:00"
 		self.fields['horaFim'].widget = widgets.AdminTimeWidget()
 
 
