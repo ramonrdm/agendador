@@ -2,6 +2,16 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib import admin
 
+class Equipamento(models.Model):
+	nome = models.TextField()
+	patrimonio = models.PositiveIntegerField()
+	responsavel = models.ForeignKey(User)
+
+class Centro(models.Model):
+	nome = models.TextField()
+	sigla = models.CharField(max_length=10)
+
+
 class Departamento(models.Model):
 	id = models.AutoField(primary_key=True)
 	sigla = models.CharField(max_length=5)
@@ -24,6 +34,7 @@ class EspacoFisico(models.Model):
 	descricao = models.TextField()
 	capacidade = models.PositiveSmallIntegerField()
 	eventosPermitidos = models.ManyToManyField(TipoEvento)
+	responsavel = models.ForeignKey(User)
 
 	def __unicode__(self):
 		return self.nome
