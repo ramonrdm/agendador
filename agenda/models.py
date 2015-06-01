@@ -6,6 +6,10 @@ class Equipamento(models.Model):
 	nome = models.TextField()
 	patrimonio = models.PositiveIntegerField()
 	responsavel = models.ForeignKey(User)
+	#bloqueado?
+	#visivel?
+	def __unicode__(self):
+		return self.nome
 
 class Centro(models.Model):
 	nome = models.TextField()
@@ -13,15 +17,14 @@ class Centro(models.Model):
 
 
 class Departamento(models.Model):
-	id = models.AutoField(primary_key=True)
 	sigla = models.CharField(max_length=5)
 	descricao = models.TextField()
+	Centro = models.ForeignKey(Centro)
 
 	def __unicode__(self):
 		return self.sigla
 
 class TipoEvento(models.Model):
-	id  = models.AutoField(primary_key=True)
 	nome = models.CharField(max_length=30)
 	descricao = models.TextField()
 
@@ -29,18 +32,19 @@ class TipoEvento(models.Model):
 		return self.nome
 
 class EspacoFisico(models.Model):
-	id = models.AutoField(primary_key=True)
 	nome = models.TextField()
+	centro = models.ForeignKey(Centro)
+	departamento = models.ForeignKey(Departamento)
 	descricao = models.TextField()
 	capacidade = models.PositiveSmallIntegerField()
 	eventosPermitidos = models.ManyToManyField(TipoEvento)
 	responsavel = models.ForeignKey(User)
+	localizacao = models.TextField()
 
 	def __unicode__(self):
 		return self.nome
 		
 class Reserva(models.Model):
-	id = models.AutoField(primary_key=True)
 	estado = models.CharField(max_length=1)
 	data = models.DateField()
 	horaInicio = models.TimeField()
@@ -52,6 +56,8 @@ class Reserva(models.Model):
 	ramal = models.PositiveIntegerField()
 	departamento = models.ForeignKey(Departamento)
 	finalidade = models.TextField()
+	#bloqueado?
+	#visivel?
 	
 	def __unicode__(self):
 		return self.usuario.username+"/"+self.departamento.sigla+" - "+self.evento.nome
