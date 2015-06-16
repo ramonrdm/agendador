@@ -3,7 +3,7 @@
 <b>{{espaco.nome}}</b> Data:  <br>
 <a href="{% url 'agenda.views.month' espaco.id anovisualizacao mesvisualizacao %}" >Voltar ao mes</a><br>
 <br/>
-<a href="{% url 'agenda.views.addreserva' %}"> Adicionar reserva de espaço físico</a>  <br/>
+<a href="{% url 'agenda.views.addreserva' espaco.id anovisualizacao mesvisualizacao dia %}"> Adicionar reserva de espaço físico</a>  <br/>
 <br/>
 
 {% for reserva in reservas %}
