@@ -7,7 +7,8 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', 'agenda.views.index', name='index'),
+    #url(r'^$', 'agenda.views.index', name='index'),
+    url(r'^$', 'agenda.views.index', name='Reservas UFSC'),
     url(r'^minhasreservas$', 'agenda.views.minhasreservas', name='minhasreservas'),
     url(r'^requisitos', 'agenda.views.sobre', name='requisitos'),
     url(r'^espacos/$', 'agenda.views.espacos', name='espacos'),

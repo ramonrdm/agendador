@@ -1,28 +1,28 @@
+# -*- coding: utf-8 -*-
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib import admin
+
+class Setor(models.Model):
+	sigla = models.CharField(max_length=10)
+	nome = models.TextField()
+	setorPai = models.ForeignKey('self', blank=True, null=True, default=1)
+	responsavel = models.ForeignKey(User)
+	descricao = models.TextField()
+	logo = models.FileField()
+
+	def __unicode__(self):
+		return self.sigla
 
 class Equipamento(models.Model):
 	nome = models.TextField()
 	patrimonio = models.PositiveIntegerField()
 	responsavel = models.ForeignKey(User)
+	setor = models.ForeignKey(Setor)
 	#bloqueado?
 	#visivel?
 	def __unicode__(self):
 		return self.nome
-
-class Centro(models.Model):
-	nome = models.TextField()
-	sigla = models.CharField(max_length=10)
-
-
-class Departamento(models.Model):
-	sigla = models.CharField(max_length=5)
-	descricao = models.TextField()
-	Centro = models.ForeignKey(Centro)
-
-	def __unicode__(self):
-		return self.sigla
 
 class TipoEvento(models.Model):
 	nome = models.CharField(max_length=30)
@@ -33,12 +33,11 @@ class TipoEvento(models.Model):
 
 class EspacoFisico(models.Model):
 	nome = models.TextField()
-	centro = models.ForeignKey(Centro)
-	departamento = models.ForeignKey(Departamento)
 	descricao = models.TextField()
 	capacidade = models.PositiveSmallIntegerField()
 	eventosPermitidos = models.ManyToManyField(TipoEvento)
 	responsavel = models.ForeignKey(User)
+	setor = models.ForeignKey(Setor)
 	localizacao = models.TextField()
 
 	def __unicode__(self):
@@ -54,11 +53,11 @@ class Reserva(models.Model):
 	evento = models.ForeignKey(TipoEvento)
 	usuario = models.ForeignKey(User)
 	ramal = models.PositiveIntegerField()
-	departamento = models.ForeignKey(Departamento)
+	setor = models.ForeignKey(Setor)
 	finalidade = models.TextField()
 	#bloqueado?
 	#visivel?
 	
 	def __unicode__(self):
-		return self.usuario.username+"/"+self.departamento.sigla+" - "+self.evento.nome
+		return self.usuario.username+"/"+self.setor.sigla+" - "+self.evento.nome
 

@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render, get_object_or_404, render_to_response
 from django.utils.safestring import mark_safe
-import time
-import calendar
+import time, calendar
 from datetime import date, datetime, timedelta
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
@@ -20,9 +19,12 @@ mnames = "Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubr
 mnames = mnames.split()
 
 def index(request):
-	titulo = "Agendador de espaço físico do CCS"
-	corpo = "Bem vindo ao Agendador de espaço físico do CCS"
-	return render_to_response("index.html",{'corpo':corpo,"titulo":titulo})
+    ufsc = Setor.objects.get(sigla="UFSC")
+    setores = Setor.objects.filter(setorPai=ufsc)
+    #print setores
+    titulo = "Agendador de espaço físico da UFSC"
+    corpo = "Bem vindo ao Agendador de espaço físico da UFSC"
+    return render_to_response("index.html",{'corpo':corpo,"titulo":titulo, "setores": setores})
 
 def sobre(request):
 	titulo = "Requisitos do Agendador CCS"

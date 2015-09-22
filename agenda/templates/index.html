@@ -13,4 +13,12 @@ Verifique a disponibilidade de espaços físicos no menu ao lado em "Agenda".<br
 <br/>
 <a href="{% url 'agenda.views.addreserva' %}">Adicionar reserva em espaço físico </a>
 
+<br><br>
+{% for setor in setores %}
+<div>
+	{{setor.sigla}}
+</div>
+
+{% endfor %}
+
 {% endblock %}
