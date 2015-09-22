@@ -3,13 +3,13 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib import admin
 
-class Setor(models.Model):
+class Grupo(models.Model):
 	sigla = models.CharField(max_length=10)
 	nome = models.TextField()
-	setorPai = models.ForeignKey('self', blank=True, null=True, default=1)
+	grupoPai = models.ForeignKey('self', blank=True, null=True, default=1)
 	responsavel = models.ForeignKey(User)
 	descricao = models.TextField()
-	logo = models.FileField()
+	logo = models.FileField(blank=True)
 
 	def __unicode__(self):
 		return self.sigla
@@ -18,7 +18,7 @@ class Equipamento(models.Model):
 	nome = models.TextField()
 	patrimonio = models.PositiveIntegerField()
 	responsavel = models.ForeignKey(User)
-	setor = models.ForeignKey(Setor)
+	grupo = models.ForeignKey(Grupo)
 	#bloqueado?
 	#visivel?
 	def __unicode__(self):
@@ -37,7 +37,7 @@ class EspacoFisico(models.Model):
 	capacidade = models.PositiveSmallIntegerField()
 	eventosPermitidos = models.ManyToManyField(TipoEvento)
 	responsavel = models.ForeignKey(User)
-	setor = models.ForeignKey(Setor)
+	grupo = models.ForeignKey(Grupo)
 	localizacao = models.TextField()
 
 	def __unicode__(self):
@@ -53,11 +53,11 @@ class Reserva(models.Model):
 	evento = models.ForeignKey(TipoEvento)
 	usuario = models.ForeignKey(User)
 	ramal = models.PositiveIntegerField()
-	setor = models.ForeignKey(Setor)
+	grupo = models.ForeignKey(Grupo)
 	finalidade = models.TextField()
 	#bloqueado?
 	#visivel?
 	
 	def __unicode__(self):
-		return self.usuario.username+"/"+self.setor.sigla+" - "+self.evento.nome
+		return self.usuario.username+"/"+self.Grupo.sigla+" - "+self.evento.nome
 

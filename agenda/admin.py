@@ -4,7 +4,7 @@ from models import *
 admin.site.register(EspacoFisico)
 admin.site.register(TipoEvento)
 admin.site.register(Equipamento)
-admin.site.register(Setor)
+admin.site.register(Grupo)
 
 class ReservaAdmin(admin.ModelAdmin):
 	list_display = ('usuario', 'espacoFisico', 'data', 'ramal', 'finalidade')

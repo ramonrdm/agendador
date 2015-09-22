@@ -19,8 +19,8 @@ mnames = "Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubr
 mnames = mnames.split()
 
 def index(request):
-    ufsc = Setor.objects.get(sigla="UFSC")
-    setores = Setor.objects.filter(setorPai=ufsc)
+    ufsc = Grupo.objects.get(sigla="UFSC")
+    setores = Grupo.objects.filter(grupoPai=ufsc)
     #print setores
     titulo = "Agendador de espaço físico da UFSC"
     corpo = "Bem vindo ao Agendador de espaço físico da UFSC"
