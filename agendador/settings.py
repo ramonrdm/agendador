@@ -108,6 +108,12 @@ USE_L10N = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
+
+TEMPLATE_DIRS = (
+    os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates'),
+)
 
 EMAIL_HOST="smtp.sistemas.ufsc.br"
 EMAIL_PORT=465
