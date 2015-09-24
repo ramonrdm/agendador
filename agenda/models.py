@@ -14,50 +14,56 @@ class Grupo(models.Model):
 	def __unicode__(self):
 		return self.sigla
 
-class Equipamento(models.Model):
-	nome = models.TextField()
-	patrimonio = models.PositiveIntegerField()
-	responsavel = models.ForeignKey(User)
-	grupo = models.ForeignKey(Grupo)
-	#bloqueado?
-	#visivel?
-	def __unicode__(self):
-		return self.nome
-
-class TipoEvento(models.Model):
+class Evento(models.Model):
 	nome = models.CharField(max_length=30)
 	descricao = models.TextField()
 
 	def __unicode__(self):
 		return self.nome
 
-class EspacoFisico(models.Model):
+class Locavel(models.Model):
+	class Meta:
+		abstract = True
+
 	nome = models.TextField()
 	descricao = models.TextField()
-	capacidade = models.PositiveSmallIntegerField()
-	eventosPermitidos = models.ManyToManyField(TipoEvento)
 	responsavel = models.ForeignKey(User)
 	grupo = models.ForeignKey(Grupo)
+	bloqueado = models.BooleanField(default=True)
+	visivel = models.BooleanField(default=True)
 	localizacao = models.TextField()
-
 	def __unicode__(self):
 		return self.nome
-		
+
+class EspacoFisico(Locavel):
+	capacidade = models.PositiveSmallIntegerField()
+	eventosPermitidos = models.ManyToManyField(Evento)
+
+class Equipamento(Locavel):
+	patrimonio = models.PositiveIntegerField()
+
 class Reserva(models.Model):
+	class Meta:
+		abstract = True
+	
 	estado = models.CharField(max_length=1)
 	data = models.DateField()
 	horaInicio = models.TimeField()
 	horaFim = models.TimeField()
 	dataReserva  = models.DateTimeField(auto_now_add=True)
-	espacoFisico = models.ForeignKey(EspacoFisico)
-	evento = models.ForeignKey(TipoEvento)
+	evento = models.ForeignKey(Evento)
 	usuario = models.ForeignKey(User)
 	ramal = models.PositiveIntegerField()
 	grupo = models.ForeignKey(Grupo)
 	finalidade = models.TextField()
-	#bloqueado?
-	#visivel?
 	
 	def __unicode__(self):
 		return self.usuario.username+"/"+self.Grupo.sigla+" - "+self.evento.nome
+
+class ReservaEspacoFisico(Reserva):
+	espacoFisico = models.ForeignKey(EspacoFisico)
+
+
+class ReservaEquipamento(Reserva):
+	espacoFisico = models.ForeignKey(Equipamento)
 

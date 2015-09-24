@@ -110,13 +110,6 @@ def addreserva(request):
         if form.is_valid():
             form.fields['usuario'] = forms.CharField(initial=request.user.id)
             
-            """Bloqueia as salas da pos"""
-            if ( request.POST['espacoFisico']=='7' or
-                 request.POST['espacoFisico']=='8' or
-                 request.POST['espacoFisico']=='9' or
-                 request.POST['espacoFisico']== '10'):
-                return render_to_response("salvo.html",{'mensagem':"Erro: Salas pos graduação estão temporariamente bloqueadas. "})
-
             if ((not request.user.groups.filter(name="LABINFO").exists()) and (request.POST['espacoFisico']=='3')):
                 return render_to_response("salvo.html",{'mensagem':"Erro: Você não realizaou o curso para utilizar o labinfo "})
             

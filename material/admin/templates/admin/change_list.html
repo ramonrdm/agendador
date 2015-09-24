@@ -1,0 +1,87 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls admin_static admin_list material_admin %}
+
+
+{% block extrajs %}
+<script type="text/javascript">
+(function($) {
+    $(document).ready(function($) {
+        var table = $("#result_list").DataTable({
+            "paging":     false,
+            "ordering":   false,
+            "info":       false,
+            "bFilter":    false,
+            "bAutoWidth": false,
+            "responsive": true
+        });
+        new $.fn.dataTable.FixedHeader(table);
+
+        $("#changelist-search-button").click(function() {
+            $("#changelist-search").submit();
+        });
+
+        $(".admin_filter").change(function() {
+		    window.location.href = $(this).val();
+		});
+
+		$(".date_hierarchy").change(function() {
+		    window.location.href = $(this).val();
+		});
+    });
+})(jQuery);
+</script>
+{% endblock %}
+
+{% block brand-logo %}{{ cl.opts.verbose_name_plural|title }}{% endblock %}
+
+{% block breadcrumbs_items %}
+<a href="{% url 'admin:index' %}">All apps</a> &rang;
+<a href="{% url opts|admin_urlname:'changelist' %}"><i class="fa adm-app-default adm-{{ opts.app_label }}-{{ opts.object_name|lower }}"></i> &nbsp;&nbsp;{{ opts.verbose_name_plural|capfirst }}</a>
+{% endblock %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col s12 m8 l9">
+        <div class="card">
+            <div class="card-content">
+                {% block result_list %}
+                {% result_list cl %}
+                {% endblock %}
+
+                {% block pagination %}{% pagination cl %}{% endblock %}
+            </div>
+        </div>
+    </div>
+    <div class="col s12 m4 l3">
+        <div class="card filters">
+            <div class="card-content">
+                <span class="card-title black-text" style="margin-bottom:20px">Filters</span>
+                {% block search %}{% search_form cl %}{% endblock %}
+
+                {% block filters %}
+                {% if cl.has_filters %}
+                <div id="changelist-filter row">
+                    {% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
+                </div>
+                {% endif %}
+                {% endblock %}
+
+                {% block date_hierarchy %}{% date_hierarchy cl %}{% endblock %}
+                <div class="clearfix"></div>
+            </div>
+            <div class="card-action">&nbsp;</div>
+        </div>
+    </div>
+
+    {% if has_add_permission %}
+    {% url cl.opts|admin_urlname:'add' as add_url %}
+    <div class="fixed-action-btn">
+        <a class="btn-floating btn-large waves-effect waves-light red z-depth-2" href="{% add_preserved_filters add_url is_popup to_field %}">
+            <i class="large mdi-content-add"></i>
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

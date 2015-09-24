@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-
+    {% include 'material/includes/material_css.html' %}
+    {% include 'material/includes/material_js.html' %}
 {% block nav-global %}
 {% endblock %}
 
@@ -17,6 +18,7 @@ Verifique a disponibilidade de espaços físicos no menu ao lado em "Agenda".<br
 {% for setor in setores %}
 <div class="setor-ufsc">
 	{{setor.sigla}}
+	<img src="/{{setor.logo}}">
 </div>
 
 {% endfor %}

@@ -1,0 +1,17 @@
+<title>{% block title %}Material Frontend{% endblock %}</title>
+
+{% block main %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <div class="green darken-2 white-text">
+        {% block breadcrumbs_items %}
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+<div class="row">
+{{ request }}
+</div>
+{% endblock %}
+{% endblock %}

@@ -35,8 +35,11 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'agenda'
-,)
+    'material',
+    'material.frontend',
+    'material.admin',
+    'agenda',
+)
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -60,6 +63,8 @@ ROOT_URLCONF = 'agendador.urls'
 
 WSGI_APPLICATION = 'agendador.wsgi.application'
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
@@ -74,6 +79,16 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+
+TEMPLATES = [
+        {
+            'OPTIONS': {
+                'context_processors': [
+                    'material.frontend.context_processors.modules',
+                ],
+            },
+        },
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
