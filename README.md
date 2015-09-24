@@ -2,6 +2,7 @@ Agendador
 =========
 
 Agendador de espaço físico
+Versao antiga do CCS
 
 + Cria espaço físico para agendamento de horário.
 + Interface simples de uma agenda por Mês e em cada dia mostra as reservas
