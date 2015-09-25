@@ -12,7 +12,7 @@ Grupo UFSC: {{grupo}}
 {% for setor in setores %}
 <div class="setor-ufsc">
 	<a href="{% url 'agenda.views.index' setor.sigla %}">{{setor.sigla}}</a>
-	<img src="/{{setor.logo}}">
+	<img width="100" height="100" src="/media/{{setor.logo}}">
 </div>
 
 {% endfor %}

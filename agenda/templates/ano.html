@@ -13,7 +13,7 @@
                 {{ month.name }}<br>
                 {% if month.entry %}</b>{% endif %}
                     {% for espaco in espacosfisicos %}
-                    <a href="{% url 'agenda.views.month' espaco.id year month.n %}">{{espaco.nome}}</a><br>
+                    <a href="{% url 'agenda.views.mes' espaco.id year month.n %}">{{espaco.nome}}</a><br>
                     {% endfor %}
             </div>
             {% if month.n == 6 %}{% endif %}

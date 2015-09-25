@@ -42,7 +42,7 @@ def ano(request, espaco=None ,year=None):
     nowy, nowm = time.localtime()[:2]
     lst = []
     # create a list of months for each year, indicating ones that contain entries and current
-    for y in [year, year+1, year+2]:
+    for y in [year, year+1]:
         mlst = []
         for n, month in enumerate(mnames):
             entry = current = False
@@ -56,7 +56,7 @@ def ano(request, espaco=None ,year=None):
 
     return render_to_response("ano.html", dict(espaco=espacofisico, years=lst, user=request.user, year=year, espacosfisicos=espacosfisicos))
 
-def month(request, espaco, year, month, change=None):
+def mes(request, espaco, year, month, change=None):
     """Listing of days in `month`."""
     espaco, year, month = int(espaco), int(year), int(month)
 
@@ -86,7 +86,7 @@ def month(request, espaco, year, month, change=None):
             lst.append([])
             week += 1
     espacofisico = EspacoFisico.objects.get(id=espaco)
-    return render_to_response("month.html", dict(espaco=espacofisico, year=year, month=month, user=request.user, month_days=lst, mname=mnames[month-1]))
+    return render_to_response("mes.html", dict(espaco=espacofisico, year=year, month=month, user=request.user, month_days=lst, mname=mnames[month-1]))
 
 
 def dia(request, espaco, year, month, day):
