@@ -3,7 +3,7 @@
 <div align="center">
 	{% for espaco in espacos %}
 		
-	<a href="{% url 'agenda.views.month' espaco.id ano mes %}"><br/><h3>{{ espaco.nome }} <br/></h3></a>
+	<a href="{% url 'agenda.views.mes' espaco.id ano mes %}"><br/><h3>{{ espaco.nome }} <br/></h3></a>
 		{{espaco.descricao}}<br/>
 		Capacidade: {{espaco.capacidade}}<br/>
 	{% endfor %}

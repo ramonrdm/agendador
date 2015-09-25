@@ -20,7 +20,10 @@ mnames = mnames.split()
 
 def index(request, grupo=None):
     if grupo:
-        grupo = Grupo.objects.get(sigla=grupo) 
+        try:
+            grupo = Grupo.objects.get(sigla=grupo)
+        except Grupo.DoesNotExist:
+            grupo = Grupo.objects.get(sigla="UFSC")
     else:
         grupo = Grupo.objects.get(sigla="UFSC")
     
@@ -77,7 +80,7 @@ def mes(request, espaco, year, month, change=None):
     for day in month_days:
         entries = current = False
         if day:
-        	entries = Reserva.objects.filter(data__year=year, data__month=month, data__day=day, espacoFisico=espaco)
+        	entries = ReservaEspacoFisico.objects.filter(data__year=year, data__month=month, data__day=day, espacoFisico=espaco)
         if day == nday and year == nyear and month == nmonth:
             current = True
 
@@ -93,7 +96,7 @@ def dia(request, espaco, year, month, day):
     """Entries for the day."""
     nyear, nmonth, nday = time.localtime()[:3]
     espacofisico = EspacoFisico.objects.get(id=espaco)
-    reservas = Reserva.objects.filter(data__year=year, data__month=month, data__day=day, espacoFisico=espaco).order_by("horaInicio")
+    reservas = ReservaEspacoFisico.objects.filter(data__year=year, data__month=month, data__day=day, espacoFisico=espaco).order_by("horaInicio")
     return render_to_response("dia.html", dict(reservas=reservas, espaco=espacofisico, anovisualizacao=year ,mesvisualizacao=month))
 
 def espacos(request):
@@ -101,6 +104,12 @@ def espacos(request):
 	ano = time.localtime()[0]
 	mes = time.localtime()[1]
 	return render_to_response("espacos.html", {'ano': ano, 'mes': mes, 'espacos': espacos1})
+
+def equipamentos(request):
+    espacos1 = Equipamento.objects.order_by("nome").all()
+    ano = time.localtime()[0]
+    mes = time.localtime()[1]
+    return render_to_response("espacos.html", {'ano': ano, 'mes': mes, 'espacos': espacos1})
 
 @login_required
 def addreserva(request):
@@ -133,17 +142,3 @@ def addreserva(request):
         form.fields['estado'].widget = forms.HiddenInput()
         form.fields['dataReserva'].widget = forms.HiddenInput()
     return render_to_response("addreserva.html", {'form': form, "usuario": usuario, 'dados': dados }, context_instance=RequestContext(request))
-@login_required
-def minhasreservas(request):
-    reservas = Reserva.objects.filter(usuario=request.user.id).order_by("data")
-    return render_to_response("minhasreservas.html",{"reservas":reservas})
-
-@login_required
-def remover(request, reserva):
-    reservaRemover = get_object_or_404(Reserva, usuario=request.user, id=reserva)
-    print reservaRemover
-    if request.method == "POST":
-        reservaRemover.delete()
-        return render_to_response("salvo.html", {'mensagem': "Reserva removida com sucesso!"})
-
-    return render_to_response("remover.html", {'reserva': reservaRemover},context_instance=RequestContext(request))
