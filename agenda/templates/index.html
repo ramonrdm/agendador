@@ -6,18 +6,12 @@
 
 {% block content %}
 
-{{corpo}}
-
-<br/><br/><br/><br/>
-
-Verifique a disponibilidade de espaços físicos no menu ao lado em "Agenda".<br/>
-<br/>
-<a href="{% url 'agenda.views.addreserva' %}">Adicionar reserva em espaço físico </a>
-
+<p align="center">{{corpo}}</p>
+Grupo UFSC: {{grupo}}
 <br><br>
 {% for setor in setores %}
 <div class="setor-ufsc">
-	{{setor.sigla}}
+	<a href="{% url 'agenda.views.index' setor.sigla %}">{{setor.sigla}}</a>
 	<img src="/{{setor.logo}}">
 </div>
 

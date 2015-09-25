@@ -90,7 +90,7 @@
 	}
 	header {
 
-	    background-color: #eeeeee;
+	   /* background-color: #eeeeee; */
 	    color:white;
 	    text-align:center;
 	    padding:5px;
@@ -123,26 +123,24 @@
 <body >
 	<header>
 		{% load staticfiles %}
-		<!-- <img src="{% static "logoccs.jpg" %}"> -->
-
 	</header>
 	<nav>
-	<a href="/"><img src="{% static "logoccs.jpg" %}" width="80%"></a>
+	<a href="/"><img src="{% static "img/logoufsc.png" %}" width="80%"></a><br>
+	<br>
 		<a href="{% url 'agenda.views.index' %}">Inicial</a> <br/>
-		<a href="{% url 'agenda.views.main' %}">Agenda</a> <br/>
+		<a href="{% url 'agenda.views.ano' %}">Agenda</a> <br/>
 		<a href="{% url 'agenda.views.espacos' %}">Locais</a><br/>
 		<a href="{% url 'agenda.views.minhasreservas' %}">Minhas Reservas</a><br/>
 		<a href="{% url 'agenda.views.sobre' %}">Sobre</a><br/>
 		<a href="/admin"> Admin </a>
 	</nav>
-	
 	<section>
 		{% block content %}
         {% endblock %}
 	</section>
 	
 	<footer>
-		CCS/UFSC
+		
 	</footer>
 
 

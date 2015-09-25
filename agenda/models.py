@@ -29,8 +29,8 @@ class Locavel(models.Model):
 	descricao = models.TextField()
 	responsavel = models.ForeignKey(User)
 	grupo = models.ForeignKey(Grupo)
-	bloqueado = models.BooleanField(default=True)
-	visivel = models.BooleanField(default=True)
+	bloqueado = models.BooleanField(default=False)
+	visivel = models.BooleanField(default=False)
 	localizacao = models.TextField()
 	def __unicode__(self):
 		return self.nome

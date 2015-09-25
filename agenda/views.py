@@ -18,19 +18,23 @@ from datetime import date
 mnames = "Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubro Novembro Dezembro"
 mnames = mnames.split()
 
-def index(request):
-    ufsc = Grupo.objects.get(sigla="UFSC")
-    setores = Grupo.objects.filter(grupoPai=ufsc)
-    #print setores
-    titulo = "Agendador de espaço físico da UFSC"
-    corpo = "Bem vindo ao Agendador de espaço físico da UFSC"
-    return render_to_response("index.html",{'corpo':corpo,"titulo":titulo, "setores": setores})
+def index(request, grupo=None):
+    if grupo:
+        grupo = Grupo.objects.get(sigla=grupo) 
+    else:
+        grupo = Grupo.objects.get(sigla="UFSC")
+    
+    setores = Grupo.objects.filter(grupoPai=grupo)
+    
+    titulo = "Agendador UFSC"
+    corpo = "Bem vindo ao Agendador de espaços físicos e equipamentos da UFSC"
+    return render_to_response("index.html",{'corpo':corpo,"titulo":titulo, 'grupo': grupo, "setores": setores})
 
 def sobre(request):
 	titulo = "Requisitos do Agendador CCS"
 	return render_to_response("sobre.html", {'titulo':titulo})
 
-def main(request, espaco=None ,year=None):
+def ano(request, espaco=None ,year=None):
     """Main listing, years and months; three years per page."""
     # prev / next years
     if year: year = int(year)
@@ -50,7 +54,7 @@ def main(request, espaco=None ,year=None):
     espacosfisicos = EspacoFisico.objects.all()
     espacofisico = EspacoFisico.objects.filter(id=espaco)
 
-    return render_to_response("main.html", dict(espaco=espacofisico, years=lst, user=request.user, year=year, espacosfisicos=espacosfisicos))
+    return render_to_response("ano.html", dict(espaco=espacofisico, years=lst, user=request.user, year=year, espacosfisicos=espacosfisicos))
 
 def month(request, espaco, year, month, change=None):
     """Listing of days in `month`."""
