@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from agenda.models import Reserva
+from agenda.models import Reserva, EspacoFisico
 from django import forms
 from django.contrib.admin import widgets
 import datetime
@@ -14,6 +14,7 @@ class FormReserva(forms.ModelForm):
 	dataReserva = forms.DateTimeField(initial=datetime.datetime.now)
 	class Meta:
 		model = Reserva
+		fields = '__all__'
 	#horaInicio = forms.DateTimeField(label="Data Inicio: (24:59)", initial="24:59")
 	def __init__(self, *args, **kwargs):
 		super(FormReserva, self).__init__(*args, **kwargs)
@@ -21,7 +22,13 @@ class FormReserva(forms.ModelForm):
 		self.fields['horaInicio'].widget = widgets.AdminTimeWidget()
 		#self.fields['horaInicio'].initial = "24:00"
 		self.fields['horaFim'].widget = widgets.AdminTimeWidget()
-
+		
+		#espacoatual = args.pop("espacoatual")
+		#print "bluh"
+		#print espacoatual
+		#espacoatual = EspacoFisico.objects.filter(id=6)
+        #self.fields['espacoFisico'] = espacoatual
+        #form.fields['evento'].queryset = espacoatual[0].eventosPermitidos
 
 
 	def choque(self):

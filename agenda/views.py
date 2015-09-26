@@ -38,7 +38,6 @@ def sobre(request):
 	return render_to_response("sobre.html", {'titulo':titulo})
 
 def ano(request, espaco=None ,year=None):
-    """Main listing, years and months; three years per page."""
     # prev / next years
     if year: year = int(year)
     else:    year = time.localtime()[0]
@@ -97,7 +96,8 @@ def dia(request, espaco, year, month, day):
     nyear, nmonth, nday = time.localtime()[:3]
     espacofisico = EspacoFisico.objects.get(id=espaco)
     reservas = ReservaEspacoFisico.objects.filter(data__year=year, data__month=month, data__day=day, espacoFisico=espaco).order_by("horaInicio")
-    return render_to_response("dia.html", dict(reservas=reservas, espaco=espacofisico, anovisualizacao=year ,mesvisualizacao=month))
+    return render_to_response("dia.html", dict(reservas=reservas, espaco=espacofisico, anovisualizacao=year ,mesvisualizacao=month, dia=day))
+
 
 def espacos(request):
 	espacos1 = EspacoFisico.objects.order_by("nome").all()
@@ -112,7 +112,7 @@ def equipamentos(request):
     return render_to_response("espacos.html", {'ano': ano, 'mes': mes, 'espacos': espacos1})
 
 @login_required
-def addreserva(request):
+def addreserva(request, espacoatual, ano=None, mes= None, dia=None):
     usuario = request.user.username
     dados = request.session.get('attributes')
     if request.method == "POST":
@@ -141,4 +141,14 @@ def addreserva(request):
         form.fields['usuario'].widget = forms.HiddenInput()
         form.fields['estado'].widget = forms.HiddenInput()
         form.fields['dataReserva'].widget = forms.HiddenInput()
+        espacoatual = EspacoFisico.objects.filter(id=espacoatual)
+        form.fields['espacoFisico'].queryset = espacoatual
+        form.fields['espacoFisico'].initial = espacoatual[0].id
+        form.fields['evento'].queryset = espacoatual[0].eventosPermitidos
+        if ano and mes and dia:
+            form.fields['data'].initial = date(int(ano), int(mes), int(dia))
+        choices = (("8:00","8:00"),("9:00","9:00"))
+        form.fields['horaInicio'].choices = choices
+        #form.fields['horaInicio'] = forms.ChoiceField(choices)
+
     return render_to_response("addreserva.html", {'form': form, "usuario": usuario, 'dados': dados }, context_instance=RequestContext(request))

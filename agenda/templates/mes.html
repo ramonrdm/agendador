@@ -19,7 +19,7 @@
         <td class="day-titulo">Sabado</td>
         <td class="day-titulo">Domingo</td>
     </tr>
-
+    {% load staticfiles %}
     {% for week in month_days %}
         <tr>
         {% for day, entries, current in week %}
@@ -36,15 +36,18 @@
 
             <!-- Day number and entry snippets -->
             {% if day != 0 %}
-                {{ day }}
-                <a title="Nova Reserva" href="{% url 'agenda.views.addreserva' espaco.id year month day %}">
+
+                {{ day }} <a title="Nova Reserva" href="{% url 'agenda.views.addreserva' espaco.id year month day %}">
                 <img src="{% static "admin/img/icon_addlink.gif" %}"> </a>
                 <p class="txt-reserva-mes">
                 {% for entry in entries %}
                     {{ entry.horaInicio|date:"H:i" }} até {{ entry.horaFim|date:"H:i" }} {{ entry.tipoEvento}}/{{ entry.departamento}}<br/>
                 {% endfor %}
                 </p>
+                
+             
             {% endif %}
+
             </td>
         {% endfor %}
         </tr>
