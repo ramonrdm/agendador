@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
+<script type="text/javascript">
+function mostraDetalhes(id){
+	document.getElementById(id).style.display = 'block'
+}
+</script>
 <b>{{espaco.nome}}</b> Data:  <br>
 <a href="{% url 'agenda.views.mes' espaco.id anovisualizacao mesvisualizacao %}" >Voltar ao mes</a><br>
 <br/>
@@ -7,7 +12,19 @@
 <br/>
 
 {% for reserva in reservas %}
-	{{ reserva.horaInicio|date:"H:i"}} até {{ reserva.horaFim|date:"H:i" }} - {{reserva.evento}}| {{reserva.usuario}}/{{reserva.departamento}}  <br/>
+	{{ reserva.horaInicio|date:"H:i"}} até {{ reserva.horaFim|date:"H:i" }} - {{reserva.evento}}| {{reserva.usuario}}/{{reserva.departamento}}  <a href="#" onclick="mostraDetalhes({{reserva.id}})"> ▼&nbsp; Detalhes </a>
+	<div id="{{reserva.id}}" style="display: none">
+		<strong>Detalhes da reverva:</strong><br>
+		<strong>Usuário nome: </strong>{{reserva.usuario.first_name}}<br>
+		<strong>Ramal:</strong> {{reserva.ramal}}<br>
+		<strong>Departamento: </strong>{{reserva.departamento}}<br>
+		<strong>Justificativa:</strong><br>
+		{{reserva.finalidade}}
+
+	</div>
+	  <br/>
+
+
 {% empty %}
 	<br> <b>Sem reservas para este dia </b>
 {% endfor %}
@@ -15,3 +32,4 @@
 
 
 {% endblock %}
+
