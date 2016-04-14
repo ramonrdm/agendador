@@ -19,31 +19,42 @@ mnames = "Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubr
 mnames = mnames.split()
 
 def index(request, grupo=None):
-    print "RAMON RAMON RAMON"
-    if grupo:
-        try:
-            grupo = Grupo.objects.get(sigla=grupo)
-        except Grupo.DoesNotExist:
-            grupo = Grupo.objects.get(sigla="UFSC")
-    else:
+    
+    titulo = "Agendador UFSC"
+    corpo = "Bem vindo ao Agendador de espaços físicos e equipamentos da UFSC"
+
+    try:
+        grupo = Grupo.objects.get(sigla=grupo)
+    except Grupo.DoesNotExist:
         grupo = Grupo.objects.get(sigla="UFSC")
     
     setores = Grupo.objects.filter(grupoPai=grupo)
-    if(not setores):
-        return ano(request, grupo)
-        
+
     espacosFisicos = EspacoFisico.objects.filter(grupo=grupo)
     equipamentos = Equipamento.objects.filter(grupo=grupo)
 
-    titulo = "Agendador UFSC"
-    corpo = "Bem vindo ao Agendador de espaços físicos e equipamentos da UFSC"
+    year = time.localtime()[0]
+    nowy, nowm = time.localtime()[:2]
+    lst = []
+    # create a list of months for each year, indicating ones that contain entries and current
+    for y in [year, year+1]:
+        mlst = []
+        for n, month in enumerate(mnames):
+            entry = current = False
+            if y == nowy and n+1 == nowm:
+                current = True
+            mlst.append(dict(n=n+1, name=month, current=current))
+        lst.append((y, mlst))
+
     return render_to_response(
-                                "index.html",
-                                    {
-                                        'corpo':corpo,"titulo":titulo, 'grupo': grupo, "setores": setores,
-                                        'espacosfisicos':espacosFisicos, 'equipamentos': equipamentos
-                                    }
-                                )
+        "index.html",
+        dict(
+            corpo=corpo, titulo=titulo, grupo=grupo, setores=setores,
+            espacosfisicos=espacosFisicos, equipamentos=equipamentos,
+            years=lst, user=request.user
+        )
+        )
+
 
 def sobre(request):
 	titulo = "Requisitos do Agendador CCS"

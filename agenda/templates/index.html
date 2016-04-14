@@ -7,7 +7,7 @@
 {% block content %}
 
 <p align="center">{{corpo}}</p>
-Grupo UFSC: {{grupo}}
+Setor: {{grupo}}
 <br><br>
 {% for setor in setores %}
 <div class="setor-ufsc" align="center">
@@ -21,18 +21,54 @@ Grupo UFSC: {{grupo}}
 {% if espacosfisicos %}
 <div id=espacosFisicos>
 	<h3>Espaços Físicos:</h3>
-	{% for ep in espacosfisicos %}
-		{{ep.nome}}
-	{% endfor %}
+<div align="center" style="width: 100%;">
+    {% for year, months in years %}
+        <div align="center" class="ano" style="width: 100%;" ><br/>{{ year }}</div>
+        {% for month in months %}
+            <div class=
+            {% if month.current %}"mes-current"{% endif %}
+            {% if not month.current %}"month"{% endif %} >
+
+                {% if month.entry %}<b>{% endif %}
+                {{ month.name }}<br>
+                {% if month.entry %}</b>{% endif %}
+                    {% for espaco in espacosfisicos %}
+                    <a href="{% url 'agenda.views.mes' espaco.id year month.n %}">{{espaco.nome}}</a><br>
+                    {% endfor %}
+            </div>
+            {% if month.n == 6 %}{% endif %}
+        {% endfor %}
+    {% endfor %}
+
+</div>
 </div>
 {% endif %}
 {% if equipamentos %}
 <div id="equipamentos">
 	<h3>Equipamentos:</h3>
-	{% for equipamento in equipamentos %}
-		{{equipamento.nome}}
-	{% endfor %}
+<div align="center" style="width: 1100px;">
+    {% for year, months in years %}
+        <div align="center" class="ano" style="width: 1100px;" ><br/>{{ year }}</div>
+        {% for month in months %}
+            <div class=
+            {% if month.current %}"mes-current"{% endif %}
+            {% if not month.current %}"month"{% endif %} >
+
+                {% if month.entry %}<b>{% endif %}
+                {{ month.name }}<br>
+                {% if month.entry %}</b>{% endif %}
+                    {% for espaco in espacosfisicos %}
+                    <a href="{% url 'agenda.views.mes' espaco.id year month.n %}">{{espaco.nome}}</a><br>
+                    {% endfor %}
+            </div>
+            {% if month.n == 6 %}{% endif %}
+        {% endfor %}
+    {% endfor %}
+
+</div>
 </div>
 {% endif %}
+
+
 
 {% endblock %}
