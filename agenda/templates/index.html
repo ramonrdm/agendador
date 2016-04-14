@@ -10,11 +10,29 @@
 Grupo UFSC: {{grupo}}
 <br><br>
 {% for setor in setores %}
-<div class="setor-ufsc">
-	<a href="{% url 'agenda.views.index' setor.sigla %}">{{setor.sigla}}</a>
-	<img width="100" height="100" src="/media/{{setor.logo}}">
+<div class="setor-ufsc" align="center">
+	<a href="{% url 'agenda.views.index' setor.sigla %}">{{setor.sigla}}<br>
+	<img width="100" height="100" src="/media/{{setor.logo}}"></a>
+	<br><br>
 </div>
 
 {% endfor %}
+
+{% if espacosfisicos %}
+<div id=espacosFisicos>
+	<h3>Espaços Físicos:</h3>
+	{% for ep in espacosfisicos %}
+		{{ep.nome}}
+	{% endfor %}
+</div>
+{% endif %}
+{% if equipamentos %}
+<div id="equipamentos">
+	<h3>Equipamentos:</h3>
+	{% for equipamento in equipamentos %}
+		{{equipamento.nome}}
+	{% endfor %}
+</div>
+{% endif %}
 
 {% endblock %}

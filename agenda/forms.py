@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from agenda.models import Reserva, EspacoFisico
+from agenda.models import Reserva, EspacoFisico, ReservaEspacoFisico
 from django import forms
 from django.contrib.admin import widgets
 import datetime
@@ -13,7 +13,7 @@ class FormReserva(forms.ModelForm):
 	"""Formulário de reservas CCS"""
 	dataReserva = forms.DateTimeField(initial=datetime.datetime.now)
 	class Meta:
-		model = Reserva
+		model = ReservaEspacoFisico
 		fields = '__all__'
 	#horaInicio = forms.DateTimeField(label="Data Inicio: (24:59)", initial="24:59")
 	def __init__(self, *args, **kwargs):

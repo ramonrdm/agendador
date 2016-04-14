@@ -19,6 +19,7 @@ mnames = "Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubr
 mnames = mnames.split()
 
 def index(request, grupo=None):
+    print "RAMON RAMON RAMON"
     if grupo:
         try:
             grupo = Grupo.objects.get(sigla=grupo)
@@ -28,16 +29,27 @@ def index(request, grupo=None):
         grupo = Grupo.objects.get(sigla="UFSC")
     
     setores = Grupo.objects.filter(grupoPai=grupo)
-    
+    if(not setores):
+        return ano(request, grupo)
+        
+    espacosFisicos = EspacoFisico.objects.filter(grupo=grupo)
+    equipamentos = Equipamento.objects.filter(grupo=grupo)
+
     titulo = "Agendador UFSC"
     corpo = "Bem vindo ao Agendador de espaços físicos e equipamentos da UFSC"
-    return render_to_response("index.html",{'corpo':corpo,"titulo":titulo, 'grupo': grupo, "setores": setores})
+    return render_to_response(
+                                "index.html",
+                                    {
+                                        'corpo':corpo,"titulo":titulo, 'grupo': grupo, "setores": setores,
+                                        'espacosfisicos':espacosFisicos, 'equipamentos': equipamentos
+                                    }
+                                )
 
 def sobre(request):
 	titulo = "Requisitos do Agendador CCS"
 	return render_to_response("sobre.html", {'titulo':titulo})
 
-def ano(request, espaco=None ,year=None):
+def ano(request, grupo=None ,year=None):
     # prev / next years
     if year: year = int(year)
     else:    year = time.localtime()[0]
@@ -53,10 +65,9 @@ def ano(request, espaco=None ,year=None):
             mlst.append(dict(n=n+1, name=month, current=current))
         lst.append((y, mlst))
     
-    espacosfisicos = EspacoFisico.objects.all()
-    espacofisico = EspacoFisico.objects.filter(id=espaco)
+    espacosfisicos = EspacoFisico.objects.filter(grupo=grupo)
 
-    return render_to_response("ano.html", dict(espaco=espacofisico, years=lst, user=request.user, year=year, espacosfisicos=espacosfisicos))
+    return render_to_response("ano.html", dict(years=lst, user=request.user, year=year, espacosfisicos=espacosfisicos))
 
 def mes(request, espaco, year, month, change=None):
     """Listing of days in `month`."""
@@ -141,10 +152,12 @@ def addreserva(request, espacoatual, ano=None, mes= None, dia=None):
         form.fields['usuario'].widget = forms.HiddenInput()
         form.fields['estado'].widget = forms.HiddenInput()
         form.fields['dataReserva'].widget = forms.HiddenInput()
-        espacoatual = EspacoFisico.objects.filter(id=espacoatual)
-        form.fields['espacoFisico'].queryset = espacoatual
-        form.fields['espacoFisico'].initial = espacoatual[0].id
-        form.fields['evento'].queryset = espacoatual[0].eventosPermitidos
+        espacoatuala = EspacoFisico.objects.filter(id=espacoatual)
+        print "aquiii"
+        print espacoatuala
+        form.fields['espacoFisico'].queryset = espacoatuala
+        form.fields['espacoFisico'].initial = espacoatuala[0].id
+        form.fields['evento'].queryset = espacoatuala[0].eventosPermitidos
         if ano and mes and dia:
             form.fields['data'].initial = date(int(ano), int(mes), int(dia))
         choices = (("8:00","8:00"),("9:00","9:00"))
