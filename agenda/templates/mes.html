@@ -1,15 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
 <div  align="center" >
-
+{% if espaco.patrimonio %}
+<a href= "{% url 'agenda.views.mese' espaco.id year month "prev" %}"> < < Anterior</a> 
+| {{ mname }} {{ year }}  - {{ espaco.nome }}  | 
+<a href= "{% url 'agenda.views.mese' espaco.id year month "next" %}">Proximo > > </a>
+{% else %}
 <a href= "{% url 'agenda.views.mes' espaco.id year month "prev" %}"> < < Anterior</a> 
 | {{ mname }} {{ year }}  - {{ espaco.nome }}  | 
 <a href= "{% url 'agenda.views.mes' espaco.id year month "next" %}">Proximo > > </a>
+{% endif %}
 <br/><br/>
-
-
     <table align="center" border="0">
-
     <tr >
         <td class="day-titulo">Segunda</td>
         <td class="day-titulo">Terça</td>

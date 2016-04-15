@@ -80,7 +80,7 @@ def ano(request, grupo=None ,year=None):
 
     return render_to_response("ano.html", dict(years=lst, user=request.user, year=year, espacosfisicos=espacosfisicos))
 
-def mes(request, espaco, year, month, change=None):
+def mes(request, espaco, year, month, change=None, tipo=None):
     """Listing of days in `month`."""
     espaco, year, month = int(espaco), int(year), int(month)
 
@@ -109,9 +109,19 @@ def mes(request, espaco, year, month, change=None):
         if len(lst[week]) == 7:
             lst.append([])
             week += 1
-    espacofisico = EspacoFisico.objects.get(id=espaco)
-    return render_to_response("mes.html", dict(espaco=espacofisico, year=year, month=month, user=request.user, month_days=lst, mname=mnames[month-1]))
+    if(tipo=="equi"):
+        espacofisico = Equipamento.objects.get(id=espaco)
+    else:
+        espacofisico = EspacoFisico.objects.get(id=espaco)
+    return render_to_response(
+            "mes.html", 
+            dict(
+                espaco=espacofisico, year=year, month=month, 
+                user=request.user, month_days=lst, mname=mnames[month-1]
+                ))
 
+def mese(request, espaco, year, month, change=None):
+    return mes(request, espaco, year, month, change, tipo="equi")
 
 def dia(request, espaco, year, month, day):
     """Entries for the day."""

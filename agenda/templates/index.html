@@ -20,7 +20,7 @@ Setor: {{grupo}}
 
 {% if espacosfisicos %}
 <div id=espacosFisicos>
-	<h3>Espaços Físicos:</h3>
+	<h3>Espaços Físicos do {{grupo.sigla}}:</h3>
 <div align="center" style="width: 100%;">
     {% for year, months in years %}
         <div align="center" class="ano" style="width: 100%;" ><br/>{{ year }}</div>
@@ -57,8 +57,8 @@ Setor: {{grupo}}
                 {% if month.entry %}<b>{% endif %}
                 {{ month.name }}<br>
                 {% if month.entry %}</b>{% endif %}
-                    {% for espaco in espacosfisicos %}
-                    <a href="{% url 'agenda.views.mes' espaco.id year month.n %}">{{espaco.nome}}</a><br>
+                    {% for equipamento in equipamentos %}
+                    <a href="{% url 'agenda.views.mese' equipamento.id year month.n %}">{{equipamento.nome}}</a><br>
                     {% endfor %}
             </div>
             {% if month.n == 6 %}{% endif %}
