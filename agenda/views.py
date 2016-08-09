@@ -112,6 +112,9 @@ def addreserva(request, espacoatual, ano=None, mes= None, dia=None):
             if ((not request.user.groups.filter(name="LABINFO").exists()) and (request.POST['espacoFisico']=='3')):
                 return render_to_response("salvo.html",{'mensagem':"Erro: Você não realizaou o curso para utilizar o labinfo "})
             
+            if ((not request.user.groups.filter(name="CONSELHEIROS").exists()) and (request.POST['espacoFisico']=='4')):
+                return render_to_response("salvo.html",{'mensagem':"Erro: Você não é membro do grupo sala dos conselhos, você não pode reservar este espaço."})
+            
             if form.choque():
                 return render_to_response("salvo.html",{'mensagem':"Erro: Já existe reserva neste horário"})
             
@@ -119,9 +122,15 @@ def addreserva(request, espacoatual, ano=None, mes= None, dia=None):
             if(not request.user.groups.filter(name="CCS").exists()):
                 return render_to_response("salvo.html",{'mensagem':"Erro: Você não é membro do grupo CCS! Fale com o Mario!"})
 
-            form.save()
-            form.enviarEmail(request.user.email)
-            return render_to_response("salvo.html",{'mensagem': "Reserva realizada com sucesso!"})
+            instancia = form.save()
+            #gambito para webconferencia
+            if request.POST['espacoFisico']=='7':
+                msg = "Reserva realizada com sucesso!" + " É imprescindível que você faça contato com o Mário ou Amilcar na Seção de Informática do CCS, Ramal 4162, para orientações de uso da Sala de Web conferência."
+                form.enviarEmail(request.user.email, 7)
+            else:
+                msg = "Reserva realizada com sucesso!"
+                form.enviarEmail(request.user.email, instancia.id)
+            return render_to_response("salvo.html",{'mensagem': msg })
     else:
         form = FormReserva()
         form.fields['usuario'].widget = forms.HiddenInput()

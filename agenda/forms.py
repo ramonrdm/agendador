@@ -44,7 +44,10 @@ class FormReserva(forms.ModelForm):
 				return True
 		return False
 		
-	def enviarEmail(self, mail):
-		mensagem_email="Reserva de espaço físico "+str(self.cleaned_data['horaInicio'])+'/'+str(self.cleaned_data['horaFim'])+' '+str(self.cleaned_data['data'])+' - '+str(self.cleaned_data['espacoFisico'])+", realizada com sucesso"
+	def enviarEmail(self, mail, idEspaco=None):
+		mensagem_email="Reserva de espaço físico das "+str(self.cleaned_data['horaInicio'])+' as '+str(self.cleaned_data['horaFim'])+' '+str(self.cleaned_data['data'])+' - '+str(self.cleaned_data['espacoFisico'])+", realizada com sucesso."
+		#Gambito para Web conferencia.
+		if idEspaco == 7:
+			mensagem_email = mensagem_email+ " É imprescindível que você faça contato com o Mário ou Amilcar na Seção de Informática do CCS, Ramal 4162, para orientações de uso da Sala de Web conferência."
 		send_mail('Reserva CCS - '+str(self.cleaned_data['espacoFisico'])+' - '+str(self.cleaned_data['data']), mensagem_email, 'reservas.ccs@sistemas.ufsc.br', [mail], fail_silently=False)
 
