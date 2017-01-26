@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib import admin
 
 class Grupo(models.Model):
-	sigla = models.CharField(max_length=10)
+	sigla = models.CharField(max_length=10, unique=True)
 	nome = models.TextField()
 	grupoPai = models.ForeignKey('self', blank=True, null=True, default=1)
 	responsavel = models.ForeignKey(User)

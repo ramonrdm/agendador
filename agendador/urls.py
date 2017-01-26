@@ -29,3 +29,4 @@ urlpatterns = [
     url(r'^accounts/login/$', views2.login),
     url(r'^accounts/logout/$', views2.logout),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
