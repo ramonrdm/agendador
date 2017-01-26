@@ -25,7 +25,11 @@ def index(request, grupo=None):
     try:
         grupo = Grupo.objects.get(sigla=grupo)
     except Grupo.DoesNotExist:
-        grupo = Grupo.objects.get(sigla="UFSC")
+        try:
+            grupo = Grupo.objects.get(sigla="UFSC")
+        except Grupo.DoesNotExist:
+            #return render_to_response("index.html")
+            grupo = 0
     
     setores = Grupo.objects.filter(grupoPai=grupo)
 
