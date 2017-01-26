@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.forms.models import modelformset_factory
-from django.template import RequestContext
+from django.template import RequestContext, Library
 from django.views.decorators import csrf
 from agenda.models import *
 from agenda.forms import FormReserva
@@ -29,7 +29,7 @@ def index(request, grupo=None):
             grupo = Grupo.objects.get(sigla="UFSC")
         except Grupo.DoesNotExist:
             #return render_to_response("index.html")
-            grupo = 0
+            grupo=0
     
     setores = Grupo.objects.filter(grupoPai=grupo)
 

@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import QueryDict, HttpResponseRedirect
 
 try:
     from urllib.parse import urlencode, parse_qs, urlsplit, urlunsplit
@@ -8,7 +8,9 @@ except ImportError:
 
 
 class SmoothNavigationMiddleware(object):
-    def process_response(self, request, response):
+    """Keep `?back=` queryst parameter on POST requests."""
+
+    def process_response(self, request, response):  # noqa D102
         if isinstance(response, HttpResponseRedirect):
             back = request.GET.get('back')
             if back:
