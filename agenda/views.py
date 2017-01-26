@@ -6,10 +6,9 @@ from datetime import date, datetime, timedelta
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
-from django.core.context_processors import csrf
 from django.forms.models import modelformset_factory
 from django.template import RequestContext
-from django.core.context_processors import csrf
+from django.views.decorators import csrf
 from agenda.models import *
 from agenda.forms import FormReserva
 from django import forms
