@@ -13,6 +13,7 @@ from agenda.models import *
 from agenda.forms import FormReserva
 from django import forms
 from datetime import date
+from material.frontend import urls as frontend_urls
 
 mnames = "Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubro Novembro Dezembro"
 mnames = mnames.split()

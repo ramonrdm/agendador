@@ -1,7 +1,13 @@
+{% extends 'material/frontend/base_module.html' %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="pt-br" lang="pt-br" >
 <head>
+	{% load staticfiles %}
+	{% include 'material/includes/material_css.html' %}
+	<script src="{% static 'material/js/jquery-2.2.0.js' %}"></script>
+	{% include 'material/includes/material_js.html' %}
+
 	<title>{% block title %}Agendador{% endblock %}</title>
 	<style type="text/css">
 	

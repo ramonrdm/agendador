@@ -13,12 +13,16 @@ class Grupo(models.Model):
 
 	def __unicode__(self):
 		return self.sigla
+	def __str__(self):
+		return self.sigla
 
 class Evento(models.Model):
 	nome = models.CharField(max_length=30)
 	descricao = models.TextField()
 
 	def __unicode__(self):
+		return self.nome
+	def __str__(self):
 		return self.nome
 
 class Locavel(models.Model):
@@ -33,6 +37,8 @@ class Locavel(models.Model):
 	visivel = models.BooleanField(default=False)
 	localizacao = models.TextField()
 	def __unicode__(self):
+		return self.nome
+	def __str__(self):
 		return self.nome
 
 class EspacoFisico(Locavel):

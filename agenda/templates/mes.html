@@ -6,9 +6,9 @@
 | {{ mname }} {{ year }}  - {{ espaco.nome }}  | 
 <a href= "{% url 'agenda.views.mese' espaco.id year month "next" %}">Proximo > > </a>
 {% else %}
-<a href= "{% url 'agenda.views.mes' espaco.id year month "prev" %}"> < < Anterior</a> 
+<a href= "{% url 'mes' espaco.id year month "prev" %}"> < < Anterior</a> 
 | {{ mname }} {{ year }}  - {{ espaco.nome }}  | 
-<a href= "{% url 'agenda.views.mes' espaco.id year month "next" %}">Proximo > > </a>
+<a href= "{% url 'mes' espaco.id year month "next" %}">Proximo > > </a>
 {% endif %}
 <br/><br/>
     <table align="center" border="0">
@@ -31,7 +31,7 @@
             {% if day != 0 and not current %}"day"{% endif %}
             {% if day != 0 and current %}"current"{% endif %}
             {% if day != 0 %}
-                onClick="parent.location='{% url 'agenda.views.dia' espaco.id year month day %}'"
+                onClick="parent.location='{% url 'dia' espaco.id year month day %}'"
                 onMouseOver="this.bgColor='#eeeeee';"
                 onMouseOut="this.bgColor='white';"
             {% endif %} >
@@ -39,7 +39,7 @@
             <!-- Day number and entry snippets -->
             {% if day != 0 %}
 
-                {{ day }} <a title="Nova Reserva" href="{% url 'agenda.views.addreserva' espaco.id year month day %}">
+                {{ day }} <a title="Nova Reserva" href="{% url 'addreserva' espaco.id year month day %}">
                 <img src="{% static "admin/img/icon_addlink.gif" %}"> </a>
                 <p class="txt-reserva-mes">
                 {% for entry in entries %}

@@ -10,9 +10,9 @@ admin.autodiscover()
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls), name="admin inicial"),
     url(r'^admin', include(admin.site.urls)),
-    #url(r'', include(frontend_urls),name="urtls front"),
+    url(r'', include(frontend_urls),name="urtls front"),
     url(r'^$', views.index, name='Reservas UFSC'),
-    url(r'^sobre$', views.sobre, name='Sobre'),
+    url(r'^sobre$', views.sobre, name='sobr'),
     url(r'^espacos/$', views.espacos, name='espacos'),
     url(r'^equipamentos/$', views.equipamentos, name='equipamentos'),
     url(r"^mes/(\d+)/(\d+)/(\d+)/(prev|next)/$", views.mes, name="mes"),
@@ -27,6 +27,6 @@ urlpatterns = [
     url(r'^addreserva/(\d+)/(\d+)/(\d+)/(\d+)/$', views.addreserva, name='addreserva'),
     url(r'^accounts/login/$', views2.login, name="login cas"),
     url(r'^accounts/logout/$', views2.logout, name="logout cas"),
-    url(r'^(?P<grupo>\w+)$', views.index, name='Reservas UFSC'),
+    url(r'^(?P<grupo>\w+)$', views.index, name='Reservas-UFSC'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
