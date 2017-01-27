@@ -177,8 +177,8 @@ def addreserva(request, espacoatual, ano=None, mes= None, dia=None):
         form.fields['estado'].widget = forms.HiddenInput()
         form.fields['dataReserva'].widget = forms.HiddenInput()
         espacoatuala = EspacoFisico.objects.filter(id=espacoatual)
-        print "aquiii"
-        print espacoatuala
+        #print "aquiii"
+        #print espacoatuala
         form.fields['espacoFisico'].queryset = espacoatuala
         form.fields['espacoFisico'].initial = espacoatuala[0].id
         form.fields['evento'].queryset = espacoatuala[0].eventosPermitidos

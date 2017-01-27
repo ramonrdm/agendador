@@ -10,7 +10,7 @@ admin.autodiscover()
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls), name="admin inicial"),
     url(r'^admin', include(admin.site.urls)),
-    url(r'', include(frontend_urls),name="urtls front"),
+    #url(r'', include(frontend_urls),name="urtls front"),
     url(r'^$', views.index, name='Reservas UFSC'),
     url(r'^sobre$', views.sobre, name='Sobre'),
     url(r'^espacos/$', views.espacos, name='espacos'),

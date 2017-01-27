@@ -24,11 +24,12 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0','reservas.ufsc', 'localhost']
 
 # Application definition
 
 INSTALLED_APPS = (
+    'material.theme.lightblue',
     'material',
     'material.frontend',
     'material.admin',
@@ -39,6 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'agenda',
+    'django_cas_ng',
 )
 
 MIDDLEWARE_CLASSES = (
