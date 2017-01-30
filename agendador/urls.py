@@ -5,13 +5,15 @@ from django.contrib import admin
 from material.frontend import urls as frontend_urls
 from agenda import views
 from django_cas_ng import views as views2
+from django.views import generic
 admin.autodiscover()
 
 urlpatterns = [
+    url('^$', generic.TemplateView.as_view(template_name="index.html"), name="index"),
     url(r'^admin/', include(admin.site.urls), name="admin inicial"),
     url(r'^admin', include(admin.site.urls)),
     url(r'', include(frontend_urls),name="urtls front"),
-    url(r'^$', views.index, name='Reservas UFSC'),
+    #url(r'^$', views.index, name='Reservas UFSC'),
     url(r'^sobre$', views.sobre, name='sobr'),
     url(r'^espacos/$', views.espacos, name='espacos'),
     url(r'^equipamentos/$', views.equipamentos, name='equipamentos'),

@@ -15,8 +15,10 @@ from django import forms
 from datetime import date
 from material.frontend import urls as frontend_urls
 
+
 mnames = "Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubro Novembro Dezembro"
 mnames = mnames.split()
+
 
 def index(request, grupo=None):
     
@@ -189,4 +191,4 @@ def addreserva(request, espacoatual, ano=None, mes= None, dia=None):
         form.fields['horaInicio'].choices = choices
         #form.fields['horaInicio'] = forms.ChoiceField(choices)
 
-    return render_to_response("addreserva.html", {'form': form, "usuario": usuario, 'dados': dados }, context_instance=RequestContext(request))
+    return render(request, "addreserva.html", {'form': form, "usuario": usuario, 'dados': dados })
