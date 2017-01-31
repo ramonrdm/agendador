@@ -22,7 +22,7 @@ SECRET_KEY = '&vn=ld^l+t0bo3r_3uy!3*6&x3x6_ppru#1lhm(gku!z+s6=kc'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
+#TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = ['0.0.0.0','reservas.ufsc', 'localhost']
 
@@ -89,14 +89,15 @@ TEMPLATES = [
             'DIRS': [os.path.join(BASE_DIR, 'templates')],
             'APP_DIRS': True,
             'OPTIONS': {
+                'debug': DEBUG,
                 'context_processors': [
-                    #'material.frontend.context_processors.modules',
                     'django.template.context_processors.debug',
                     'django.template.context_processors.request',
                     'django.contrib.auth.context_processors.auth',
                     'django.contrib.messages.context_processors.messages',
+                    'material.frontend.context_processors.modules',
                 ],
-                'debug': DEBUG
+                
             },
         },
 ]
@@ -122,9 +123,6 @@ STATIC_URL = '/static/'
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
-TEMPLATE_DIRS = (
-    os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates'),
-)
 
 EMAIL_HOST="smtp.sistemas.ufsc.br"
 EMAIL_PORT=465
