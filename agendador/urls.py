@@ -30,5 +30,6 @@ urlpatterns = [
     url(r'^accounts/login/$', views2.login, name="login cas"),
     url(r'^accounts/logout/$', views2.logout, name="logout cas"),
     url(r'^(?P<grupo>\w+)$', views.index, name='Reservas-UFSC'),
+    url(r'^agenda/(?P<grupo>\w+)$', views.index, name='Reservas-UFSC'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

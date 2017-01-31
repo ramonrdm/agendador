@@ -21,7 +21,7 @@ mnames = mnames.split()
 
 
 def index(request, grupo=None):
-    
+    print("ramão")
     titulo = "Agendador UFSC"
     corpo = "Bem vindo ao Agendador de espaços físicos e equipamentos da UFSC"
 
