@@ -19,9 +19,8 @@ from material.frontend import urls as frontend_urls
 mnames = "Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubro Novembro Dezembro"
 mnames = mnames.split()
 
-
 def index(request, grupo=None):
-    print("ramão")
+    print("RAMÃO RAMÃO RAMÃO")
     titulo = "Agendador UFSC"
     corpo = "Bem vindo ao Agendador de espaços físicos e equipamentos da UFSC"
 
@@ -32,7 +31,7 @@ def index(request, grupo=None):
             grupo = Grupo.objects.get(sigla="UFSC")
         except Grupo.DoesNotExist:
             return render_to_response("index.html")
-            #grupo=0
+            
     
     setores = Grupo.objects.filter(grupoPai=grupo)
 
@@ -52,19 +51,20 @@ def index(request, grupo=None):
             mlst.append(dict(n=n+1, name=month, current=current))
         lst.append((y, mlst))
 
-    return render_to_response(
-        "index.html",
+    return render(
+        request,
+        "agenda/index.html",
         dict(
             corpo=corpo, titulo=titulo, grupo=grupo, setores=setores,
             espacosfisicos=espacosFisicos, equipamentos=equipamentos,
             years=lst, user=request.user
-        )
+            )
         )
 
 
 def sobre(request):
 	titulo = "Requisitos do Agendador CCS"
-	return render_to_response("sobre.html", {'titulo':titulo})
+	return render(request, "sobre.html", {'titulo':titulo})
 
 def ano(request, grupo=None ,year=None):
     # prev / next years

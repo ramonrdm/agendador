@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<b>Agendador de espaço físico e equipamentos UFSC</b><br/>
-Versão Beta 0.9.0<br>
-<br/><br/>
-Objetivo:<br/>
+<p style="margin-left: 10px">
+<b>Agendador de espaço físico e equipamentos UFSC</b>
+<br>
+Objetivo:
 Tornar prática reserva de espaços físicos e equipamentos para a UFSC.<br/>
 <br/>
 Ramon Dutra Miranda - Desenvolvimento de Software<br/>
@@ -15,24 +15,18 @@ Direção do Centro de Comunicação e Expressão - UFSC </br>
 Letras Libras - CCE - UFSC</br>
 <br/>
 Software web
-<p>
+
 + Python
 + Django
 + MySQL
 + Django_cas_ng
 + Django Material
-</p>
 
+<br>
 Código fonte:<br/>
 <a href="https://github.com/ramonrdm/agendador">https://github.com/ramonrdm/agendador</a><br/>
 
-{% load material_form %}
-<form method="POST">
-    {% csrf_token %}
-    {% form form=FormReserva %}{% endform %}
-    <button type="submit" name="_submit" class="btn">Submit</button>
-</form>
-
+</p>
 
 {% endblock %}
 

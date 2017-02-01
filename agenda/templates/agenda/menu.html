@@ -3,6 +3,5 @@
     <li><a href="{% url 'agenda:index' %}">Adicionar uma reseva</a></li>
     <li><a href="{% url 'sobre' %}">Sobre</a></li>
     
-    {% if perms.agenda.can_add_lead %}<li><a href="{% url 'agenda:index' %}">Leads</a></li>{% endif %}
+    {% if perms.agenda.can_add_lead %}<li><a href="{% url 'agenda:index' %}">link se admin</a></li>{% endif %}
 </ul>
-ramão

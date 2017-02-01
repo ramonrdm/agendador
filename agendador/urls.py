@@ -9,12 +9,13 @@ from django.views import generic
 admin.autodiscover()
 
 urlpatterns = [
-    url('^$', generic.TemplateView.as_view(template_name="index.html"), name="index"),
-    url(r'^admin/', include(admin.site.urls), name="admin inicial"),
+    #url('^$', generic.TemplateView.as_view(template_name="index.html"), name="index"),
+    url(r'^$', views.index, name="index"),
     url(r'^admin', include(admin.site.urls)),
     url(r'', include(frontend_urls)),
-    #url(r'^$', views.index, name='Reservas UFSC'),
-    url(r'^sobre$', views.sobre, name='sobre'),
+    url(r'^$', views.index, name='Reservas UFSC'),
+    #url(r'^sobre$', views.Sobre2.as_view(template_name="agenda/sobre.html, content_type='text/plain'"), name='sobre'),
+    url(r'^sobre$', views.sobre, name="sobre"),
     url(r'^espacos/$', views.espacos, name='espacos'),
     url(r'^equipamentos/$', views.equipamentos, name='equipamentos'),
     url(r"^mes/(\d+)/(\d+)/(\d+)/(prev|next)/$", views.mes, name="mes"),
@@ -30,6 +31,6 @@ urlpatterns = [
     url(r'^accounts/login/$', views2.login, name="login cas"),
     url(r'^accounts/logout/$', views2.logout, name="logout cas"),
     url(r'^(?P<grupo>\w+)$', views.index, name='Reservas-UFSC'),
-    url(r'^agenda/(?P<grupo>\w+)$', views.index, name='Reservas-UFSC'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
