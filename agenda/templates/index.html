@@ -5,6 +5,10 @@
 
 {% block content %}
 
+{% block extracss %}
+    <link href="{% static 'agenda/static/css/agenda.css' %}"  rel="stylesheet">
+{% endblock %}
+
 <p align="center">{{corpo}}</p>
 Setor: {{grupo}}
 <br><br>
