@@ -3,8 +3,19 @@
 {% block nav-global %}
 {% endblock %}
 
+{% block title %}Agendador {{grupo.sigla}}{% endblock %}
+
+{% block extracss %}
+    ramon
+    {% load static %}
+    <link href="{% static 'agenda/css/agenda.css' %}"  rel="stylesheet">
+    ramon 
+{% endblock %}
+
+
 {% block content %}
 
+<link href="{% static 'agenda/css/agenda.css' %}"  rel="stylesheet">
 <p align="center">{{corpo}}</p>
 Setor: {{grupo}}
 <br><br>
