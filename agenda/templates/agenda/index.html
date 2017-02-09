@@ -3,37 +3,92 @@
 {% block nav-global %}
 {% endblock %}
 
-{% block title %}Agendador {{grupo.sigla}}{% endblock %}
+{% block title %}Agendador - {{grupo.sigla}}{% endblock %}
 
 {% block extracss %}
-    ramon
     {% load static %}
     <link href="{% static 'agenda/css/agenda.css' %}"  rel="stylesheet">
-    ramon 
 {% endblock %}
 
 
 {% block content %}
 
+
+
+
+{% if setores %}
+
+      <div class="card-panel">
+         <img src="html5-mini-logo.jpg" alt="" class="responsive-img">      
+      </div>      
+      <div class="card-panel">
+         <img src="html5-mini-logo.jpg" alt="" class="circle responsive-img">        
+      </div>  
+
+            {% for setor in setores %}
+          <div class="row">
+            <div class="col s12 m12 13">
+              <div class="card">
+                <div class="card-image">
+                <a href="{% url 'Reservas-UFSC' setor.sigla %}">
+                   <img width="100" height="100" src="/media/{{setor.logo}}">
+                   </a>
+                  <span class="card-title">{{setor.sigla}}</span>
+                </div>
+              </div>
+            </div>
+            </div>
+            {% endfor %}
+
+<div class="card">
+    <div class="card-content">
+        <span class="card-title black-text">Sub setores</span>
+        <div class="row">
+            {% for setor in setores %}
+            <div class="app-item col s6 m6 l4">
+                <a href="{% url 'Reservas-UFSC' setor.sigla %}">
+                <img width="100" height="100" src="/media/{{setor.logo}}"></a>
+                <h6 style="truncate word-wrap: break-word;"> {{setor.sigla}} </h6>
+            </div>
+            <br>
+            {% endfor %}
+            
+
+
+            <div class="app-item col s6 m6 l4">
+                <a href="/admin/auth/group/">
+                    <i class="material-icons admin-modelicon admin-modelicon-auth-group"></i>
+                    <h6 style="truncate word-wrap: break-word;">Groups</h6>
+                </a>
+            </div>
+            
+            <div class="app-item col s6 m6 l4">
+                <a href="/admin/auth/user/">
+                    <i class="material-icons admin-modelicon admin-modelicon-auth-user"></i>
+                    <h6 style="truncate word-wrap: break-word;">Users</h6>
+                </a>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
+
+{% endif %}
 <link href="{% static 'agenda/css/agenda.css' %}"  rel="stylesheet">
 <p align="center">{{corpo}}</p>
 Setor: {{grupo}}
 <br><br>
-{% for setor in setores %}
-<div class="setor-ufsc" align="center">
-	<a href="{% url 'Reservas-UFSC' setor.sigla %}">{{setor.sigla}}<br>
-	<img width="100" height="100" src="/media/{{setor.logo}}"></a>
-	<br><br>
-</div>
 
-{% endfor %}
+
 
 {% if espacosfisicos %}
-<div id=espacosFisicos>
+<div id="espacosFisicos" >
 	<h3>Espaços Físicos do {{grupo.sigla}}:</h3>
-<div align="center" style="width: 100%;">
+<div>
     {% for year, months in years %}
-        <div align="center" class="ano" style="width: 100%;" ><br/>{{ year }}</div>
+        <div align="center" class="ano"  ><br/>{{ year }}</div>
         {% for month in months %}
             <div class=
             {% if month.current %}"mes-current"{% endif %}
@@ -53,12 +108,13 @@ Setor: {{grupo}}
 </div>
 </div>
 {% endif %}
+
 {% if equipamentos %}
 <div id="equipamentos">
 	<h3>Equipamentos:</h3>
-<div align="center" style="width: 1100px;">
+<div>
     {% for year, months in years %}
-        <div align="center" class="ano" style="width: 1100px;" ><br/>{{ year }}</div>
+        <div align="center" class="ano"" ><br/>{{ year }}</div>
         {% for month in months %}
             <div class=
             {% if month.current %}"mes-current"{% endif %}
@@ -68,7 +124,7 @@ Setor: {{grupo}}
                 {{ month.name }}<br>
                 {% if month.entry %}</b>{% endif %}
                     {% for equipamento in equipamentos %}
-                    <a href="{% url 'agenda.views.mese' equipamento.id year month.n %}">{{equipamento.nome}}</a><br>
+                    <a href="{% url 'mes' equipamento.id year month.n %}">{{equipamento.nome}}</a><br>
                     {% endfor %}
             </div>
             {% if month.n == 6 %}{% endif %}

@@ -22,8 +22,8 @@ mnames = mnames.split()
 def index(request, grupo=None):
     print("RAMÃO RAMÃO RAMÃO")
     
-    titulo = "Agendador UFSC"
-    corpo = "Bem vindo ao Agendador de espaços físicos e equipamentos da UFSC"
+    #titulo = "Agendador UFSC"
+    #corpo = "Bem vindo ao Agendador de espaços físicos e equipamentos da UFSC"
 
     try:
         grupo = Grupo.objects.get(sigla=grupo)
@@ -56,7 +56,7 @@ def index(request, grupo=None):
         request,
         "agenda/index.html",
         dict(
-            corpo=corpo, titulo=titulo, grupo=grupo, setores=setores,
+            grupo=grupo, setores=setores,
             espacosfisicos=espacosFisicos, equipamentos=equipamentos,
             years=lst, user=request.user
             )
