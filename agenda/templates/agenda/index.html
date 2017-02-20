@@ -12,63 +12,73 @@
 
 {% block content %}
 
-<div class="card-panel">
+<div class="row">
 
 
     <div class="card">
-        <link href="{% static 'agenda/css/agenda.css' %}"  rel="stylesheet">
-        <span class="card-title black-text"> Setor: {{grupo}} </span>
+        <div class="card-content">
+            <link href="{% static 'agenda/css/agenda.css' %}"  rel="stylesheet">
+            <span class="card-title black-text"> Setor: {{grupo}} </span>
+        </div>
     </div>
 
     {% if setores %}
     <div class="card">
+        <div class="card-content">
         <span class="card-title black-text">Sub setores</span>
         <div class="row">
             {% for setor in setores %}
-            <div class="app-item col s6 m6 l4">
+            <div class="card col s6 m6 l4">
+                <div class="card-content">
                 <a href="{% url 'Reservas-UFSC' setor.sigla %}">
                 <img width="100" height="100" src="/media/{{setor.logo}}"></a>
                 <h6 style="truncate word-wrap: break-word;"> {{setor.sigla}} </h6>
+                </div>
+
             </div>
             {% endfor %}
             
         </div>
+        </div>
     </div>
     {% endif %}
 
-<div class="card" id="espacosFisicos" >
-    <div class="card-title">Espaços Físicos do {{grupo.sigla}}:</div>
-    {% if espacosfisicos %}
+    <div class="card" id="espacosFisicos" >
+        <div class="card-content">
+            <div class="card-title">Espaços Físicos do {{grupo.sigla}}:</div>
+                <div class="row">
+                    {% if espacosfisicos %}
+                    
+                        {% for year, months in years %}
+                            <div align="center" class="ano"  ><br/>{{ year }}</div>
+                            {% for month in months %}
+                                <div class=
+                                {% if month.current %}"mes-current"{% endif %}
+                                {% if not month.current %}"month"{% endif %} >
 
-    <div class="row">
-        {% for year, months in years %}
-            <div align="center" class="ano"  ><br/>{{ year }}</div>
-            {% for month in months %}
-                <div class="">
-                <div class=
-                {% if month.current %}"mes-current"{% endif %}
-                {% if not month.current %}"month"{% endif %} >
-
-                    {% if month.entry %}<b>{% endif %}
-                    {{ month.name }}<br>
-                    {% if month.entry %}</b>{% endif %}
-                        {% for espaco in espacosfisicos %}
-                        <a href="{% url 'mes' espaco.id year month.n %}">{{espaco.nome}}</a><br>
+                                    {% if month.entry %}<b>{% endif %}
+                                    {{ month.name }}<br>
+                                    {% if month.entry %}</b>{% endif %}
+                                        {% for espaco in espacosfisicos %}
+                                        <a href="{% url 'mes' espaco.id year month.n %}">{{espaco.nome}}</a><br>
+                                        {% endfor %}
+                                </div>
+                                {% if month.n == 6 %}{% endif %}
+                            {% endfor %}
                         {% endfor %}
-                </div>
-                </div>
-                {% if month.n == 6 %}{% endif %}
-            {% endfor %}
-        {% endfor %}
 
+                    {% else %}
+                    <span>Sem espaços fisicos neste setor.</span>
+                    {% endif %}
+            </div>
+        </div>
     </div>
-    {% endif %}
-    </div>
+
 <div class="card">
     TESTES
 </div>
 
-<div id="equipamentos" class="card">
+<div class="card">
     <span class="card-title" >Equipamentos:</span>
     {% if equipamentos %}
     <div>
@@ -91,11 +101,10 @@
         {% endfor %}
     </div>
     {% else %}
-    Sem equipamentos neste setor.
+    <span> Sem equipamentos neste setor.</span>
     {% endif %}
 </div>
 
-</div>
 </div>
 
 
