@@ -2,46 +2,26 @@
 
 {% block nav-global %}
 {% endblock %}
-
-{% block title %}Agendador - {{grupo.sigla}}{% endblock %}
+{% block title %} Agendador - {{grupo.sigla}}{% endblock %}
 
 {% block extracss %}
     {% load static %}
-    <link href="{% static 'agenda/css/agenda.css' %}"  rel="stylesheet">
+
 {% endblock %}
 
 
 {% block content %}
 
+<div class="card-panel">
 
 
+    <div class="card">
+        <link href="{% static 'agenda/css/agenda.css' %}"  rel="stylesheet">
+        <span class="card-title black-text"> Setor: {{grupo}} </span>
+    </div>
 
-{% if setores %}
-
-      <div class="card-panel">
-         <img src="html5-mini-logo.jpg" alt="" class="responsive-img">      
-      </div>      
-      <div class="card-panel">
-         <img src="html5-mini-logo.jpg" alt="" class="circle responsive-img">        
-      </div>  
-
-            {% for setor in setores %}
-          <div class="row">
-            <div class="col s12 m12 13">
-              <div class="card">
-                <div class="card-image">
-                <a href="{% url 'Reservas-UFSC' setor.sigla %}">
-                   <img width="100" height="100" src="/media/{{setor.logo}}">
-                   </a>
-                  <span class="card-title">{{setor.sigla}}</span>
-                </div>
-              </div>
-            </div>
-            </div>
-            {% endfor %}
-
-<div class="card">
-    <div class="card-content">
+    {% if setores %}
+    <div class="card">
         <span class="card-title black-text">Sub setores</span>
         <div class="row">
             {% for setor in setores %}
@@ -50,91 +30,73 @@
                 <img width="100" height="100" src="/media/{{setor.logo}}"></a>
                 <h6 style="truncate word-wrap: break-word;"> {{setor.sigla}} </h6>
             </div>
-            <br>
             {% endfor %}
-            
-
-
-            <div class="app-item col s6 m6 l4">
-                <a href="/admin/auth/group/">
-                    <i class="material-icons admin-modelicon admin-modelicon-auth-group"></i>
-                    <h6 style="truncate word-wrap: break-word;">Groups</h6>
-                </a>
-            </div>
-            
-            <div class="app-item col s6 m6 l4">
-                <a href="/admin/auth/user/">
-                    <i class="material-icons admin-modelicon admin-modelicon-auth-user"></i>
-                    <h6 style="truncate word-wrap: break-word;">Users</h6>
-                </a>
-            </div>
             
         </div>
     </div>
-</div>
+    {% endif %}
 
+<div class="card" id="espacosFisicos" >
+    <div class="card-title">Espaços Físicos do {{grupo.sigla}}:</div>
+    {% if espacosfisicos %}
 
+    <div class="row">
+        {% for year, months in years %}
+            <div align="center" class="ano"  ><br/>{{ year }}</div>
+            {% for month in months %}
+                <div class="">
+                <div class=
+                {% if month.current %}"mes-current"{% endif %}
+                {% if not month.current %}"month"{% endif %} >
 
-{% endif %}
-<link href="{% static 'agenda/css/agenda.css' %}"  rel="stylesheet">
-<p align="center">{{corpo}}</p>
-Setor: {{grupo}}
-<br><br>
-
-
-
-{% if espacosfisicos %}
-<div id="espacosFisicos" >
-	<h3>Espaços Físicos do {{grupo.sigla}}:</h3>
-<div>
-    {% for year, months in years %}
-        <div align="center" class="ano"  ><br/>{{ year }}</div>
-        {% for month in months %}
-            <div class=
-            {% if month.current %}"mes-current"{% endif %}
-            {% if not month.current %}"month"{% endif %} >
-
-                {% if month.entry %}<b>{% endif %}
-                {{ month.name }}<br>
-                {% if month.entry %}</b>{% endif %}
-                    {% for espaco in espacosfisicos %}
-                    <a href="{% url 'mes' espaco.id year month.n %}">{{espaco.nome}}</a><br>
-                    {% endfor %}
-            </div>
-            {% if month.n == 6 %}{% endif %}
+                    {% if month.entry %}<b>{% endif %}
+                    {{ month.name }}<br>
+                    {% if month.entry %}</b>{% endif %}
+                        {% for espaco in espacosfisicos %}
+                        <a href="{% url 'mes' espaco.id year month.n %}">{{espaco.nome}}</a><br>
+                        {% endfor %}
+                </div>
+                </div>
+                {% if month.n == 6 %}{% endif %}
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
 
+    </div>
+    {% endif %}
+    </div>
+<div class="card">
+    TESTES
 </div>
-</div>
-{% endif %}
 
-{% if equipamentos %}
-<div id="equipamentos">
-	<h3>Equipamentos:</h3>
-<div>
-    {% for year, months in years %}
-        <div align="center" class="ano"" ><br/>{{ year }}</div>
-        {% for month in months %}
-            <div class=
-            {% if month.current %}"mes-current"{% endif %}
-            {% if not month.current %}"month"{% endif %} >
+<div id="equipamentos" class="card">
+    <span class="card-title" >Equipamentos:</span>
+    {% if equipamentos %}
+    <div>
+        {% for year, months in years %}
+            <div align="center" class="ano"" ><br/>{{ year }}</div>
+            {% for month in months %}
+                <div class=
+                {% if month.current %}"mes-current"{% endif %}
+                {% if not month.current %}"month"{% endif %} >
 
-                {% if month.entry %}<b>{% endif %}
-                {{ month.name }}<br>
-                {% if month.entry %}</b>{% endif %}
-                    {% for equipamento in equipamentos %}
-                    <a href="{% url 'mes' equipamento.id year month.n %}">{{equipamento.nome}}</a><br>
-                    {% endfor %}
-            </div>
-            {% if month.n == 6 %}{% endif %}
+                    {% if month.entry %}<b>{% endif %}
+                    {{ month.name }}<br>
+                    {% if month.entry %}</b>{% endif %}
+                        {% for equipamento in equipamentos %}
+                        <a href="{% url 'mes' equipamento.id year month.n %}">{{equipamento.nome}}</a><br>
+                        {% endfor %}
+                </div>
+                {% if month.n == 6 %}{% endif %}
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
+    </div>
+    {% else %}
+    Sem equipamentos neste setor.
+    {% endif %}
+</div>
 
 </div>
 </div>
-{% endif %}
-
 
 
 {% endblock %}
