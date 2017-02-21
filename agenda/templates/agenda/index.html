@@ -14,7 +14,6 @@
 
 <div class="row">
 
-
     <div class="card">
         <div class="card-content">
             <link href="{% static 'agenda/css/agenda.css' %}"  rel="stylesheet">
@@ -34,10 +33,8 @@
                 <img width="100" height="100" src="/media/{{setor.logo}}"></a>
                 <h6 style="truncate word-wrap: break-word;"> {{setor.sigla}} </h6>
                 </div>
-
             </div>
             {% endfor %}
-            
         </div>
         </div>
     </div>
@@ -45,28 +42,27 @@
 
     <div class="card" id="espacosFisicos" >
         <div class="card-content">
-            <div class="card-title">Espaços Físicos do {{grupo.sigla}}:</div>
+            <span class="card-title">Espaços Físicos do {{grupo.sigla}}:</span>
                 <div class="row">
                     {% if espacosfisicos %}
-                    
                         {% for year, months in years %}
-                            <div align="center" class="ano"  ><br/>{{ year }}</div>
+                            <ul class="collapsible">
+                            <li>
+                            <div class="collapsible-header" ><span class="new badge">{{ year }}</span></div>
+                            <div class="collapsible-body">
                             {% for month in months %}
-                                <div class=
-                                {% if month.current %}"mes-current"{% endif %}
-                                {% if not month.current %}"month"{% endif %} >
-
-                                    {% if month.entry %}<b>{% endif %}
-                                    {{ month.name }}<br>
-                                    {% if month.entry %}</b>{% endif %}
+                                <div class="collection col 8">
+                                    <a class="collection-item" href="#"><b>{{ month.name }}</b></a>
                                         {% for espaco in espacosfisicos %}
-                                        <a href="{% url 'mes' espaco.id year month.n %}">{{espaco.nome}}</a><br>
+                                        <a  class="collection-item" href="{% url 'mes' espaco.id year month.n %}">{{espaco.nome}}</a>
                                         {% endfor %}
-                                </div>
                                 {% if month.n == 6 %}{% endif %}
+                                </div>
                             {% endfor %}
+                            </div>
+                            </li>
                         {% endfor %}
-
+                            </ul>
                     {% else %}
                     <span>Sem espaços fisicos neste setor.</span>
                     {% endif %}
@@ -74,38 +70,33 @@
         </div>
     </div>
 
-<div class="card">
-    TESTES
-</div>
-
-<div class="card">
-    <span class="card-title" >Equipamentos:</span>
-    {% if equipamentos %}
-    <div>
-        {% for year, months in years %}
-            <div align="center" class="ano"" ><br/>{{ year }}</div>
-            {% for month in months %}
-                <div class=
-                {% if month.current %}"mes-current"{% endif %}
-                {% if not month.current %}"month"{% endif %} >
-
-                    {% if month.entry %}<b>{% endif %}
-                    {{ month.name }}<br>
-                    {% if month.entry %}</b>{% endif %}
-                        {% for equipamento in equipamentos %}
-                        <a href="{% url 'mes' equipamento.id year month.n %}">{{equipamento.nome}}</a><br>
-                        {% endfor %}
-                </div>
-                {% if month.n == 6 %}{% endif %}
-            {% endfor %}
-        {% endfor %}
+    <div class="card">
+        <div class="card-content">
+            <span class="card-title" >Equipamentos do setor {{grupo.sigla}}:</span>
+            <div class="row">
+            {% if equipamentos %}
+                {% for year, months in years %}
+                    <div align="center" class="ano" ><br/>{{ year }}</div>
+                    {% for month in months %}
+                        <div class=
+                        {% if month.current %}"mes-current"{% endif %}
+                        {% if not month.current %}"month"{% endif %} >
+                            {% if month.entry %}<b>{% endif %}
+                            {{ month.name }}<br>
+                            {% if month.entry %}</b>{% endif %}
+                                {% for equipamento in equipamentos %}
+                                <a href="{% url 'mes' equipamento.id year month.n %}">{{equipamento.nome}}</a><br>
+                                {% endfor %}
+                        </div>
+                        {% if month.n == 6 %}{% endif %}
+                    {% endfor %}
+                {% endfor %}
+            {% else %}
+            <span> Sem equipamentos neste setor.</span>
+            {% endif %}
+            </div>
+        </div>
     </div>
-    {% else %}
-    <span> Sem equipamentos neste setor.</span>
-    {% endif %}
-</div>
 
 </div>
-
-
 {% endblock %}
