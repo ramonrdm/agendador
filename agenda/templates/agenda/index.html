@@ -80,19 +80,21 @@
             {% if equipamentos %}
                 {% for year, months in years %}
                     <div align="center" class="ano" ><br/>{{ year }}</div>
+                    <div class="row">
                     {% for month in months %}
-                        <div class=
-                        {% if month.current %}"mes-current"{% endif %}
-                        {% if not month.current %}"month"{% endif %} >
-                            {% if month.entry %}<b>{% endif %}
-                            {{ month.name }}<br>
-                            {% if month.entry %}</b>{% endif %}
-                                {% for equipamento in equipamentos %}
-                                <a href="{% url 'mes' equipamento.id year month.n %}">{{equipamento.nome}}</a><br>
-                                {% endfor %}
+                     <div class="collection col 8">
+                        <ul class="collection with-header">
+                        <li class="collection-header"><h4>{{ month.name }}</h4></li>
+                        {% for equipamento in equipamentos %}
+                        <li class="collection-item"><a href="{% url 'mes' equipamento.id year month.n %}">{{equipamento.nome}}</a></li>
+                        
+                        {% endfor %}
+                        </ul>
                         </div>
+
                         {% if month.n == 6 %}{% endif %}
                     {% endfor %}
+                    </div>
                 {% endfor %}
             {% else %}
             <span> Sem equipamentos neste setor.</span>
