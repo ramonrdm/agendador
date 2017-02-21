@@ -120,8 +120,9 @@ def mes(request, espaco, year, month, change=None, tipo=None):
         espacofisico = Equipamento.objects.get(id=espaco)
     else:
         espacofisico = EspacoFisico.objects.get(id=espaco)
-    return render_to_response(
-            "mes.html", 
+    return render(
+            request,
+            "agenda/mes.html", 
             dict(
                 espaco=espacofisico, year=year, month=month, 
                 user=request.user, month_days=lst, mname=mnames[month-1]
@@ -135,7 +136,7 @@ def dia(request, espaco, year, month, day):
     nyear, nmonth, nday = time.localtime()[:3]
     espacofisico = EspacoFisico.objects.get(id=espaco)
     reservas = ReservaEspacoFisico.objects.filter(data__year=year, data__month=month, data__day=day, espacoFisico=espaco).order_by("horaInicio")
-    return render_to_response("dia.html", dict(reservas=reservas, espaco=espacofisico, anovisualizacao=year ,mesvisualizacao=month, dia=day))
+    return render(request, "agenda/dia.html", dict(reservas=reservas, espaco=espacofisico, anovisualizacao=year ,mesvisualizacao=month, dia=day))
 
 
 def espacos(request):

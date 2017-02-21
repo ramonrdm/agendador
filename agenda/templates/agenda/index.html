@@ -46,19 +46,22 @@
                 <div class="row">
                     {% if espacosfisicos %}
                         {% for year, months in years %}
-                            <ul class="collapsible">
+                            <ul class="collapsible" data-collapsible="accordion">
                             <li>
-                            <div class="collapsible-header" ><span class="new badge">{{ year }}</span></div>
+                            <div class="collapsible-header active" >{{ year }}</div>
                             <div class="collapsible-body">
+                            <div class="row">
                             {% for month in months %}
+
                                 <div class="collection col 8">
                                     <a class="collection-item" href="#"><b>{{ month.name }}</b></a>
                                         {% for espaco in espacosfisicos %}
                                         <a  class="collection-item" href="{% url 'mes' espaco.id year month.n %}">{{espaco.nome}}</a>
                                         {% endfor %}
-                                {% if month.n == 6 %}{% endif %}
+                                {% if month.n == 6 %}</div><div class="row">{% endif %}
                                 </div>
                             {% endfor %}
+                            </div>
                             </div>
                             </li>
                         {% endfor %}
@@ -66,7 +69,7 @@
                     {% else %}
                     <span>Sem espaços fisicos neste setor.</span>
                     {% endif %}
-            </div>
+                </div>
         </div>
     </div>
 
