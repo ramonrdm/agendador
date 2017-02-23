@@ -19,25 +19,25 @@ from material.frontend import urls as frontend_urls
 mnames = "Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubro Novembro Dezembro"
 mnames = mnames.split()
 
-def index(request, grupo=None):
+def index(request, unidade=None):
     print("RAMÃO RAMÃO RAMÃO")
     
     #titulo = "Agendador UFSC"
     #corpo = "Bem vindo ao Agendador de espaços físicos e equipamentos da UFSC"
 
     try:
-        grupo = Grupo.objects.get(sigla=grupo)
-    except Grupo.DoesNotExist:
+        unidade = Unidade.objects.get(sigla=unidade)
+    except Unidade.DoesNotExist:
         try:
-            grupo = Grupo.objects.get(sigla="UFSC")
-        except Grupo.DoesNotExist:
+            unidade = Unidade.objects.get(sigla="UFSC")
+        except Unidade.DoesNotExist:
             return render_to_response("index.html")
             
     
-    setores = Grupo.objects.filter(grupoPai=grupo)
+    unidades = Unidade.objects.filter(unidadePai=unidade)
 
-    espacosFisicos = EspacoFisico.objects.filter(grupo=grupo)
-    equipamentos = Equipamento.objects.filter(grupo=grupo)
+    espacosFisicos = EspacoFisico.objects.filter(unidade=unidade)
+    equipamentos = Equipamento.objects.filter(unidade=unidade)
 
     year = time.localtime()[0]
     nowy, nowm = time.localtime()[:2]
@@ -56,7 +56,7 @@ def index(request, grupo=None):
         request,
         "agenda/index.html",
         dict(
-            grupo=grupo, setores=setores,
+            unidade=unidade, unidades=unidades,
             espacosfisicos=espacosFisicos, equipamentos=equipamentos,
             years=lst, user=request.user
             )
@@ -67,7 +67,7 @@ def sobre(request):
 	titulo = "Requisitos do Agendador CCS"
 	return render(request, "sobre.html", {'titulo':titulo})
 
-def ano(request, grupo=None ,year=None):
+def ano(request, unidade=None ,year=None):
     # prev / next years
     if year: year = int(year)
     else:    year = time.localtime()[0]
@@ -83,7 +83,7 @@ def ano(request, grupo=None ,year=None):
             mlst.append(dict(n=n+1, name=month, current=current))
         lst.append((y, mlst))
     
-    espacosfisicos = EspacoFisico.objects.filter(grupo=grupo)
+    espacosfisicos = EspacoFisico.objects.filter(unidade=unidade)
 
     return render_to_response("ano.html", dict(years=lst, user=request.user, year=year, espacosfisicos=espacosfisicos))
 

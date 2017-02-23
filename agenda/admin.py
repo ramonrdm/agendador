@@ -4,10 +4,9 @@ from agenda.models import *
 admin.site.register(Evento)
 admin.site.register(EspacoFisico)
 admin.site.register(Equipamento)
-#admin.site.register(Grupo)
 
-@admin.register(Grupo)
-class GrupoAdmin(admin.ModelAdmin):
+@admin.register(Unidade)
+class UnidadeAdmin(admin.ModelAdmin):
 	icon = '<i class="material-icons">group</i>'
 
 class ReservaEquipamentoAdmin(admin.ModelAdmin):

@@ -3,10 +3,10 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib import admin
 
-class Grupo(models.Model):
+class Unidade(models.Model):
 	sigla = models.CharField(max_length=10, unique=True)
 	nome = models.TextField()
-	grupoPai = models.ForeignKey('self', blank=True, null=True, default=1)
+	unidadePai = models.ForeignKey('self', blank=True, null=True, default=1)
 	responsavel = models.ForeignKey(User)
 	descricao = models.TextField()
 	logo = models.FileField(blank=True)
@@ -32,7 +32,7 @@ class Locavel(models.Model):
 	nome = models.TextField()
 	descricao = models.TextField()
 	responsavel = models.ForeignKey(User)
-	grupo = models.ForeignKey(Grupo)
+	unidade = models.ForeignKey(Unidade)
 	bloqueado = models.BooleanField(default=False)
 	visivel = models.BooleanField(default=False)
 	localizacao = models.TextField()
@@ -60,11 +60,10 @@ class Reserva(models.Model):
 	evento = models.ForeignKey(Evento)
 	usuario = models.ForeignKey(User)
 	ramal = models.PositiveIntegerField()
-	grupo = models.ForeignKey(Grupo)
 	finalidade = models.TextField()
 	
 	def __unicode__(self):
-		return self.usuario.username+"/"+self.Grupo.sigla+" - "+self.evento.nome
+		return self.usuario.username+"/"+self.evento.nome
 
 class ReservaEspacoFisico(Reserva):
 	espacoFisico = models.ForeignKey(EspacoFisico)
