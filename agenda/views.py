@@ -108,7 +108,9 @@ def addreserva(request, espacoatual, ano=None, mes= None, dia=None):
         form = FormReserva(request.POST, request.FILES)
         if form.is_valid():
             form.fields['usuario'] = forms.CharField(initial=request.user.id)
-
+            """Bloqueio sala multiuso"""
+            if (request.POST['espacoFisico']== '5'):
+                return render_to_response("salvo.html",{'mensagem':"Erro: Sala temporariamente bloqueada. "})
             if ((not request.user.groups.filter(name="LABINFO").exists()) and (request.POST['espacoFisico']=='3')):
                 return render_to_response("salvo.html",{'mensagem':"Erro: Você não realizaou o curso para utilizar o labinfo "})
             
