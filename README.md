@@ -16,3 +16,5 @@ Agendador de espaço físico
  	Integração com o CAS-UFSC, ou seja, utiliza o IdUFSC para login.
 
 Administração = admin & admin
+
+Bolsista: Antônio Besen de Miranda Gomes
