@@ -75,9 +75,9 @@ MEDIA_URL = '/media/'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'agendador',
-        'USER': 'agendador',
-        'PASSWORD': 'agendador',
+        'NAME': 'agendador_db',
+        'USER': 'antoniobesen',
+        'PASSWORD': '32324141',
         'HOST': 'localhost',
         'PORT': '3306',
     }

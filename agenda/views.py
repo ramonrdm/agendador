@@ -31,7 +31,7 @@ def index(request, unidade=None):
         try:
             unidade = Unidade.objects.get(sigla="UFSC")
         except Unidade.DoesNotExist:
-            return render_to_response("index.html")
+            return render_to_response("agenda/index.html")
             
     
     unidades = Unidade.objects.filter(unidadePai=unidade)
