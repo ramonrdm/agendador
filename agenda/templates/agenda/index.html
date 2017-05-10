@@ -25,12 +25,12 @@
         <div class="card-content">
         <span class="card-title black-text">Sub unidades</span>
         <div class="row">
-            {% for setor in unidades %}
+            {% for subUnidade in unidades %}
             <div class="card col s6 m6 l4">
                 <div class="card-content">
                 <a href="{% url 'Reservas-UFSC' setor.sigla %}">
                 <img width="100" height="100" src="/media/{{setor.logo}}"></a>
-                <h6 style="truncate word-wrap: break-word;"> {{unidade.sigla}} </h6>
+                <h6 style="truncate word-wrap: break-word;"> {{subUnidade.sigla}} </h6>
                 </div>
             </div>
             {% endfor %}
