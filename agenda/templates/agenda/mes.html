@@ -14,9 +14,9 @@
 
 <div class="col s12 m12 l12" >
 {% if espaco.patrimonio %}
-<a href= "{% url 'agenda.views.mese' espaco.id year month 'prev' %}"> < < Anterior</a> 
+<a href= "{% url 'mese' espaco.id year month 'prev' %}"> < < Anterior</a> 
 | {{ mname }} {{ year }}  - {{ espaco.nome }}  | 
-<a href= "{% url 'agenda.views.mese' espaco.id year month 'next' %}">Proximo > > </a>
+<a href= "{% url 'mese' espaco.id year month 'next' %}">Proximo > > </a>
 {% else %}
 
 <a href= "{% url 'mes' espaco.id year month 'prev' %}">
