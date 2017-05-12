@@ -10,78 +10,29 @@
 </div>
 -->
 <div class="row">
-<div class="card col s12 m12 l12">
+    <div class="col s12 m20 l20" >
+        {% if espaco.patrimonio %}
+            <a href= "{% url 'mese' espaco.id year month 'prev' %}"> < < Anterior</a> 
+            | {{ mname }} {{ year }}  - {{ espaco.nome }}  | 
+            <a href= "{% url 'mese' espaco.id year month 'next' %}">Proximo > > </a>
+        {% else %}
+        {% endif %}    
 
-<div class="col s12 m12 l12" >
-{% if espaco.patrimonio %}
-<a href= "{% url 'mese' espaco.id year month 'prev' %}"> < < Anterior</a> 
-| {{ mname }} {{ year }}  - {{ espaco.nome }}  | 
-<a href= "{% url 'mese' espaco.id year month 'next' %}">Proximo > > </a>
-{% else %}
-
-<a href= "{% url 'mes' espaco.id year month 'prev' %}">
-<button>
-    Anterior
-</button> 
-
-</a> 
-{{ mname }} {{ year }}  - {{ espaco.nome }}
-
-<a href= "{% url 'mes' espaco.id year month 'next' %}">
-    <button>
-        Proximo
-    </button> 
-</a>
-{% endif %}    
-</div>
-
-<table >
-    <thead>
-        <th class="day-titulo col s2 m2 l2">Segunda</th>
-        <th class="day-titulo col s2 m2 l2">Terça</th>
-        <th class="day-titulo col s2 m2 l2">Quarta</th>
-        <th class="day-titulo col s2 m2 l2">Quinta</th>
-        <th class="day-titulo col s2 m2 l2">Sexta</th>
-        <th class="day-titulo col s2 m2 l2">Sabado</th>
-        <th class="day-titulo col s2 m2 l2">Domingo</th>
-    </thead>
-    <tbody>
-    </tbody></table>
-    {% for week in month_days %}
-        <div class="row">
-            {% for day, entries, current in week %}
-                {% if day != 0 %}
-                    <div class="col s2 m2 l2" > 
-                        <strong>{{ day }}
-                        <a title="Nova Reserva" href="{% url 'addreserva' espaco.id year month day %}">
-                        <i class="material-icons">add_circle</i>
-                        </a>
-                        </strong> 
-                        {% if entries %}
-                        <ul class="collection col s12 m12 l12">
-                        {% for entry in entries %}
-                            <li class="collection-item">
-                                {{ entry.horaInicio|date:"H:i" }} - {{ entry.horaFim|date:"H:i" }} {{ entry.tipoEvento}}/{{ entry.usuario}}    
-                            </li>
-                            
-                        {% endfor %}
-                        </ul>
-                        {% endif%}
-                    </div>
-                {% else %}
-                    <div class="col s2 m2 l2"></div>
-                {% endif %}
-            {% endfor %}
-        </div>
-
-    {% endfor %}
-    </tbody>
-</table>
+        <table class="responsive-table">
+            <thead>
+                <th >Segunda</th>
+                <th >Terça</th>
+                <th >Quarta</th>
+                <th >Quinta</th>
+                <th >Sexta</th>
+                <th >Sabado</th>
+                <th >Domingo</th>
+            </thead>
+            <tbody>
+            </tbody></table>    
+    </div>
 </div>
 
 
-</div>
-
-</div>
 
 {% endblock %}
