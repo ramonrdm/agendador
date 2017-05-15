@@ -90,7 +90,6 @@ def ano(request, unidade=None ,year=None):
 def mes(request, espaco, year, month, change=None, tipo=None):
     """Listing of days in `month`."""
     espaco, year, month = int(espaco), int(year), int(month)
-
     # apply next / previous change
     if change in ("next", "prev"):
         now, mdelta = date(year, month, 15), timedelta(days=31)
@@ -108,7 +107,7 @@ def mes(request, espaco, year, month, change=None, tipo=None):
     for day in month_days:
         entries = current = False
         if day:
-        	entries = ReservaEspacoFisico.objects.filter(data__year=year, data__month=month, data__day=day, espacoFisico=espaco)
+        	entries = ReservaEquipamento.objects.filter(data__year=year, data__month=month, data__day=day, espacoFisico=espaco)
         if day == nday and year == nyear and month == nmonth:
             current = True
 
@@ -120,6 +119,10 @@ def mes(request, espaco, year, month, change=None, tipo=None):
         espacofisico = Equipamento.objects.get(id=espaco)
     else:
         espacofisico = EspacoFisico.objects.get(id=espaco)
+    for week in lst:
+            for entries in week:
+                    for entry in entries:
+                        print entry
     return render(
             request,
             "agenda/mes.html", 

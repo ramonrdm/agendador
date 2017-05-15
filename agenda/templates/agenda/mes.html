@@ -30,9 +30,15 @@
                     <tr>
                         {% for day, entries, current in week %}
                             {% if day == 0 %}
-                            <td></td>
+                                <td></td>
                             {% else %}
-                            <td>{{ day }}</td>
+                                <td><span>{{ day }}</span>
+                                <ul>
+                                {% for entry in entries %}
+                                       <li>{{ entry.horaInicio|date:"H:i" }} até {{ entry.horaFim|date:"H:i" }} {{ entry.tipoEvento}}/{{ entry.departamento}}</li> 
+                                {% endfor %}            
+                                </ul>
+                                    </td>
                             {% endif %}
                         {% endfor %}
                     </tr>

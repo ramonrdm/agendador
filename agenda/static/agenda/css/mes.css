@@ -11,7 +11,13 @@ th {
 	border-left: solid 1px #808080 !important;
 }
 td {
-	height:100px !important;
+	text-align: center !important;
+
+	vertical-align: text-top !important;
+	max-height:120px !important;
+	height:120px !important;
  	border-right: solid 1px #808080 !important; 
   	border-left: solid 1px #808080 !important;
+}
+td span {
 }
