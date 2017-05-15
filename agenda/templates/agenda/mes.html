@@ -9,29 +9,57 @@
 </div>
 </div>
 -->
-<div class="row">
-    <div class="col s12 m20 l20" >
-        {% if espaco.patrimonio %}
-            <a href= "{% url 'mese' espaco.id year month 'prev' %}"> < < Anterior</a> 
-            | {{ mname }} {{ year }}  - {{ espaco.nome }}  | 
-            <a href= "{% url 'mese' espaco.id year month 'next' %}">Proximo > > </a>
-        {% else %}
-        {% endif %}    
+    
+    
+      <!--Import jQuery before materialize.js-->
+    
+      <table class="table bordered">
+        <thead>
+          <tr>
+            <th>Segunda</th>
+            <th>Terça</th>
+            <th>Quarta</th>
+            <th>Quinta</th>
+            <th>Sexta</th>
+            <th>Sábado</th>
+            <th>Domingo</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for week in month_days %}
+                    <tr>
+                        {% for day, entries, current in week %}
+                            {% if day == 0 %}
+                            <td></td>
+                            {% else %}
+                            <td>{{ day }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+            {% endfor %}
+        </tbody>
 
-        <table class="responsive-table">
-            <thead>
-                <th >Segunda</th>
-                <th >Terça</th>
-                <th >Quarta</th>
-                <th >Quinta</th>
-                <th >Sexta</th>
-                <th >Sabado</th>
-                <th >Domingo</th>
-            </thead>
-            <tbody>
-            </tbody></table>    
-    </div>
-</div>
+      </table>
+
+    
+<!--
+<script>
+
+$(document).ready(function() {
+    drawCallendar();
+});
+
+function drawCallendar() {
+    for (var i = 0; i < 5; i++) {
+        $("#corpoCalendario").append("<tr id='semana"+i+"'></tr>");
+        for (var j = 0; j < 7; j++) {
+            $("#semana"+i).append("<td id='dia"+j+"'></td>");
+        }
+    }
+}
+
+</script>
+-->
 
 
 
