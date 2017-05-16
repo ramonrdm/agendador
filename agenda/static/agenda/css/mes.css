@@ -5,17 +5,10 @@ tr {
 	border: none; 
 }
 th {
-	max-width: 30%;
-	min-width: 10%;
 	border-right: solid 1px #808080 !important;
 	border-left: solid 1px #808080 !important;
 }
 td {
-	text-align: center !important;
-
-	vertical-align: text-top !important;
-	max-height:120px !important;
-	height:120px !important;
  	border-right: solid 1px #808080 !important; 
   	border-left: solid 1px #808080 !important;
 }
