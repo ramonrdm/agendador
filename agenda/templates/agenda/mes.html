@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{{ espaco.nome }} - {{ mname }}/{{ year }}{% endblock %}
-<div class ="container">
+<div class="row">
+<div class="container">
 {% block content %}
 <!--
 <div class="row">
@@ -13,8 +14,7 @@
     
     
       <!--Import jQuery before materialize.js-->
-    
-      <table class="responsive-table bordered"> 
+      <table class="col s1 m6 responsive-table bordered"> 
         <thead>
           <tr>
             <th>Segunda</th>
@@ -49,6 +49,7 @@
       </table>
       </div>
       </div>
+    </div>
 
     
 <!--
