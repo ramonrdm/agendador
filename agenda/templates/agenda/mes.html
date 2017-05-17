@@ -89,6 +89,7 @@ $(document).ready(function() {
 
     $('#calendar').fullCalendar({
         locale: 'pt-br',
+        monthNames:["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
         events: [
         {% for week in month_days %}
             {% for day, entries, current in week %}
