@@ -16,8 +16,11 @@
 </div>
 </div>
 -->
+    <div id="conteudo">
+    <a class="btn right" href="{%url 'mese' espaco.id year month 'next' %}">proximo</a>
+
+    <div id="calendar"> </div>
     
-    <div id="calendar">
 
     </div>
     
@@ -85,6 +88,7 @@ $(document).ready(function() {
     // page is now ready, initialize the calendar...
 
     $('#calendar').fullCalendar({
+        locale: 'pt-br',
         events: [
         {% for week in month_days %}
             {% for day, entries, current in week %}
@@ -99,8 +103,8 @@ $(document).ready(function() {
             {% endfor %}
         {% endfor %}
         
-           
         ]
+
     });
     if({{month}}>9) {
         var date = $.fullCalendar.moment("{{year}}-{{month}}-01");
