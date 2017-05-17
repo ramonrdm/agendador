@@ -3,6 +3,11 @@
 <div class="row">
 <div class="container">
 {% block content %}
+
+<link rel='stylesheet' href="/static/agenda/fullCalendar/fullcalendar.css" />
+<script src="/static/agenda/fullCalendar/lib/moment.min.js"></script>
+<script src="/static/agenda/fullCalendar/fullcalendar.js"></script>
+<script src="/static/agenda/fullCalendar/locale/pt-br.js"></script>
 <!--
 <div class="row">
 <div class="col s12 m12 l12">
@@ -12,18 +17,22 @@
 </div>
 -->
     
+    <div id="calendar">
+            <button id="ppA" value="04">Antes</button>
+
+    </div>
     
-      <!--Import jQuery before materialize.js-->
-      <table class="col s1 m6 responsive-table bordered"> 
+      <!--Import jQuery before materialize.js 
+      <table class="col s12 m6 table bordered"> 
         <thead>
           <tr>
-            <th>Segunda</th>
-            <th>Terça</th>
-            <th>Quarta</th>
-            <th>Quinta</th>
-            <th>Sexta</th>
-            <th>Sábado</th>
-            <th>Domingo</th>
+            <th class="center-align">Segunda</th>
+            <th class="center-align">Terça</th>
+            <th class="center-align">Quarta</th>
+            <th class="center-align">Quinta</th>
+            <th class="center-align">Sexta</th>
+            <th class="center-align">Sábado</th>
+            <th class="center-align">Domingo</th>
           </tr>
         </thead>
         <tbody>
@@ -33,7 +42,7 @@
                             {% if day == 0 %}
                                 <td></td>
                             {% else %}
-                                <td><span>{{ day }}</span>
+                                <td class="left-align"><span>{{ day }}</span>
                                 <ul>
                                 {% for entry in entries %}
                                        <li>{{ entry.horaInicio|date:"H:i" }} até {{ entry.horaFim|date:"H:i" }} {{ entry.tipoEvento}}/{{ entry.departamento}}</li> 
@@ -46,7 +55,7 @@
             {% endfor %}
         </tbody>
 
-      </table>
+      </table>-->
       </div>
       </div>
     </div>
@@ -71,6 +80,23 @@ function drawCallendar() {
 </script>
 -->
 
+<script type="text/javascript">
+	
+$(document).ready(function() {
+
+    // page is now ready, initialize the calendar...
+
+    $("#ppA").click(function() {
+        $('#calendar').fullCalendar('gotoDate', moment('2017-04-01'));
+    })
+    $('#calendar').fullCalendar({
+        // put your options and callbacks here
+        locale: 'pt-br',
+    })
+
+});
+
+</script>
 
 
 {% endblock %}
