@@ -123,6 +123,7 @@ def mes(request, espaco, year, month, change=None, tipo=None):
             for entries in week:
                     for entry in entries:
                         print entry
+    print month
     return render(
             request,
             "agenda/mes.html", 
