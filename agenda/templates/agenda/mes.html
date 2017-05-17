@@ -85,8 +85,22 @@ $(document).ready(function() {
     // page is now ready, initialize the calendar...
 
     $('#calendar').fullCalendar({
+        events: [
+        {% for week in month_days %}
+            {% for day, entries, current in week %}
+                {% if day != 0 %}
+                        {% for entry in entries %}
+                            {
+                                title: "{{ entry.horaInicio|date:"H:i" }}-{{ entry.horaFim|date:"H:i" }}",
+                                start: "{{entry.data|date:"Y-m-d"}}"
+                            },
+                        {% endfor %}
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
         
-
+           
+        ]
     });
     if({{month}}>9) {
         var date = $.fullCalendar.moment("{{year}}-{{month}}-01");
