@@ -4,10 +4,10 @@
 <div class="container">
 {% block content %}
 
-<link rel='stylesheet' href="/static/agenda/fullCalendar/fullcalendar.css" />
 <script src="/static/agenda/fullCalendar/lib/moment.min.js"></script>
+<link rel='stylesheet' href="/static/agenda/fullCalendar/fullcalendar.css" />
 <script src="/static/agenda/fullCalendar/fullcalendar.js"></script>
-<script src="/static/agenda/fullCalendar/locale/pt-br.js"></script>
+
 <!--
 <div class="row">
 <div class="col s12 m12 l12">
@@ -26,6 +26,14 @@
 
     </div>
     
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <h4>Modal Header</h4>
+            <p>Um monte de texto</p>
+        </div>
+    </div>
+
+
       <!--Import jQuery before materialize.js 
       <table class="col s12 m6 table bordered"> 
         <thead>
@@ -86,11 +94,7 @@ function drawCallendar() {
 <script type="text/javascript">
 	
 $(document).ready(function() {
-
-    // page is now ready, initialize the calendar...
-
-    $('#calendar').fullCalendar({
-        locale: 'pt-br',
+   $('#calendar').fullCalendar({
         monthNames:["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
         dayNamesShort:["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
         events: [
@@ -106,10 +110,17 @@ $(document).ready(function() {
                 {% endif %}
             {% endfor %}
         {% endfor %}
-        
-        ]
+        ],
+        eventAfterAllRender: function() {
+            $(".fc-day-top").each(function(index,value) {                  
+                $(value).html("<a id='addReserva' href='#modal1'><i class='left material-icons'>add</i></a> <span class='fc-day-number'>"+$(value).find("span").html()+ "</span>");
+           });
+        }
+    });     
+    setMonth();
+});
 
-    });
+function setMonth() {
     if({{month}}>9) {
         var date = $.fullCalendar.moment("{{year}}-{{month}}-01");
             $("#calendar").fullCalendar('gotoDate', date);
@@ -117,8 +128,18 @@ $(document).ready(function() {
         var date = $.fullCalendar.moment("{{year}}-0{{month}}-01");
             $("#calendar").fullCalendar('gotoDate', date);
         }
-});
+}
 </script>
 
+<!-- tirar esse script desse arquivo depois para deixar mais bem organizado. -->
+
+<script>
+// o mês da de pegar pelo django e o dia da de pegar pelo span do fc-number do componente.
+$(".modal").modal();
+// ou colocar direto na tag ou chamar com o ajax o form de adicionar reservas.
+
+
+
+</script>
 
 {% endblock %}

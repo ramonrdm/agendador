@@ -119,7 +119,6 @@ STATIC_URL = '/static/'
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
-
 EMAIL_HOST="smtp.sistemas.ufsc.br"
 EMAIL_PORT=465
 EMAIL_HOST_USER="reservas.ccs@sistemas.ufsc.br"
