@@ -71,7 +71,35 @@
                 </div>
         </div>
     </div>
+    <div class="card">
+        <div class="card-content">
+            <span class="card-title" >Equipamentos do setor {{unidade.sigla}}:</span>
+            <div class="row">
+            {% if equipamentos %}
+                {% for year, months in years %}
+                    <div align="center" class="ano" >{{ year }}</div>
+                    <div class="row">
+                    <table>
+                        <tr>
+                            {% for month in months %}
+                                {% if month.n <= 6 %}
+                                    <td>{{month}}</td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                     
 
+                        
+                    </table>
+                    </div>
+                {% endfor %}
+            {% else %}
+            <span> Sem equipamentos neste setor.</span>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+<!--
     <div class="card">
         <div class="card-content">
             <span class="card-title" >Equipamentos do setor {{unidade.sigla}}:</span>
@@ -101,6 +129,7 @@
             </div>
         </div>
     </div>
+-->
 
 </div>
 {% endblock %}
