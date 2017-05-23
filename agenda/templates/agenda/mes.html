@@ -83,11 +83,7 @@ function drawCallendar() {
     for (var i = 0; i < 5; i++) {
         $("#corpoCalendario").append("<tr id='semana"+i+"'></tr>");
         for (var j = 0; j < 7; j++) {
-            $("#semana"+i).append("<td id='dia"+j+"'></td>");
-        }
-    }
-}
-
+            $("#semana"+i).append("<td id='dia"+j+"'></td>")
 </script>
 -->
 
@@ -97,7 +93,9 @@ $(document).ready(function() {
    $('#calendar').fullCalendar({
         monthNames:["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
         dayNamesShort:["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+
         events: [
+
         {% for week in month_days %}
             {% for day, entries, current in week %}
                 {% if day != 0 %}
@@ -115,9 +113,10 @@ $(document).ready(function() {
             $(".fc-day").each(function(index,value) {       
                 if(value.className.indexOf("fc-other-month") === -1) {
                     $(value).html("<a id='addReserva' href='#modal1'><i class='material-icons'>add_circle</i></a>");
-                }           
+                }          
            });
         }
+
     });     
     setMonth();
 });
