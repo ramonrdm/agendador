@@ -13,7 +13,6 @@
 {% block content %}
 
 <div class="row">
-
     <div class="card">
         <div class="card-content">
             <span class="card-title black-text"> Setor: {{unidade}} </span>
@@ -71,21 +70,18 @@
                 </div>
         </div>
     </div>
-    <div class="row">
-        <div class="card col s12 m12 l12">
+        <div class="card">
             <div class="card-content">
                 <span class="card-title" >Equipamentos do setor {{unidade.sigla}}:</span>
-                <div class="row">
                 {% if equipamentos %}
                     {% for year, months in years %}
                         <div align="center" class="ano" >{{ year }}</div>
-                        <div class="row">
-                        <table>
+                        <table class="responsive-table">
                                 {% for month in months %}
                                     {% if month.n == 1 %}
                                     <tr>
                                         <td><ul class="collection with-header">
-                                                        <li class="collection-header"><h4>{{ month.name }}</h4></li>
+                                                        <li class="collection-header"><h6>{{ month.name }}</h6></li>
                                                         {% for equipamento in equipamentos %}
                                                             <li class="collection-item"><a href="{% url 'mese' equipamento.id year month.n %}">{{equipamento.nome}}</a></li>
                                                         {% endfor %}
@@ -94,7 +90,7 @@
                                     {% else %}
                                         {% if month.n <= 6 %}
                                             <td><ul class="collection with-header">
-                                                    <li class="collection-header"><h4>{{ month.name }}</h4></li>
+                                                    <li class="collection-header"><h6>{{ month.name }}</h6></li>
                                                     {% for equipamento in equipamentos %}
                                                         <li class="collection-item"><a href="{% url 'mese' equipamento.id year month.n %}">{{equipamento.nome}}</a></li>
                                                     {% endfor %}
@@ -102,10 +98,10 @@
                                             </td>
                                         {% else %}
                                             {% if month.n == 7 %}
+                                                s</tr>
                                                 <tr>
                                                     <td><ul class="collection with-header">
-                                                            <li class="collection-header"><h4>{{ month.name }}</h4>
-                                                            </li>
+                                                            <li class="collection-header"><h6>{{ month.name }}</h6></li>
                                                             {% for equipamento in equipamentos %}
                                                                 <li class="collection-item"><a href="{% url 'mese' equipamento.id year month.n %}">{{equipamento.nome}}</a></li>
                                                             {% endfor %}
@@ -113,7 +109,7 @@
                                                     </td>
                                             {% else %}
                                                 <td><ul class="collection with-header">
-                                                    <li class="collection-header"><h4>{{ month.name }}</h4></li>
+                                                    <li class="collection-header"><h6>{{ month.name }}</h6></li>
                                                     {% for equipamento in equipamentos %}
                                                         <li class="collection-item"><a href="{% url 'mese' equipamento.id year month.n %}">{{equipamento.nome}}</a></li>
                                                     {% endfor %}
@@ -124,16 +120,12 @@
                                     {% endif %}
                                 {% endfor %}
                             </tr>
-                            </tr>
                         </table>
-                        </div>
                     {% endfor %}
                 {% else %}
                 <span> Sem equipamentos neste setor.</span>
                 {% endif %}
-                </div>
             </div>
-        </div>
     </div>
 <!--
     <div class="card">
@@ -165,6 +157,6 @@
         </div>
     </div>
 -->
-
+</div>
 </div>
 {% endblock %}
