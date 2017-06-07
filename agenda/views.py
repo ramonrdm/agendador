@@ -111,8 +111,11 @@ def addreserva(request, espacoatual, ano=None, mes= None, dia=None):
             """Bloqueio sala multiuso"""
             if (request.POST['espacoFisico']== '5'):
                 return render_to_response("salvo.html",{'mensagem':"Erro: Sala temporariamente bloqueada. "})
+            
             if ((not request.user.groups.filter(name="LABINFO").exists()) and (request.POST['espacoFisico']=='3')):
                 return render_to_response("salvo.html",{'mensagem':"Erro: Você não realizaou o curso para utilizar o labinfo "})
+            if (request.POST['espacoFisico']=='3' and (date.today() < date(2017,10,02))):
+                return render_to_response("salvo.html",{'mensagem':"Erro: Espaço bloqueado para reservas até 02/10/2017 "})
             
             if ((not request.user.groups.filter(name="CONSELHEIROS").exists()) and (request.POST['espacoFisico']=='4')):
                 return render_to_response("salvo.html",{'mensagem':"Erro: Você não é membro do grupo sala dos conselhos, você não pode reservar este espaço."})
