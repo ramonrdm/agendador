@@ -114,7 +114,7 @@ def addreserva(request, espacoatual, ano=None, mes= None, dia=None):
             
             if ((not request.user.groups.filter(name="LABINFO").exists()) and (request.POST['espacoFisico']=='3')):
                 return render_to_response("salvo.html",{'mensagem':"Erro: Você não realizaou o curso para utilizar o labinfo "})
-            if (request.POST['espacoFisico']=='3' and (date.today() < date(2017,10,02) and form.fields['date'] > date(2017,12,31) )):
+            if (request.POST['espacoFisico']=='3' and (date.today() < date(2017,10,02) and form.cleaned_data['data'] > date(2017,12,31) )):
                 return render_to_response("salvo.html",{'mensagem':"Erro: Espaço bloqueado para reservas em 2018 até 02/10/2017 "})
             
             if ((not request.user.groups.filter(name="CONSELHEIROS").exists()) and (request.POST['espacoFisico']=='4')):
