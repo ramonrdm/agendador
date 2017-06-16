@@ -67,7 +67,7 @@ WSGI_APPLICATION = 'agendador.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'agendador',
+        'NAME': 'agendaccs',
         'USER': 'agendador',
         'PASSWORD': 'agendador',
         'HOST': 'localhost',
