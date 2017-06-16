@@ -251,12 +251,12 @@ def _verify_cas3_saml(ticket, service):
     try:
         user = None
         attributes = {}
-        response = page.read()
+        response = page.read().replace('\n','')
         tree = ElementTree.fromstring(response)
         #print response
         # Find the authentication status
         success = tree.find('.//' + SAML_1_0_PROTOCOL_NS + 'StatusCode')
-        if success is not None and success.attrib['Value'] == 'samlp:Success':
+        if success is not None and success.attrib['Value'] == 'saml1p:Success':
             # User is validated
             attrs = tree.findall('.//' + SAML_1_0_ASSERTION_NS + 'Attribute')
             for at in attrs:
