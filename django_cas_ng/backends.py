@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """CAS authentication backend"""
 from __future__ import unicode_literals
 
@@ -252,6 +253,7 @@ def _verify_cas3_saml(ticket, service):
         user = None
         attributes = {}
         response = page.read().replace('\n','')
+        response = response.encode("utf-8")
         tree = ElementTree.fromstring(response)
         #print response
         # Find the authentication status
