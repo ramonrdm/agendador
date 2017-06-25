@@ -1,9 +1,9 @@
 from django.contrib import admin
 from agenda.models import *
 
-admin.site.register(Evento)
-admin.site.register(EspacoFisico)
-admin.site.register(Equipamento)
+admin.site.register(Atividade)
+#admin.site.register(EspacoFisico)
+#admin.site.register(Equipamento)
 
 @admin.register(Unidade)
 class UnidadeAdmin(admin.ModelAdmin):
@@ -20,3 +20,11 @@ class ReservaEspacoFisicoAdmin(admin.ModelAdmin):
 	search_fields = ['finalidade', 'usuario__username']
 	icon = '<i class="material-icons">room</i>'
 admin.site.register(ReservaEspacoFisico, ReservaEspacoFisicoAdmin)
+
+class EquipamentoAdmin(admin.ModelAdmin):
+	list_display = ('nome','unidade','responsavel')
+admin.site.register(Equipamento, EquipamentoAdmin)
+
+class EspacoFisicoAdmin(admin.ModelAdmin):
+	list_display = ('nome','unidade','responsavel')
+admin.site.register(EspacoFisico, EspacoFisicoAdmin)	

@@ -16,7 +16,7 @@ class Unidade(models.Model):
 	def __str__(self):
 		return self.sigla
 
-class Evento(models.Model):
+class Atividade(models.Model):
 	nome = models.CharField(max_length=30)
 	descricao = models.TextField()
 
@@ -34,8 +34,9 @@ class Locavel(models.Model):
 	responsavel = models.ForeignKey(User)
 	unidade = models.ForeignKey(Unidade)
 	bloqueado = models.BooleanField(default=False)
-	visivel = models.BooleanField(default=False)
+	visivel = models.BooleanField(default=True)
 	localizacao = models.TextField()
+	foto = models.FileField(blank=True)
 	def __unicode__(self):
 		return self.nome
 	def __str__(self):
@@ -43,7 +44,7 @@ class Locavel(models.Model):
 
 class EspacoFisico(Locavel):
 	capacidade = models.PositiveSmallIntegerField()
-	eventosPermitidos = models.ManyToManyField(Evento)
+	atividadesPermitidas = models.ManyToManyField(Atividade)
 
 class Equipamento(Locavel):
 	patrimonio = models.PositiveIntegerField()
@@ -52,18 +53,19 @@ class Reserva(models.Model):
 	class Meta:
 		abstract = True
 	
-	estado = models.CharField(max_length=1)
+	estados = (('A','Aprovado'),('D','Desaprovado'),('E','Esperando'))
+	estado = models.CharField(max_length=1, choices=estados)
 	data = models.DateField()
 	horaInicio = models.TimeField()
 	horaFim = models.TimeField()
 	dataReserva  = models.DateTimeField(auto_now_add=True)
-	evento = models.ForeignKey(Evento)
+	atividade = models.ForeignKey(Atividade)
 	usuario = models.ForeignKey(User)
 	ramal = models.PositiveIntegerField()
 	finalidade = models.TextField()
 	
 	def __unicode__(self):
-		return self.usuario.username+"/"+self.evento.nome
+		return self.usuario.username+"/"+self.atividade.nome
 
 class ReservaEspacoFisico(Reserva):
 	espacoFisico = models.ForeignKey(EspacoFisico)
