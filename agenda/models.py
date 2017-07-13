@@ -54,7 +54,7 @@ class Reserva(models.Model):
 		abstract = True
 	
 	estados = (('A','Aprovado'),('D','Desaprovado'),('E','Esperando'))
-	estado = models.CharField(max_length=1, choices=estados)
+	estado = models.CharField(max_length=1, choices=estados, default='E')
 	data = models.DateField()
 	horaInicio = models.TimeField()
 	horaFim = models.TimeField()
