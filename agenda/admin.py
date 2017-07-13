@@ -15,6 +15,15 @@ class UnidadeAdmin(admin.ModelAdmin):
 			return qs
 		return qs.filter(responsavel=request.user)
 
+	def get_readonly_fields(self, request, obj=None):
+		qs = super(UnidadeAdmin, self).get_queryset(request)
+		qsResp = qs.filter(responsavel=request.user)
+		if request.user.is_superuser:
+			return []
+		if obj in qsResp:
+			return ['responsavel']
+		return []
+
 class ReservaEquipamentoAdmin(admin.ModelAdmin):
 	list_display = ('usuario', 'espacoFisico', 'data', 'ramal', 'finalidade')
 	search_fields = ['finalidade', 'usuario__username']
@@ -37,6 +46,15 @@ class EquipamentoAdmin(admin.ModelAdmin):
 			return qs
 		return qs.filter(responsavel=request.user)
 
+	def get_readonly_fields(self, request, obj=None):
+		qs = super(EquipamentoAdmin, self).get_queryset(request)
+		qsResp = qs.filter(responsavel=request.user)
+		if request.user.is_superuser:
+			return []
+		if obj in qsResp:
+			return ['responsavel', 'unidade']
+		return []
+
 admin.site.register(Equipamento, EquipamentoAdmin)
 
 class EspacoFisicoAdmin(admin.ModelAdmin):
@@ -47,5 +65,14 @@ class EspacoFisicoAdmin(admin.ModelAdmin):
 		if request.user.is_superuser:
 			return qs
 		return qs.filter(responsavel=request.user)
+
+	def get_readonly_fields(self, request, obj=None):
+		qs = super(EspacoFisicoAdmin, self).get_queryset(request)
+		qsResp = qs.filter(responsavel=request.user)
+		if request.user.is_superuser:
+			return []
+		if obj in qsResp:
+			return ['responsavel', 'unidade']
+		return []
 
 admin.site.register(EspacoFisico, EspacoFisicoAdmin)	
