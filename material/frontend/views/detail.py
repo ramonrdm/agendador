@@ -13,7 +13,7 @@ class DetailModelView(generic.DetailView):
     def get_object_data(self):
         """List of object fields to display.
 
-        Choice fields values are exapanded to readable choice label.
+        Choice fields values are expanded to readable choice label.
         """
         for field in self.object._meta.fields:
             if isinstance(field, models.AutoField):
@@ -27,8 +27,8 @@ class DetailModelView(generic.DetailView):
             else:
                 value = getattr(self.object, field.get_attname())
 
-                if value is not None:
-                    yield (field.verbose_name.title(), value)
+            if value is not None:
+                yield (field.verbose_name.title(), value)
 
     def has_view_permission(self, request, obj):
         """Object view permission check.
@@ -42,7 +42,9 @@ class DetailModelView(generic.DetailView):
         opts = self.model._meta
         codename = get_permission_codename('view', opts)
         view_perm = '{}.{}'.format(opts.app_label, codename)
-        if request.user.has_perm(view_perm, obj=obj):
+        if request.user.has_perm(view_perm):
+            return True
+        elif request.user.has_perm(view_perm, obj=obj):
             return True
         return self.has_change_permission(request, obj=obj)
 
@@ -59,8 +61,10 @@ class DetailModelView(generic.DetailView):
         # default lookup for the django permission
         opts = self.model._meta
         codename = get_permission_codename('change', opts)
-        return request.user.has_perm(
-            '{}.{}'.format(opts.app_label, codename), obj=obj)
+        change_perm = '{}.{}'.format(opts.app_label, codename)
+        if request.user.has_perm(change_perm):
+            return True
+        return request.user.has_perm(change_perm, obj=obj)
 
     def has_delete_permission(self, request, obj):
         """Object delete permission check.
@@ -73,11 +77,13 @@ class DetailModelView(generic.DetailView):
         # default lookup for the django permission
         opts = self.model._meta
         codename = get_permission_codename('delete', opts)
-        return request.user.has_perm(
-            '{}.{}'.format(opts.app_label, codename), obj=obj)
+        delete_perm = '{}.{}'.format(opts.app_label, codename)
+        if request.user.has_perm(delete_perm):
+            return True
+        return request.user.has_perm(delete_perm, obj=obj)
 
     def get_object(self):
-        """Retrive the object.
+        """Retrieve the object.
 
         Check object view permission at the same time.
         """

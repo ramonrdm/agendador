@@ -41,7 +41,7 @@ def _get_attr_label(owner, attr_name):
 
 
 class ModelField(object):
-    """Retrive a field value from the model.
+    """Retrieve a field value from the model.
 
     Field verbose name would be use as a label.
     """
@@ -66,7 +66,7 @@ class ModelField(object):
 
 
 class ModelAttr(object):
-    """Retrive attribute value from the model instance.
+    """Retrieve attribute value from the model instance.
 
     If model attribute is a callable, to get the value it would be
     called without any arguments.
@@ -115,10 +115,10 @@ class DataSourceAttr(object):
 
     @property
     def label(self):
-        """Retrive the label for the data source attibute.
+        """Retrieve the label for the data source attribute.
 
-        Label could be specifiend in `.short_description` or the
-        attribue name would be used.
+        Label could be specified in `.short_description` or the
+        attribute name would be used.
 
         Example::
 
@@ -186,7 +186,7 @@ class DataTableMixin(ContextMixin):
         return context
 
     def get_list_display(self):
-        """Return list of coluns to display."""
+        """Return list of columns to display."""
         return self.list_display
 
     def get_datatable_config(self):
@@ -202,7 +202,7 @@ class DataTableMixin(ContextMixin):
     def get_data_attr(self, attr_name):
         """Data getter for an attribute.
 
-        Data could comes from the model field or extrnal `data_source`
+        Data could comes from the model field or external `data_source`
         method call.
         """
         opts = self.object_list.model._meta
@@ -221,7 +221,7 @@ class DataTableMixin(ContextMixin):
         raise AttributeError("Unable to lookup '{}' on {}" .format(attr_name, self.object_list.model._meta.object_name))
 
     def get_columns_def(self):
-        """Returns columns definition for the datables js config."""
+        """Return columns definition for the datables js config."""
         return [
             {'data': field_name, 'orderable': self.get_data_attr(field_name).orderable}
             for field_name in self.get_list_display()
@@ -249,7 +249,7 @@ class DataTableMixin(ContextMixin):
 
     def get_table_data(self, start, length):
         """Get a page for datatable."""
-        for item in self.object_list[start:start+length]:
+        for item in self.object_list[start:start + length]:
             columns = OrderedDict()
             for n, field_name in enumerate(self.get_list_display()):
                 attr = self.get_data_attr(field_name)
@@ -262,11 +262,11 @@ class DataTableMixin(ContextMixin):
         return self.object_list.count()
 
     def total_filtered(self):
-        """Dataset size with filter appllied."""
+        """Dataset size with filter applied."""
         return self.object_list.count()
 
     def get_ordering(self):
-        """ Return the field or fields to use for ordering the queryset."""
+        """Return the field or fields to use for ordering the queryset."""
         if self.request_form.is_valid():
             ordering = []
             requested_order = self.request_form.cleaned_data['ordering']
@@ -331,7 +331,7 @@ class DataTableMixin(ContextMixin):
 
 
 class ListModelView(TemplateResponseMixin, DataTableMixin, View):
-    """List view sutable to work with jQuery Datatables.
+    """List view suitable to work with jQuery Datatables.
 
     The view responsive for handling GET/POST requests from the browser
     and AJAX from the datatable.
@@ -370,7 +370,9 @@ class ListModelView(TemplateResponseMixin, DataTableMixin, View):
         opts = self.model._meta
         codename = get_permission_codename('view', opts)
         view_perm = '{}.{}'.format(opts.app_label, codename)
-        if request.user.has_perm(view_perm, obj=obj):
+        if request.user.has_perm(view_perm):
+            return True
+        elif request.user.has_perm(view_perm, obj=obj):
             return True
         return self.has_change_permission(request, obj=obj)
 
@@ -385,8 +387,23 @@ class ListModelView(TemplateResponseMixin, DataTableMixin, View):
         # default lookup for the django permission
         opts = self.model._meta
         codename = get_permission_codename('change', opts)
-        return request.user.has_perm(
-            '{}.{}'.format(opts.app_label, codename), obj=obj)
+        change_perm = '{}.{}'.format(opts.app_label, codename)
+        if request.user.has_perm(change_perm):
+            return True
+        return request.user.has_perm(change_perm, obj=obj)
+
+    def has_add_permission(self, request):
+        """Object add permission check.
+
+        If view had a `viewset`, the `viewset.has_add_permission` used.
+        """
+        if self.viewset is not None:
+            return self.viewset.has_add_permission(request)
+
+        # default lookup for the django permission
+        opts = self.model._meta
+        codename = get_permission_codename('add', opts)
+        return request.user.has_perm('{}.{}'.format(opts.app_label, codename))
 
     def get_template_names(self):
         """
@@ -422,11 +439,13 @@ class ListModelView(TemplateResponseMixin, DataTableMixin, View):
             return list(list_display)[:1]
 
     def get_queryset(self):
-        """Retrive the view queryset."""
+        """Retrieve the view queryset."""
         if self.queryset is not None:
             queryset = self.queryset
             if isinstance(queryset, QuerySet):
                 queryset = queryset.all()
+        elif self.viewset is not None and hasattr(self.viewset, 'get_queryset'):
+            queryset = self.viewset.get_queryset(self.request)
         elif self.model is not None:
             queryset = self.model._default_manager.all()
         else:
@@ -444,10 +463,15 @@ class ListModelView(TemplateResponseMixin, DataTableMixin, View):
         return queryset
 
     def format_column(self, item, field_name, value):
-        value = super(ListModelView, self).format_column(item, field_name, value)
-        if field_name in self.get_list_display_links(self.get_list_display()):
-            value = format_html('<a href="{}">{}</a>', self.get_item_url(item), value)
-        return value
+        if isinstance(value, bool):
+            return format_html('<i class="material-icons">{}</i>'.format(
+                'check' if value else 'close'
+            ))
+        else:
+            formatted = super(ListModelView, self).format_column(item, field_name, value)
+            if field_name in self.get_list_display_links(self.get_list_display()):
+                formatted = format_html('<a href="{}">{}</a>', self.get_item_url(item), formatted)
+            return formatted
 
     def get_item_url(self, item):
         """Link to object detail to `list_display_links` columns."""
@@ -455,6 +479,18 @@ class ListModelView(TemplateResponseMixin, DataTableMixin, View):
         return reverse(
             '{}:{}_detail'.format(opts.app_label, opts.model_name),
             args=[item.pk])
+
+    def get_context_data(self, **kwargs):
+        """Additional context data for list view.
+
+        :keyword add_url: Link to the add view
+        """
+        opts = self.model._meta
+
+        if self.has_add_permission(self.request):
+            kwargs['add_url'] = reverse('{}:{}_add'.format(opts.app_label, opts.model_name))
+
+        return super(ListModelView, self).get_context_data(**kwargs)
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):

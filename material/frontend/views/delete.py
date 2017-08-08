@@ -4,6 +4,7 @@ from django.db import router
 from django.db.models.deletion import Collector
 from django.core.exceptions import PermissionDenied
 from django.views import generic
+from django.utils.translation import ugettext_lazy as _
 
 from .mixins import MessageUserMixin
 
@@ -24,8 +25,10 @@ class DeleteModelView(MessageUserMixin, generic.DeleteView):
         # default lookup for the django permission
         opts = self.model._meta
         codename = get_permission_codename('delete', opts)
-        return request.user.has_perm(
-            '{}.{}'.format(opts.app_label, codename), obj=obj)
+        delete_perm = '{}.{}'.format(opts.app_label, codename)
+        if request.user.has_perm(delete_perm):
+            return True
+        return request.user.has_perm(delete_perm, obj=obj)
 
     def _get_deleted_objects(self):
         collector = Collector(using=router.db_for_write(self.object))
@@ -41,7 +44,7 @@ class DeleteModelView(MessageUserMixin, generic.DeleteView):
         return super(DeleteModelView, self).get_context_data(**kwargs)
 
     def get_object(self):
-        """Retrive the object for delete.
+        """Retrieve the object for delete.
 
         Check object delete permission at the same time.
         """
@@ -81,4 +84,4 @@ class DeleteModelView(MessageUserMixin, generic.DeleteView):
         return response
 
     def message_user(self):
-        self.success('The {name} "{link}"  was deleted successfully.')
+        self.success(_('The {name} "{link}"  was deleted successfully.'))

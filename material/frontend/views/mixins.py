@@ -1,10 +1,27 @@
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
+from django.forms.models import modelform_factory
 from django.utils.encoding import force_text
 from django.utils.html import format_html
 from django.utils.http import urlquote
 from django.utils.translation import ugettext as _
+
+from ...base import Span
+
+
+def _collect_elements(parent, container=None):
+    if container is None:
+        container = []
+
+    if hasattr(parent, 'elements'):
+        for element in parent.elements:
+            _collect_elements(element, container=container)
+
+    if isinstance(parent, Span):
+        container.append(parent.field_name)
+
+    return container
 
 
 class ModelViewMixin(object):
@@ -12,11 +29,15 @@ class ModelViewMixin(object):
 
     viewset = None
     layout = None
+    form_widgets = None
 
     def __init__(self, *args, **kwargs):  # noqa D102
         super(ModelViewMixin, self).__init__(*args, **kwargs)
         if self.form_class is None and self.fields is None:
-            self.fields = '__all__'
+            if self.layout is not None:
+                self.fields = _collect_elements(self.layout)
+            else:
+                self.fields = '__all__'
 
     def has_object_permission(self, request, obj):
         """Check object access permission.
@@ -25,12 +46,34 @@ class ModelViewMixin(object):
         """
         raise NotImplementedError
 
+    def get_queryset(self):
+        """Return the list of items for this view.
+
+        If view have no explicit `self.queryset`, tries too lookup to
+        `viewflow.get_queryset`
+        """
+        if self.queryset is None and self.viewset is not None:
+            if hasattr(self.viewset, 'get_queryset'):
+                return self.viewset.get_queryset(self.request)
+        return super(ModelViewMixin, self).get_queryset()
+
     def get_object(self):
-        """Retrive an object and check user permissions."""
+        """Retreive an object and check user permissions."""
         obj = super(ModelViewMixin, self).get_object()
         if not self.has_object_permission(self.request, obj):
             raise PermissionDenied
         return obj
+
+    def get_form_class(self):
+        if self.form_class is None:
+            if self.model is not None:
+                model = self.model
+            elif hasattr(self, 'object') and self.object is not None:
+                model = self.object.__class__
+            else:
+                model = self.get_queryset().model
+            return modelform_factory(model, fields=self.fields, widgets=self.form_widgets)
+        return super(ModelViewMixin, self).get_form_class()
 
     def get_success_url(self):
         """Redirect back to the list view if no `success_url` is configured."""
@@ -72,14 +115,14 @@ class ModelViewMixin(object):
         return response
 
     def message_user(self):
-        """Successfull notification.
+        """Successful notification.
 
         Subclasses can override it.
         """
 
 
 class MessageUserMixin(object):
-    """User notification utilities django.messages framework.'"""
+    """User notification utilities django.messages framework."""
 
     def report(self, message, level=messages.INFO, fail_silently=True, **kwargs):
         """Construct message and notify the user."""

@@ -19,7 +19,7 @@ class BaseViewset(object):
         """Collect url specs from the instance attributes.
 
         Assumes that each attribute with name ending with `_view`
-        contains tripple (regexp, view, url_name)
+        contains triple (regexp, view, url_name)
         """
         result = []
 
@@ -48,7 +48,7 @@ class ModelViewSet(BaseViewset):
     """Model Create/Read/Update/Delete/List viewset.
 
     Lightweight alternative for django admin. CRUD interface based in
-    the django generic views. Viewset provides a sinple place to
+    the django generic views. Viewset provides a simple place to
     configure the views and share the common configuration parameters.
 
     :keyword model: Model class views
@@ -70,8 +70,16 @@ class ModelViewSet(BaseViewset):
 
     :keyword delete_view_class: CBV to delete an object
 
-    There is no specifical requirements to CBV, by overriding
-    corresponsing `get_<op>_view` method you can even use function
+    :keyword layout: Layout for django-material forms
+
+    :keyword form_class: Form Class for Create and Update views
+
+    :keyword form_widgets: Custom widgets for the model form
+                           in the Create and Update views, if
+                           no custom form_class provided.
+
+    There is no specifically requirements to CBV, by overriding
+    corresponding `get_<op>_view` method you can even use function
     based views with this viewset.
 
     Example::
@@ -98,19 +106,12 @@ class ModelViewSet(BaseViewset):
 
     layout = DEFAULT
     form_class = DEFAULT
-
-    def get_queryset(self, request):
-        """Return common queryset for all CRUD views.
-
-        By default just return `self.queryset`. Subclasses can
-        override that.
-        """
-        return self.queryset
+    form_widgets = DEFAULT
 
     def filter_kwargs(self, view_class, **kwargs):
-        """Add defaults and filter kwargs to only thouse that view can accept.
+        """Add defaults and filter kwargs to only those that view can accept.
 
-        Viewset pass to the view only kwars that have non DEFAULT values,
+        Viewset pass to the view only kwargs that have non DEFAULT values,
         and if the view have a corresponding attribute.
 
         In addition, if view has `viewset` attribute, it will receive
@@ -139,18 +140,19 @@ class ModelViewSet(BaseViewset):
     def get_create_view_kwargs(self, **kwargs):
         """Configuration arguments for create view.
 
-        May not be called if `get_create_view` is overriden.
+        May not be called if `get_create_view` is overridden.
         """
         result = {
             'layout': self.layout,
             'form_class': self.form_class,
+            'form_widgets': self.form_widgets,
         }
         result.update(kwargs)
         return self.filter_kwargs(self.create_view_class, **result)
 
     @property
     def create_view(self):
-        """Tripple (regexp, view, name) for create view url config."""
+        """Triple (regexp, view, name) for create view url config."""
         return [
             r'^add/$',
             self.get_create_view(),
@@ -178,7 +180,7 @@ class ModelViewSet(BaseViewset):
     def get_detail_view_kwargs(self, **kwargs):
         """Configuration arguments for detail view.
 
-        May not be called if `get_detail_view` is overriden.
+        May not be called if `get_detail_view` is overridden.
         """
         return self.filter_kwargs(self.detail_view_class, **kwargs)
 
@@ -190,13 +192,15 @@ class ModelViewSet(BaseViewset):
         opts = self.model._meta
         codename = get_permission_codename('view', opts)
         view_perm = '{}.{}'.format(opts.app_label, codename)
-        if request.user.has_perm(view_perm, obj=obj):
+        if request.user.has_perm(view_perm):
+            return True
+        elif request.user.has_perm(view_perm, obj=obj):
             return True
         return self.has_change_permission(request, obj=obj)
 
     @property
     def detail_view(self):
-        """Tripple (regexp, view, name) for detail view url config."""
+        """Triple (regexp, view, name) for detail view url config."""
         return [
             r'^(?P<pk>.+)/detail/$',
             self.get_detail_view(),
@@ -215,7 +219,7 @@ class ModelViewSet(BaseViewset):
     def get_list_view_kwargs(self, **kwargs):
         """Configuration arguments for list view.
 
-        May not be called if `get_list_view` is overriden.
+        May not be called if `get_list_view` is overridden.
         """
         result = {
             'list_display': self.list_display,
@@ -226,7 +230,7 @@ class ModelViewSet(BaseViewset):
 
     @property
     def list_view(self):
-        """Tripple (regexp, view, name) for list view url config."""
+        """Triple (regexp, view, name) for list view url config."""
         return [
             '^$',
             self.get_list_view(),
@@ -245,11 +249,12 @@ class ModelViewSet(BaseViewset):
     def get_update_view_kwargs(self, **kwargs):
         """Configuration arguments for update view.
 
-        May not be called if `get_update_view` is overriden.
+        May not be called if `get_update_view` is overridden.
         """
         result = {
             'layout': self.layout,
-            'form_Class': self.form_class,
+            'form_class': self.form_class,
+            'form_widgets': self.form_widgets,
         }
         result.update(kwargs)
         return self.filter_kwargs(self.update_view_class, **result)
@@ -261,12 +266,14 @@ class ModelViewSet(BaseViewset):
         """
         opts = self.model._meta
         codename = get_permission_codename('change', opts)
-        return request.user.has_perm(
-            '{}.{}'.format(opts.app_label, codename), obj=obj)
+        change_perm = '{}.{}'.format(opts.app_label, codename)
+        if request.user.has_perm(change_perm):
+            return True
+        return request.user.has_perm(change_perm, obj=obj)
 
     @property
     def update_view(self):
-        """Tripple (regexp, view, name) for update view url config."""
+        """Triple (regexp, view, name) for update view url config."""
         return [
             r'^(?P<pk>.+)/change/$',
             self.get_update_view(),
@@ -289,19 +296,21 @@ class ModelViewSet(BaseViewset):
         """
         opts = self.model._meta
         codename = get_permission_codename('delete', opts)
-        return request.user.has_perm(
-            '{}.{}'.format(opts.app_label, codename), obj=obj)
+        delete_perm = '{}.{}'.format(opts.app_label, codename)
+        if request.user.has_perm(delete_perm):
+            return True
+        return request.user.has_perm(delete_perm, obj=obj)
 
     def get_delete_view_kwargs(self, **kwargs):
         """Configuration arguments for delete view.
 
-        May not be called if `get_delete_view` is overriden.
+        May not be called if `get_delete_view` is overridden.
         """
         return self.filter_kwargs(self.delete_view_class, **kwargs)
 
     @property
     def delete_view(self):
-        """Tripple (regexp, view, name) for delete view url config."""
+        """Triple (regexp, view, name) for delete view url config."""
         return [
             r'^(?P<pk>.+)/delete/$',
             self.get_delete_view(),

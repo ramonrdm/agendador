@@ -14,5 +14,7 @@ Agendador de espaço físico
  + Django 
  + Django-cas-ng
  	Integração com o CAS-UFSC, ou seja, utiliza o IdUFSC para login.
+ + Django-material:
+	https://github.com/viewflow/django-material/
 
 Bolsista: Antônio Besen de Miranda Gomes

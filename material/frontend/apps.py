@@ -4,9 +4,11 @@ from importlib import import_module
 from django.apps import AppConfig, apps
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_migrate
+from django.utils.six.moves import input
 from django.template import Template, TemplateDoesNotExist
 from django.template.loader import get_template, select_template
 from django.utils.module_loading import module_has_submodule
+from django.utils.translation import ugettext_lazy as _
 
 from .registry import modules as modules_registry
 from .urlconf import ModuleURLResolver
@@ -108,7 +110,7 @@ class ModuleMixin(object):
 
         If no template exists, no exception raised.
 
-        Intendent to use with {% include %} template tag::
+        Intended to use with {% include %} template tag::
 
             {% include module.menu %}
         """
@@ -123,7 +125,7 @@ class ModuleMixin(object):
         If  <app_label>/base_module.html exists it would be used.
         The default is 'material/frontend/base_module.html'
 
-        Intendent to use in modules generic tmeplates. Ex::
+        Intended to use in modules generic templates. Ex::
 
             {% extends current_module.base_template %}
         """
@@ -134,10 +136,10 @@ class ModuleMixin(object):
 
 
 class MaterialFrontendConfig(AppConfig):
-    """Default condif for Material Frontend."""
+    """Default config for Material Frontend."""
 
     name = 'material.frontend'
-    verbose_name = 'Site Modules'
+    verbose_name = _('Frontend')
     icon = '<i class="material-icons">view_module</i>'
 
     def ready(self):

@@ -14,7 +14,7 @@
         {% endblock css %}
         {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
         {% block js %}
-        <script src="{% static 'material/js/jquery-2.2.0.js' %}"></script>
+        <script src="{% static 'material/js/jquery.js' %}"></script>
         <script>
             // Use same django for material and django admin
             var django = django || {};
@@ -30,6 +30,7 @@
         {% endblock head %}
     </head>
     <body class="{% if is_popup %}popup{% endif %}">
+        {% block body %}
         <header>
             {% block header %}
             {% if not is_popup %}
@@ -64,7 +65,7 @@
                                 <ul>
                                     {% for model in app.models %}
                                     <li class="{% if model.active %}active{% endif %}">
-                                        <a href="{{ model.admin_url }}">{{ model.name }}</a>
+                                        <a href="{{ model.admin_url }}">{% trans model.name %}</a>
                                     </li>
                                     {% endfor %}
                                 </ul>
@@ -100,9 +101,9 @@
                                 <li><a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a></li>
                             {% endif %}
                             {% if user.is_authenticated %}
-                            <li><a href="{% url 'admin:logout' %}" data-turbolinks="false"><i class="material-icons right">exit_to_app</i>{% trans "Logout" %}</a></li>
+                            <li><a href="{% url 'admin:logout' %}" data-turbolinks="false"><i class="material-icons right">exit_to_app</i>{% trans "Log out" %}</a></li>
                             {% else %}
-                            <li><a href="{% url 'admin:login' %}" data-turbolinks="false"><i class="material-icons right">lock_open</i>{% trans "Login" %}</a></li>
+                            <li><a href="{% url 'admin:login' %}" data-turbolinks="false"><i class="material-icons right">lock_open</i>{% trans "Log in" %}</a></li>
                             {% endif %}
                             {% endblock %}
                         </ul>
@@ -118,15 +119,18 @@
                 </nav>
                 {% endif %}
                 {% endblock %}
+                {% block main_content %}
                 <div class="content">
                     {% block content %}{% endblock %}
                 </div>
+                {% endblock main_content %}
             {% endblock main %}
         </main>
         <footer>
             {% block footer %}
             {% endblock footer %}
         </footer>
+        {% endblock body %}
 
         {% include 'admin/includes/material_js.html' %}
         {% block extrajs %}{% endblock %}
@@ -144,35 +148,3 @@
         {% endblock messages %}
     </body>
 </html>
-<!--
-    <body>
-        <ul id="user-menu" class="dropdown-content">
-        </ul>
-        {# endif #}
-
-        {# if not is_popup #}
-        <header>
-            <nav id="header" class="nav-top">
-                <div class="nav-wrapper">
-                    <a href="/" class="page-title hide-on-med-and-down">{# block brand-logo #}{# trans 'Administration' #}{# endblock #}</a>
-                    <a href="#" data-activates="nav-mobile" class="button-collapse full"><i class="material-icons">menu</i></a>
-
-                    <ul class="right">
-                        {# if user.is_authenticated #}
-                        <li><a class="dropdown-button constrain_width" href="#!" data-activates="user-menu">{{ user.get_full_name }}<i class="material-icons right">arrow_drop_down</i></a></li>
-                        {# endif #}
-                    </ul>
-                </div>
-
-                <ul id="nav-mobile" class="side-nav fixed module-menu">
-                    <li class="logo valign-wrapper">
-                        <a href="{# url 'admin:index' #}" class="no-navigation">
-                            {# block branding #}{# endblock #}
-                        </a>
-                    </li>
-
-                </ul>
-            </nav>
-        </header>
-        {# endif #}
--->

@@ -4,6 +4,7 @@ import math
 import re
 from collections import OrderedDict
 
+from django.db.models.query import QuerySet
 from django.forms.forms import BoundField
 from django.template import Library
 from django.template.base import (
@@ -22,7 +23,7 @@ register = Library()
 
 @register.tag('render')
 class FormRenderNode(Node):
-    """Shugar for element in template rendering."""
+    """Sugar for element in template rendering."""
 
     def __init__(self, parser, token):  # noqa D102
         bits = token.split_contents()
@@ -133,13 +134,13 @@ def jquery_datepicker_format(field):
 
 @register.filter
 def datepicker_value(value, date_format):
-    """Retun localized date value."""
+    """Return localized date value."""
     return formats.localize_input(value, date_format)
 
 
 @register.filter('force_text')
 def force_text_impl(value):
-    """Coerse widget value to text."""
+    """Coerce widget value to text."""
     return force_text(value)
 
 
@@ -148,7 +149,7 @@ def split_choices_by_columns(choices, columns):
     """Split CheckboxSelectMultiple values into columns."""
     columns = int(columns)
     col_span = 12 // columns
-    per_column = int(math.ceil(len(choices)/columns))
+    per_column = int(math.ceil(len(choices) / columns))
     choices = [tuple(choice) + (i,) for i, choice in enumerate(choices)]
     return [
         (col_span, choices[i:i + per_column])
@@ -197,7 +198,7 @@ def select_options(bound_field):
     If group_name is None - option is not belongs to group
     """
     selected = bound_field.value()
-    if not isinstance(selected, (list, tuple)):
+    if not isinstance(selected, (list, tuple, QuerySet)):
         selected = [selected]
     selected = set(force_text(v) for v in selected)
 

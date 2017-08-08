@@ -1,0 +1,83 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls admin_static admin_modify material_form material_admin %}
+
+
+{% block brand-logo %}{{ title }}{% endblock %}
+
+{% block breadcrumbs_items %}
+<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+<a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+<a class="active" href="{% url opts|admin_urlname:'changelist' %}">{% if add %}{% trans 'Add' %} {{ opts.verbose_name }}{% else %}{% trans 'Change' %}{% endif %}</a>
+{% endblock %}
+
+
+{% block content %}
+<div class="row change-form">
+    <div class="col s12 m12 l9">
+        <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form">
+            <div class="card">
+                <div class="card-content">
+                    {% csrf_token %}
+                    {% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1" />{% endif %}
+                    {% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}" />{% endif %}
+                    <div class="row">
+                        <div class="col s12">
+                            <h4 class="form-title black-text">{% if add %}{% trans 'New' %} {{ opts.verbose_name }}{% else %}{{ adminform.form.instance|title }}{% endif %}</h4>
+                        </div>
+                    </div>
+                    {% if errors %}
+                    <div class="row">
+                        <div class="col s12">
+                            <small class="errornote">
+                                {% if errors|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
+                                <br/><br/>
+                            </small>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% block change_form %}
+                        {% fieldset_layout adminform inline_admin_formsets as layout %}
+                        {% form form=adminform.form layout=layout %}{% endform %}
+                        {% prepopulated_fields_js %}
+                    {% endblock %}
+                    {% block after_related_objects %}{% endblock %}
+                </div>
+                <div class="card-action">
+                    {% submit_row %}
+                </div>
+            </div>
+        </form>
+    </div>
+    {% if not is_popup and change %}
+    <div class="col s12 m12 l3">
+        <div class="card actions-card">
+            <div class="card-content">
+                <span class="card-title black-text">{% trans "Action" %}</span>
+                {% block object-tools %}
+                <div class="row">
+                    <div class="col s12">
+                        <ul class="object-tools col s12">
+                            {% block object-tools-items %}
+                            <li>
+                                {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
+                                <a href="{% add_preserved_filters history_url %}" class="historylink">{% trans "History" %}</a>
+                            </li>
+                            {% if has_absolute_url %}<li><a href="{{ absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>{% endif %}
+                            {% endblock %}
+                        </ul>
+                    </div>
+                </div>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if adminform and add %}
+    <script type="text/javascript">
+      $('form#{{ opts.model_name }}_form :input:visible:enabled:first').attr('autofocus', true);
+      $('form#{{ opts.model_name }}_form :input:visible:enabled:first').focus();
+    </script>
+    {% endif %}
+</div>
+{% endblock %}

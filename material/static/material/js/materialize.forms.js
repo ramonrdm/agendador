@@ -6,7 +6,7 @@
       animateForms: true,
       newFormCallback: initForms
     })
-    
+
     // Select
     // http://materializecss.com/forms.html#select
     $container
@@ -14,7 +14,7 @@
       .not('.disabled')
       .not('.material-ignore')
       .material_select()
-    
+
     // Date/DateTime/Time
     // https://github.com/xdan/datetimepicker
     $container
@@ -50,5 +50,24 @@
       })
   }
 
-  $(document).on('ready turbolinks:load', function() { initForms($(document)) })
+  function destroyForms ($container) {
+    // Select
+    $container
+      .find('select')
+      .not('.disabled')
+      .not('.material-ignore')
+      .material_select('destroy')
+
+    // Date/DateTime/Time
+    $container
+      .find('[data-form-control="date"],[data-form-control="time"],[data-form-control="datetime"]')
+      .datetimepicker('destroy');
+  }
+
+  if(window.Turbolinks) {
+    $(document).on('turbolinks:load', function() { initForms($(document)) })
+    $(document).on('turbolinks:before-cache', function () { destroyForms($(document))})
+  } else {
+    $(document).on('ready', function() { initForms($(document)) })
+  }
 })()

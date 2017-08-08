@@ -10,6 +10,47 @@ body {
 th {
   font-weight: 300; }
 
+/* REGISTRATION */
+.registration {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  background-size: cover !important; }
+  .registration .sidebar {
+    align-items: center;
+    align-self: flex-start;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+    min-width: 400px;
+    max-width: 400px;
+    opacity: 0.85;
+    text-align: center; }
+    .registration .sidebar h4 {
+      font-weight: 300; }
+    .registration .sidebar form {
+      width: 90%; }
+  .registration .logo {
+    -ms-grid-row-align: center;
+        align-self: center;
+    width: 100%;
+    text-align: center;
+    color: white; }
+    .registration .logo .logo__icon {
+      font-size: 20rem; }
+  .registration .action button {
+    width: calc(100% - 3rem);
+    margin-top: 1.5rem; }
+
+@media only screen and (max-width: 600px) {
+  .registration .logo {
+    display: none; }
+  .registration .sidebar {
+    width: 100%; } }
+
 /* LAYOUT */
 @media only screen and (min-width: 993px) {
   html {
@@ -21,7 +62,8 @@ th {
 
 .content {
   display: flex;
-  max-width: 100%; }
+  max-width: 100%;
+  padding-bottom: 50px; }
 
 .left-panel {
   flex-basis: 80%;
@@ -37,6 +79,8 @@ th {
   min-width: 250px;
   margin-left: 0.375rem;
   margin-right: 0.375rem; }
+  .right-panel > .card {
+    margin-bottom: 0.5rem; }
 
 @media only screen and (max-width: 993px) {
   .left-panel {
@@ -84,30 +128,34 @@ th {
   overflow-y: hidden; }
   .side-nav.fixed .userView {
     min-height: 175px; }
+  .side-nav.fixed li {
+    min-height: 48px; }
   .side-nav.fixed > li.last {
     padding-bottom: 58px; }
-  .side-nav.fixed .collapsible-body li a {
-    padding-left: 70px; }
-  .side-nav.fixed .collapsible-body li .collapsible li.active {
-    background-color: rgba(0, 0, 0, 0.05); }
-    .side-nav.fixed .collapsible-body li .collapsible li.active a {
+  .side-nav.fixed .collapsible-body {
+    padding: 0; }
+    .side-nav.fixed .collapsible-body li a {
+      padding-left: 70px; }
+    .side-nav.fixed .collapsible-body li .collapsible li.active {
+      background-color: rgba(0, 0, 0, 0.05); }
+      .side-nav.fixed .collapsible-body li .collapsible li.active a {
+        color: rgba(0, 0, 0, 0.87); }
+    .side-nav.fixed .collapsible-body li:not(.active) > a.collapsible-header {
       color: rgba(0, 0, 0, 0.87); }
-  .side-nav.fixed .collapsible-body li:not(.active) > a.collapsible-header {
-    color: rgba(0, 0, 0, 0.87); }
-  .side-nav.fixed .collapsible-body li .collapsible-body li.active {
-    background-color: #303f9f; }
-    .side-nav.fixed .collapsible-body li .collapsible-body li.active a {
-      color: #fff; }
-  .side-nav.fixed .collapsible-body li .collapsible-body li a {
-    color: rgba(0, 0, 0, 0.87);
-    padding-left: 90px; }
-  .side-nav.fixed .collapsible-body .collapsible li.active > a.active {
-    color: rgba(0, 0, 0, 0.87); }
-  .side-nav.fixed .collapsible-body .submenu.active {
-    background-color: rgba(0, 0, 0, 0.05) !important; }
-    .side-nav.fixed .collapsible-body .submenu.active .collapsible li.active > a.active,
-    .side-nav.fixed .collapsible-body .submenu.active .collapsible li.active > .collapsible-header {
+    .side-nav.fixed .collapsible-body li .collapsible-body li.active {
+      background-color: #303f9f; }
+      .side-nav.fixed .collapsible-body li .collapsible-body li.active a {
+        color: #fff; }
+    .side-nav.fixed .collapsible-body li .collapsible-body li a {
+      color: rgba(0, 0, 0, 0.87);
+      padding-left: 90px; }
+    .side-nav.fixed .collapsible-body .collapsible li.active > a.active {
       color: rgba(0, 0, 0, 0.87); }
+    .side-nav.fixed .collapsible-body .submenu.active {
+      background-color: rgba(0, 0, 0, 0.05) !important; }
+      .side-nav.fixed .collapsible-body .submenu.active .collapsible li.active > a.active,
+      .side-nav.fixed .collapsible-body .submenu.active .collapsible li.active > .collapsible-header {
+        color: rgba(0, 0, 0, 0.87); }
 
 /* TOPBAR */
 nav.topbar {
@@ -216,8 +264,6 @@ table[data-form-control="datatable"] {
       height: 30px;
       top: 0px;
       bottom: 0px; }
-    table[data-form-control="datatable"] thead tr > th.sorting:last-child:before, table[data-form-control="datatable"] thead tr > th.sorting:last-child:after, table[data-form-control="datatable"] thead tr > th.sorting_asc:last-child:before, table[data-form-control="datatable"] thead tr > th.sorting_asc:last-child:after, table[data-form-control="datatable"] thead tr > th.sorting_desc:last-child:before, table[data-form-control="datatable"] thead tr > th.sorting_desc:last-child:after, table[data-form-control="datatable"] thead tr > th.sorting_asc_disabled:last-child:before, table[data-form-control="datatable"] thead tr > th.sorting_asc_disabled:last-child:after, table[data-form-control="datatable"] thead tr > th.sorting_desc_disabled:last-child:before, table[data-form-control="datatable"] thead tr > th.sorting_desc_disabled:last-child:after {
-      padding-right: 20px; }
     table[data-form-control="datatable"] thead tr > th.sorting:before, table[data-form-control="datatable"] thead tr > th.sorting_asc:before, table[data-form-control="datatable"] thead tr > th.sorting_desc:before, table[data-form-control="datatable"] thead tr > th.sorting_asc_disabled:before, table[data-form-control="datatable"] thead tr > th.sorting_desc_disabled:before {
       right: 1em;
       content: "\2191"; }
@@ -240,12 +286,20 @@ table[data-form-control="datatable"] {
     padding-left: 20px; }
   table[data-form-control="datatable"] tbody tr > td:last-child {
     padding-right: 20px; }
+  table[data-form-control="datatable"] tbody tr > td > i.material-icons {
+    height: 16px;
+    margin-top: -8px;
+    font-size: 22px;
+    display: block; }
 
 .fixedHeader-floating {
   /* Fix for checkbox column */
   z-index: 1; }
 
 /* ALERTS */
+.toast {
+  justify-content: flex-start; }
+
 .toast a {
   color: white; }
   .toast a.alert-info {
@@ -256,17 +310,10 @@ table[data-form-control="datatable"] {
     background-color: #bf360c; }
 
 /* FORM CARD */
-.form-card .card-title {
-  font-size: 1.2rem;
-  font-weight: 300;
-  text-transform: uppercase;
-  display: block;
-  margin-top: -10px; }
-
-form .section {
+.card form .section {
   padding-top: 0;
   padding-bottom: 0; }
-  form .section h5 {
+  .card form .section h5 {
     font-size: 1.2rem;
     padding-bottom: 0.5rem;
     border-bottom: 2px solid black;
