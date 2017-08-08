@@ -14,8 +14,8 @@
     <div class="row">
     <div class="card col s3 m12 l12">
         <div class="card-content">
-            <a href="{% url 'admin:agenda_equipamento_add' %}">Teste</a>
-            <span class="card-title black-text"> Setor: {{unidade}} </span>
+            <a href="{% url 'admin:agenda_equipamento_add' %}">Teste  .  </a>
+            <span class="card-title black-text"> Unidade atual: {{unidade}} </span>
         </div>
     </div>
     </div>
@@ -38,11 +38,11 @@
     </div>
     {% endif %}
 
+    {% if espacosfisicos %}
     <div class="card" id="espacosFisicos" >
         <div class="card-content">
             <span class="card-title">Espaços Físicos do {{unidade.sigla}}:</span>
                 <div class="row">
-                    {% if espacosfisicos %}
                         {% for year, months in years %}
                             <ul class="collapsible" data-collapsible="accordion">
                             <li>
@@ -64,12 +64,10 @@
                             </li>
                         {% endfor %}
                             </ul>
-                    {% else %}
-                    <span>Sem espaços fisicos neste setor.</span>
-                    {% endif %}
                 </div>
         </div>
     </div>
+    {% endif %}
 
 
     <div class="row ">
