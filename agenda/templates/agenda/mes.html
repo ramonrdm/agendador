@@ -4,6 +4,10 @@
 <div class="container">
 {% block content %}
 
+<script type="text/javascript">
+    console.log("START");
+    console.log($().jquery);
+</script>
 <script src="/static/agenda/fullCalendar/lib/moment.min.js"></script>
 <link rel='stylesheet' href="/static/agenda/fullCalendar/fullcalendar.css" />
 <script src="/static/agenda/fullCalendar/fullcalendar.js"></script>
@@ -16,6 +20,10 @@
 </div>
 </div>
 -->
+<script type="text/javascript">
+    console.log("START");
+    console.log($().jquery);
+</script>
     <div id="agenda">
     
     <a class="btn right" href="{%url 'mese' espaco.id year month 'next' %}">proximo</a>
@@ -90,33 +98,34 @@ function drawCallendar() {
 
 <script type="text/javascript">
 	
-$(document).ready(function() {
+$(function() {
+    alert("teste");
    $('#calendar').fullCalendar({
-        monthNames:["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
-        dayNamesShort:["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+        // monthNames:["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
+        // dayNamesShort:["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
 
-        events: [
+        // events: [
 
-        {% for week in month_days %}
-            {% for day, entries, current in week %}
-                {% if day != 0 %}
-                        {% for entry in entries %}
-                            {
-                                title: "{{ entry.horaInicio|date:"H:i" }}-{{ entry.horaFim|date:"H:i" }}",
-                                start: "{{entry.data|date:"Y-m-d"}}"
-                            },
-                        {% endfor %}
-                {% endif %}
-            {% endfor %}
-        {% endfor %}
-        ],
-        eventAfterAllRender: function() {
-            $(".fc-day").each(function(index,value) {       
-                if(value.className.indexOf("fc-other-month") === -1) {
-                    $(value).html("<a href='/materialicons'>add_circle</a>");
-                }
-           });
-        }
+        // {% for week in month_days %}
+        //     {% for day, entries, current in week %}
+        //         {% if day != 0 %}
+        //                 {% for entry in entries %}
+        //                     {
+        //                         title: "{{ entry.horaInicio|date:"H:i" }}-{{ entry.horaFim|date:"H:i" }}",
+        //                         start: "{{entry.data|date:"Y-m-d"}}"
+        //                     },
+        //                 {% endfor %}
+        //         {% endif %}
+        //     {% endfor %}
+        // {% endfor %}
+        // ],
+        // eventAfterAllRender: function() {
+        //     $(".fc-day").each(function(index,value) {       
+        //         if(value.className.indexOf("fc-other-month") === -1) {
+        //             $(value).html("<a href='/materialicons'>add_circle</a>");
+        //         }
+        //    });
+        // }
 
     });     
     setMonth();
@@ -142,6 +151,11 @@ $(".modal").modal();
 
 
 
+</script>
+
+<script type="text/javascript">
+    console.log("FIM");
+    console.log($().jquery);
 </script>
 
 {% endblock %}
