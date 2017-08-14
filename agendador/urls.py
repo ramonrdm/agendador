@@ -34,6 +34,7 @@ urlpatterns = [
     url(r'^accounts/login/$', views2.login, name="login cas"),
     url(r'^accounts/logout/$', views2.logout, name="logout cas"),
     url(r'^(?P<unidade>\w+)$', views.index, name='Reservas-UFSC'),
+    url(r'^intermediaria/(?P<id_equip>\d+)/(?P<data_numero>\d+)$', views.intermediaria, name="intermediaria"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

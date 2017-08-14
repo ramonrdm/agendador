@@ -1,5 +1,6 @@
 from django.contrib import admin
 from agenda.models import *
+from django.contrib.auth.models import User
 
 admin.site.register(Atividade)
 #admin.site.register(EspacoFisico)
@@ -29,6 +30,22 @@ class ReservaEquipamentoAdmin(admin.ModelAdmin):
 	search_fields = ['finalidade', 'usuario__username']
 	icon = '<i class="material-icons">power</i>'
 
+	def get_form(self, request, obj=None, **kwargs):
+		form = super(ReservaEquipamentoAdmin, self).get_form(request, obj, **kwargs)
+		if 'id_equip' in request.session:
+			form.base_fields['usuario'].initial = request.user.id
+			form.base_fields['data'].initial = request.session['data']
+			form.base_fields['espacoFisico'].initial = request.session['id_equip']
+		return form
+
+	def get_readonly_fields(self, request, obj=None):
+		qs = super(ReservaEquipamentoAdmin, self).get_queryset(request)
+		if request.user.is_superuser:
+			return []
+		if obj in qs:
+			return ['data','espacoFisico']
+		return []
+
 admin.site.register(ReservaEquipamento, ReservaEquipamentoAdmin)
 
 class ReservaEspacoFisicoAdmin(admin.ModelAdmin):
@@ -54,6 +71,8 @@ class EquipamentoAdmin(admin.ModelAdmin):
 		if obj in qsResp:
 			return ['responsavel', 'unidade']
 		return []
+
+
 
 admin.site.register(Equipamento, EquipamentoAdmin)
 
