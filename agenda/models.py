@@ -58,7 +58,7 @@ class Reserva(models.Model):
 	data = models.DateField()
 	horaInicio = models.TimeField()
 	horaFim = models.TimeField()
-	dataReserva  = models.DateTimeField(auto_now_add=True)
+	dataReserva = models.DateTimeField(auto_now_add=True)
 	atividade = models.ForeignKey(Atividade)
 	usuario = models.ForeignKey(User)
 	ramal = models.PositiveIntegerField()

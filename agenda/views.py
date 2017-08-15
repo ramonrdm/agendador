@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.shortcuts import render, get_object_or_404, render_to_response
+from django.shortcuts import render, get_object_or_404, render_to_response, redirect
 from django.utils.safestring import mark_safe
 import time, calendar
 from datetime import date, datetime, timedelta
@@ -198,3 +198,10 @@ def addreserva(request, espacoatual, ano=None, mes= None, dia=None):
         #form.fields['horaInicio'] = forms.ChoiceField(choices)
 
     return render(request, "addreserva.html", {'form': form, "usuario": usuario, 'dados': dados })
+
+def intermediaria(request, id_equip, data_numero):
+    request.session['id_equip'] = id_equip
+    data_string = str(data_numero)
+    data = data_string[0]+data_string[1]+'/'+data_string[2]+data_string[3]+'/'+data_string[4]+data_string[5]+data_string[6]+data_string[7]
+    request.session['data'] = data
+    return redirect('/adminagenda/reservaequipamento/add/')
