@@ -1,29 +1,18 @@
 {% extends "base.html" %}
 {% block title %}{{ espaco.nome }} - {{ mname }}/{{ year }}{% endblock %}
+{% load static %}
+
+{% block js %}
+    {{ block.super }}
+    <link rel='stylesheet' href="{% static 'agenda/fullcalendar/fullcalendar.css' %}" />
+    <script src="{% static 'agenda/fullcalendar/lib/moment.min.js' %}"></script>
+    <script src="{% static 'agenda/fullcalendar/fullcalendar.js' %}"></script>
+{% endblock %}
+
 <div class="row">
 <div class="container">
 {% block content %}
-<script type="text/javascript">
-    console.log("START");
-    console.log($().jquery);
-    jq162 = jQuery.noConflict( true );
-</script>
-<script src="/static/agenda/fullCalendar/lib/moment.min.js"></script>
-<link rel='stylesheet' href="/static/agenda/fullCalendar/fullcalendar.css" />
-<script src="/static/agenda/fullCalendar/fullcalendar.js"></script>
 
-<!--
-<div class="row">
-<div class="col s12 m12 l12">
-            <div class="cad col s12 teal lighten-2"><span class="flow-text">Estou sempre ocupando a largura total(col s12)</span></div>
-            <div class="card col s12 m6 teal lighten-2"><span class="flow-text">Estou sempre ocupando a largura total em dispositivos móveis (col s12 m6)</span></div>
-</div>
-</div>
--->
-<script type="text/javascript">
-    console.log("START");
-    console.log($().jquery);
-</script>
     <div id="agenda">
     
     <a class="btn right" href="{%url 'mese' espaco.id year month 'next' %}">proximo</a>
@@ -31,70 +20,11 @@
 
     <div id="calendar"> </div>
     
-    
-
     </div>
     
-    <div id="modal1" class="modal">
-        <div class="modal-content">
-            <h4>Modal Header</h4>
-            <p>Um monte de texto</p>
-        </div>
-    </div>
-
-
-      <!--Import jQuery before materialize.js 
-      <table class="col s12 m6 table bordered"> 
-        <thead>
-          <tr>
-            <th class="center-align">Segunda</th>
-            <th class="center-align">Terça</th>
-            <th class="center-align">Quarta</th>
-            <th class="center-align">Quinta</th>
-            <th class="center-align">Sexta</th>
-            <th class="center-align">Sábado</th>
-            <th class="center-align">Domingo</th>
-          </tr>
-        </thead>
-        <tbody>
-            {% for week in month_days %}
-                    <tr>
-                        {% for day, entries, current in week %}
-                            {% if day == 0 %}
-                                <td></td>
-                            {% else %}
-                                <td class="left-align"><span>{{ day }}</span>
-                                <ul>
-                                {% for entry in entries %}
-                                       <li>{{ entry.horaInicio|date:"H:i" }} até {{ entry.horaFim|date:"H:i" }} {{ entry.tipoEvento}}/{{ entry.departamento}}</li> 
-                                {% endfor %}            
-                                </ul>
-                                    </td>
-                            {% endif %}
-                        {% endfor %}
-                    </tr>
-            {% endfor %}
-        </tbody>
-
-      </table>-->
       </div>
     </div>
 
-    
-<!--
-<script>
-
-$(document).ready(function() {
-    drawCallendar();
-});
-
-function drawCallendar() {
-    for (var i = 0; i < 5; i++) {
-        $("#corpoCalendario").append("<tr id='semana"+i+"'></tr>");
-        for (var j = 0; j < 7; j++) {
-            $("#semana"+i).append("<td id='dia"+j+"'></td>")
-</script>
--->
 
 <script type="text/javascript">
 	
@@ -127,7 +57,7 @@ $(function() {
         // }
 
     });     
-    setMonth();
+    //setMonth();
 });
 
 function setMonth() {
@@ -145,7 +75,7 @@ function setMonth() {
 
 <script>
 // o mês da de pegar pelo django e o dia da de pegar pelo span do fc-number do componente.
-$(".modal").modal();
+//$(".modal").modal();
 // ou colocar direto na tag ou chamar com o ajax o form de adicionar reservas.
 
 
