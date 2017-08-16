@@ -1,22 +1,19 @@
 {% extends "base.html" %}
-
 {% block nav-global %}
 {% endblock %}
 {% block title %} Agendador - {{unidade.sigla}}{% endblock %}
+{% block page_title %}
+    <strong>Unidade: {{unidade.sigla}}</strong>
+{% endblock %}
 
 {% block extracss %}
     {% load static %}
-
+    {% include 'material/includes/material_css.html' %}
 {% endblock %}
 {% block js %}
     {{ block.super }}
-    inicio
-    {% include 'material/includes/material_css.html' %}
     <script src="{% static 'material/js/jquery.js' %}"></script>
-    meio
     {% include 'material/includes/material_js.html' %}
-    Ramon fim
-
 {% endblock %}
 
 {% block content %}
@@ -29,6 +26,7 @@
         </div>
     </div>
     </div>
+
     {% if unidades %}
     <div class="card">
         <div class="card-content">
