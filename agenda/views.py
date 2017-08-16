@@ -20,8 +20,6 @@ mnames = "Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubr
 mnames = mnames.split()
 
 def index(request, unidade=None):
-    print("RAMÃO RAMÃO RAMÃO")
-    
     #titulo = "Agendador UFSC"
     #corpo = "Bem vindo ao Agendador de espaços físicos e equipamentos da UFSC"
 
