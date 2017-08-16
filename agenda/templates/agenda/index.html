@@ -8,13 +8,23 @@
     {% load static %}
 
 {% endblock %}
+{% block js %}
+    {{ block.super }}
+    inicio
+    {% include 'material/includes/material_css.html' %}
+    <script src="{% static 'material/js/jquery.js' %}"></script>
+    meio
+    {% include 'material/includes/material_js.html' %}
+    Ramon fim
+
+{% endblock %}
 
 {% block content %}
 <div class="section">
     <div class="row">
     <div class="card col s3 m12 l12">
         <div class="card-content">
-            <a href="{% url 'intermediaria' 3 25082017 %}">Teste  .  </a>
+            <a href="{% url 'admin:agenda_equipamento_add' %}">Teste  .  </a>
             <span class="card-title black-text"> Unidade atual: {{unidade}} </span>
         </div>
     </div>
