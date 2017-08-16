@@ -1,6 +1,7 @@
 from django.contrib import admin
 from agenda.models import *
 from django.contrib.auth.models import User
+from django.forms import HiddenInput
 
 admin.site.register(Atividade)
 #admin.site.register(EspacoFisico)
@@ -36,6 +37,11 @@ class ReservaEquipamentoAdmin(admin.ModelAdmin):
 			form.base_fields['usuario'].initial = request.user.id
 			form.base_fields['data'].initial = request.session['data']
 			form.base_fields['espacoFisico'].initial = request.session['id_equip']
+
+		if not request.user.is_superuser:
+			form.base_fields['usuario'].widget = HiddenInput()
+			form.base_fields['usuario'].label = ""
+
 		return form
 
 
