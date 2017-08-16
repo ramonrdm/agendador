@@ -38,13 +38,20 @@ class ReservaEquipamentoAdmin(admin.ModelAdmin):
 			form.base_fields['espacoFisico'].initial = request.session['id_equip']
 		return form
 
-	def get_readonly_fields(self, request, obj=None):
-		qs = super(ReservaEquipamentoAdmin, self).get_queryset(request)
-		if request.user.is_superuser:
-			return []
-		if obj in qs:
-			return ['data','espacoFisico']
-		return []
+
+	def formfield_for_foreignkey(self, db_field, request, **kwargs):
+		if db_field.name == "usuario":
+			if request.user.is_superuser:
+				kwargs["queryset"] = User.objects.all()
+			else:
+				kwargs["queryset"] = User.objects.filter(id=request.user.id)
+		if db_field.name == "espacoFisico":
+			if request.user.is_superuser:
+				kwargs["queryset"] = ReservaEquipamento.objects.all()
+			else:
+				kwargs["queryset"] = Equipamento.objects.filter(id=request.session['id_equip'])
+		return super(ReservaEquipamentoAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
 
 admin.site.register(ReservaEquipamento, ReservaEquipamentoAdmin)
 
@@ -68,10 +75,8 @@ class EquipamentoAdmin(admin.ModelAdmin):
 		qsResp = qs.filter(responsavel=request.user)
 		if request.user.is_superuser:
 			return []
-		if obj in qsResp:
+		else:
 			return ['responsavel', 'unidade']
-		return []
-
 
 
 admin.site.register(Equipamento, EquipamentoAdmin)
