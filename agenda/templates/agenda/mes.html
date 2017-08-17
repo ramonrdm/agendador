@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{{ espaco.nome }} - {{ mname }}/{{ year }}{% endblock %}
 {% load static %}
-
+{% block page_title %} Resevas de {{ espaco.nome }} - {{ mname }}/{{ year }} {% endblock %}
 {% block js %}
     {{ block.super }}
 
@@ -30,14 +30,6 @@ jQuery(document).ready(function() {
         dayNamesShort:["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
 
         events: [
-                {
-                    title: 'Primeiro evento',
-                    start: '2017-08-07',
-                },
-                {
-                    title: 'Segunda Reserva',
-                    start: '2017-08-07',
-                },
         {% for week in month_days %}
             {% for day, entries, current in week %}
                 {% if day != 0 %}
@@ -51,16 +43,16 @@ jQuery(document).ready(function() {
             {% endfor %}
         {% endfor %}
         ],
-        // eventAfterAllRender: function() {
-        //     $(".fc-day").each(function(index,value) {       
-        //         if(value.className.indexOf("fc-other-month") === -1) {
-        //             $(value).html("<a href='/materialicons'>add_circle</a>");
-        //         }
-        //    });
-        // }
+        eventAfterAllRender: function() {
+            $(".fc-day").each(function(index,value) {       
+                if(value.className.indexOf("fc-other-month") === -1) {
+                    $(value).html("<a href='materialicons'>add_circle</a>");
+                }
+           });
+        }
 
     });     
-    //setMonth();
+    setMonth();
 });
 
 function setMonth() {
