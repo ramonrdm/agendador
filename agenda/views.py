@@ -117,11 +117,6 @@ def mes(request, espaco, year, month, change=None, tipo=None):
         espacofisico = Equipamento.objects.get(id=espaco)
     else:
         espacofisico = EspacoFisico.objects.get(id=espaco)
-    for week in lst:
-            for entries in week:
-                    for entry in entries:
-                        print(entry)
-    print(month)
     return render(
             request,
             "agenda/mes.html", 
