@@ -44,10 +44,12 @@ jQuery(document).ready(function() {
         {% endfor %}
         ],
         eventAfterAllRender: function() {
-            $(".fc-day").each(function(index,value) {       
+            $(".fc-day-top").each(function(index,value) {       
                 if(value.className.indexOf("fc-other-month") === -1) {
-                    $(value).append("<a href='http://ufsc.br'><i class=material-icons>add_circle</i></a>");
+                    var a = $(value).children().text();
+                    $(value).append("<a href='/adminagenda/reservaequipamento/add/{{month}}/"+a+"'><i class=material-icons>add_circle</i></a>");
                     $(value).css('text-align', 'center');
+
                 }
            });
         }
