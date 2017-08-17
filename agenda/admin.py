@@ -53,7 +53,7 @@ class ReservaEquipamentoAdmin(admin.ModelAdmin):
 				kwargs["queryset"] = User.objects.filter(id=request.user.id)
 		if db_field.name == "espacoFisico":
 			if request.user.is_superuser:
-				kwargs["queryset"] = ReservaEquipamento.objects.all()
+				kwargs["queryset"] = Equipamento.objects.all()
 			else:
 				kwargs["queryset"] = Equipamento.objects.filter(id=request.session['id_equip'])
 		return super(ReservaEquipamentoAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
