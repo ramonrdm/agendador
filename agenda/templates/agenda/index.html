@@ -18,6 +18,17 @@
 
 {% block content %}
 <div class="section">
+
+    <div class="row">
+    <div class="card col s3 m12 l12">
+        <div class="card-content">
+            <a href="{% url 'intermediaria' 1 25102017 %}">Teste  .  </a>
+            <span class="card-title black-text"> Unidade atual: {{unidade}} </span>
+        </div>
+    </div>
+    </div>
+
+
     {% if unidades %}
     <div class="card">
         <div class="card-content">
