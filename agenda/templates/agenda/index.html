@@ -1,19 +1,9 @@
-{% extends "base.html" %}
+{% extends "agenda/base.html" %}
 {% block nav-global %}
 {% endblock %}
 {% block title %} Agendador - {{unidade.sigla}}{% endblock %}
 {% block page_title %}
     <strong>Unidade: {{unidade.sigla}}</strong>
-{% endblock %}
-
-{% block extracss %}
-    {% load static %}
-    {% include 'material/includes/material_css.html' %}
-{% endblock %}
-{% block js %}
-    {{ block.super }}
-    <script src="{% static 'material/js/jquery.js' %}"></script>
-    {% include 'material/includes/material_js.html' %}
 {% endblock %}
 
 {% block content %}

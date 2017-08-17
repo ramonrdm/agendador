@@ -1,0 +1,9 @@
+{% extends 'material/frontend/base.html' %}
+{% load static %}
+{% block js %}
+    {{ block.super }}
+    <link rel='stylesheet' href="{% static 'agenda/fullcalendar/fullcalendar.css' %}" />
+    <script src="{% static 'agenda/fullcalendar/lib/moment.min.js' %}"></script>
+    <script src="{% static 'agenda/fullcalendar/fullcalendar.js' %}"></script>
+
+{% endblock %}

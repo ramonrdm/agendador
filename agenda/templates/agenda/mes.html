@@ -1,26 +1,37 @@
-{% extends "base.html" %}
+{% extends "agenda/base.html" %}
 {% block title %}{{ espaco.nome }} - {{ mname }}/{{ year }}{% endblock %}
-{% load static %}
+
 {% block page_title %} Resevas de {{ espaco.nome }} - {{ mname }}/{{ year }} {% endblock %}
-{% block js %}
-    {{ block.super }}
 
-    <link rel='stylesheet' href="{% static 'agenda/fullcalendar/fullcalendar.css' %}" />
-    <script src="{% static 'agenda/fullcalendar/lib/moment.min.js' %}"></script>
-    <script src="{% static 'agenda/fullcalendar/fullcalendar.js' %}"></script>
+<div class="row">
+<div class="container">
+{% block content %}
 
+<div id="calendar"> </div>
+
+    <div id="agenda">
+    <a class="btn right" href="{%url 'mese' espaco.id year month 'next' %}">próximo</a>
+    <a class="btn right" href="{%url 'mese' espaco.id year month 'prev' %}">anterior</a>
+    </div>
+    
+      </div>
+    </div>
+
+
+
+
+<!-- tirar esse script desse arquivo depois para deixar mais bem organizado. -->
+
+<script>
+// o mês da de pegar pelo django e o dia da de pegar pelo span do fc-number do componente.
+//$(".modal").modal();
+// ou colocar direto na tag ou chamar com o ajax o form de adicionar reservas.
+
+
+
+</script>
     <script type="text/javascript">
     console.log("Inicio");
-    //console.log($().jquery);
-    //console.log(jQuery.jquery);
-    //$.noConflict();
-    // jQuery(document).ready(function() {
-    // //page is now ready, initialize the calendar...
-    //     jQuery('#calendar').fullCalendar({
-    //         // put your options and callbacks here
-    //     });
-
-    // });
     </script>
     <script type="text/javascript">
     
@@ -55,6 +66,7 @@ jQuery(document).ready(function() {
            });
         }
 
+
     });     
     setMonth();
 });
@@ -69,41 +81,11 @@ function setMonth() {
         }
 }
 </script>
-{% endblock %}
-
-<div class="row">
-<div class="container">
-{% block content %}
-
-<div id="calendar"> </div>
-
-    <div id="agenda">
-    
-    <a class="btn right" href="{%url 'mese' espaco.id year month 'next' %}">proximo</a>
-    <a class="btn right" href="{%url 'mese' espaco.id year month 'prev' %}">anterior</a>
-
-    
-    
-    </div>
-    
-      </div>
-    </div>
-
-
-
-
-<!-- tirar esse script desse arquivo depois para deixar mais bem organizado. -->
-
-<script>
-// o mês da de pegar pelo django e o dia da de pegar pelo span do fc-number do componente.
-//$(".modal").modal();
-// ou colocar direto na tag ou chamar com o ajax o form de adicionar reservas.
-
-
-
-</script>
 
 <script type="text/javascript">
+
+
+
     console.log("FIM");
     console.log(jQuery.jquery);
 </script>
