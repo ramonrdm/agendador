@@ -70,7 +70,13 @@ class Reserva(models.Model):
 class ReservaEspacoFisico(Reserva):
 	espacoFisico = models.ForeignKey(EspacoFisico)
 
+	def __unicode__(self):
+		return self.usuario.username+"/"+self.atividade.nome
+
 
 class ReservaEquipamento(Reserva):
-	espacoFisico = models.ForeignKey(Equipamento)
+	equipamento = models.ForeignKey(Equipamento)
+
+	def __unicode__(self):
+		return self.usuario.username+"/"+self.atividade.nome
 

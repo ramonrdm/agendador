@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from agenda.models import Reserva, EspacoFisico, ReservaEspacoFisico
+from agenda.models import Reserva, EspacoFisico, ReservaEspacoFisico, ReservaEquipamento
 from django import forms
 from django.contrib.admin import widgets
 import datetime
@@ -8,6 +8,17 @@ from django.core.mail import send_mail
 from django.forms.extras.widgets import SelectDateWidget
 from django.forms import ModelForm, Form
 
+class ReservaEquipamentoAdminForm(forms.ModelForm):
+	"""docstring for ReservaEquipamentoAdminForm"""
+	class Meta:
+		model = ReservaEquipamento
+		fields = '__all__'
+	def __init__(self, *args, **kwargs):
+		self.request = kwargs.pop("request", None)
+		super(ReservaEquipamentoAdminForm, self).__init__(*args, **kwargs)
+		self.fields['usuario'].initial = self.request.user.id
+		self.fields['data'].initial = self.request.session['data']
+		self.fields['equipamento'].initial = self.request.session['id_equip']
 
 class FormReserva(forms.ModelForm):
 	"""Formulário de reservas CCS"""

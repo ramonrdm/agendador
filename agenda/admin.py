@@ -1,5 +1,6 @@
 from django.contrib import admin
 from agenda.models import *
+from agenda.forms import ReservaEquipamentoAdminForm
 from django.contrib.auth.models import User
 from django.forms import HiddenInput
 
@@ -27,36 +28,46 @@ class UnidadeAdmin(admin.ModelAdmin):
 		return []
 
 class ReservaEquipamentoAdmin(admin.ModelAdmin):
-	list_display = ('usuario', 'espacoFisico', 'data', 'ramal', 'finalidade')
+	form = ReservaEquipamentoAdminForm
+	list_display = ('usuario', 'equipamento', 'data', 'ramal', 'finalidade')
 	search_fields = ['finalidade', 'usuario__username']
 	icon = '<i class="material-icons">power</i>'
 
 	def get_form(self, request, obj=None, **kwargs):
-		form = super(ReservaEquipamentoAdmin, self).get_form(request, obj, **kwargs)
-		if 'id_equip' in request.session:
-			form.base_fields['usuario'].initial = request.user.id
-			form.base_fields['data'].initial = request.session['data']
-			form.base_fields['espacoFisico'].initial = request.session['id_equip']
+		AdminForm =  super(ReservaEquipamentoAdmin, self).get_form(request, obj, **kwargs)
+		class AdminFormWithRequest(AdminForm):
+			def __new__(cls, *args, **kwargs):
+				kwargs['request'] = request
+				return AdminForm(*args, **kwargs)
 
-		if not request.user.is_superuser:
-			form.base_fields['usuario'].widget = HiddenInput()
-			form.base_fields['usuario'].label = ""
+		return AdminFormWithRequest
 
-		return form
+	# def get_form(self, request, obj=None, **kwargs):
+	# 	form = super(ReservaEquipamentoAdmin, self).get_form(request, obj, **kwargs)
+	# 	if 'id_equip' in request.session:
+	# 		form.base_fields['usuario'].initial = request.user.id
+	# 		form.base_fields['data'].initial = request.session['data']
+	# 		form.base_fields['espacoFisico'].initial = request.session['id_equip']
+
+	# 	if not request.user.is_superuser:
+	# 		form.base_fields['usuario'].widget = HiddenInput()
+	# 		form.base_fields['usuario'].label = ""
+
+	# 	return form
 
 
-	def formfield_for_foreignkey(self, db_field, request, **kwargs):
-		if db_field.name == "usuario":
-			if request.user.is_superuser:
-				kwargs["queryset"] = User.objects.all()
-			else:
-				kwargs["queryset"] = User.objects.filter(id=request.user.id)
-		if db_field.name == "espacoFisico":
-			if request.user.is_superuser:
-				kwargs["queryset"] = Equipamento.objects.all()
-			else:
-				kwargs["queryset"] = Equipamento.objects.filter(id=request.session['id_equip'])
-		return super(ReservaEquipamentoAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+	# def formfield_for_foreignkey(self, db_field, request, **kwargs):
+	# 	if db_field.name == "usuario":
+	# 		if request.user.is_superuser:
+	# 			kwargs["queryset"] = User.objects.all()
+	# 		else:
+	# 			kwargs["queryset"] = User.objects.filter(id=request.user.id)
+	# 	if db_field.name == "espacoFisico":
+	# 		if request.user.is_superuser:
+	# 			kwargs["queryset"] = Equipamento.objects.all()
+	# 		else:
+	# 			kwargs["queryset"] = Equipamento.objects.filter(id=request.session['id_equip'])
+	# 	return super(ReservaEquipamentoAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 admin.site.register(ReservaEquipamento, ReservaEquipamentoAdmin)
