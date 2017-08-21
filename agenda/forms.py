@@ -6,7 +6,7 @@ from django.contrib.admin import widgets
 import datetime
 from django.core.mail import send_mail
 from django.forms.extras.widgets import SelectDateWidget
-from django.forms import ModelForm, Form
+from django.forms import ModelForm, Form, HiddenInput
 
 class ReservaEquipamentoAdminForm(forms.ModelForm):
 	"""docstring for ReservaEquipamentoAdminForm"""
@@ -17,8 +17,12 @@ class ReservaEquipamentoAdminForm(forms.ModelForm):
 		self.request = kwargs.pop("request", None)
 		super(ReservaEquipamentoAdminForm, self).__init__(*args, **kwargs)
 		self.fields['usuario'].initial = self.request.user.id
-		self.fields['data'].initial = self.request.session['data']
-		self.fields['equipamento'].initial = self.request.session['id_equip']
+		if self.request.session['data']:
+			self.fields['data'].initial = self.request.session['data']
+			self.fields['equipamento'].initial = self.request.session['id_equip']
+		if not self.request.user.is_superuser:
+			self.fields['usuario'].widget = HiddenInput()
+			self.fields['usuario'].label = ""
 
 class FormReserva(forms.ModelForm):
 	"""Formulário de reservas CCS"""
