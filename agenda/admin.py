@@ -42,6 +42,12 @@ class ReservaEquipamentoAdmin(admin.ModelAdmin):
 
 		return AdminFormWithRequest
 
+	def get_queryset(self, request):
+		qs = super(ReservaEquipamentoAdmin, self).get_queryset(request)
+		if request.user.is_superuser:
+			return qs
+		return qs.filter(usuario=request.user)
+
 	# def get_form(self, request, obj=None, **kwargs):
 	# 	form = super(ReservaEquipamentoAdmin, self).get_form(request, obj, **kwargs)
 	# 	if 'id_equip' in request.session:
@@ -76,6 +82,13 @@ class ReservaEspacoFisicoAdmin(admin.ModelAdmin):
 	list_display = ('usuario', 'espacoFisico', 'data', 'ramal', 'finalidade')
 	search_fields = ['finalidade', 'usuario__username']
 	icon = '<i class="material-icons">room</i>'
+
+	def get_queryset(self, request):
+		qs = super(ReservaEspacoFisicoAdmin, self).get_queryset(request)
+		if request.user.is_superuser:
+			return qs
+		return qs.filter(usuario=request.user)
+
 admin.site.register(ReservaEspacoFisico, ReservaEspacoFisicoAdmin)
 
 class EquipamentoAdmin(admin.ModelAdmin):
