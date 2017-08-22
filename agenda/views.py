@@ -63,7 +63,7 @@ def index(request, unidade=None):
 
 def sobre(request):
 	titulo = "Requisitos do Agendador CCS"
-	return render(request, "sobre.html", {'titulo':titulo})
+	return render(request, "agenda/sobre.html", {'titulo':titulo})
 
 def ano(request, unidade=None ,year=None):
     # prev / next years
@@ -140,7 +140,11 @@ def espacos(request):
 	espacos1 = EspacoFisico.objects.order_by("nome").all()
 	ano = time.localtime()[0]
 	mes = time.localtime()[1]
-	return render_to_response("espacos.html", {'ano': ano, 'mes': mes, 'espacos': espacos1})
+	return render(
+            request,
+            "agenda/espacos.html",
+            dict(ano=ano, mes=mes, espacos=espacos1
+                ))
 
 def equipamentos(request):
     espacos1 = Equipamento.objects.order_by("nome").all()
