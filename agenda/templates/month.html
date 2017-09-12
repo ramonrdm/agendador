@@ -1,11 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
+{% load staticfiles %}
 <div  align="center" >
 
 <a href= "{% url 'agenda.views.month' espaco.id year month "prev" %}"> < < Anterior</a> 
 | {{ mname }} {{ year }}  - {{ espaco.nome }}  | 
 <a href= "{% url 'agenda.views.month' espaco.id year month "next" %}">Proximo > > </a>
-<br/><br/>
+<br/>
+{% if espaco.id == 3 %} <br/><a href="{% static 'regrasLabInfoCCS.pdf' %}">Regras para uso do Laboratório de Informática</a><br/>{% endif %}
+<br/>
 
 
     <table align="center" border="0">
@@ -19,7 +22,7 @@
         <td class="day-titulo">Sabado</td>
         <td class="day-titulo">Domingo</td>
     </tr>
-    {% load staticfiles %}
+    
     {% for week in month_days %}
         <tr>
         {% for day, entries, current in week %}
