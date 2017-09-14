@@ -40,7 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     #'agenda',
     'agenda.apps.AgendaConfig',
-    'django_cas_ng',
+    #'django_cas_ng',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -67,9 +67,6 @@ WSGI_APPLICATION = 'agendador.wsgi.application'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-
-# Database
-# https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
 DATABASES = {
     'default': {
