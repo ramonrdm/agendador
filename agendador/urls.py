@@ -11,8 +11,8 @@ admin.autodiscover()
 urlpatterns = [
     #url('^$', generic.TemplateView.as_view(template_name="index.html"), name="index"),
     url(r'^$', views.index, name="index"),
-    #url(r'^accounts/login/$', views2.login, name="cas_ng_login"),
-    #url(r'^accounts/logout/$', views2.logout, name="cas_ng_logout"),
+    url(r'^accounts/login/$', views2.login, name="cas_ng_login"),
+    url(r'^accounts/logout/$', views2.logout, name="cas_ng_logout"),
     url(r'^admin', include(admin.site.urls)),
     url(r'', include(frontend_urls)),
     url(r'^$', views.index, name='Reservas UFSC'),
