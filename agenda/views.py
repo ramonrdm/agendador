@@ -114,8 +114,8 @@ def addreserva(request, espacoatual, ano=None, mes= None, dia=None):
             
             if ((not request.user.groups.filter(name="LABINFO").exists()) and (request.POST['espacoFisico']=='3')):
                 return render_to_response("salvo.html",{'mensagem':"Erro: Você não realizaou o curso para utilizar o labinfo "})
-            if (request.POST['espacoFisico']=='3' and (date.today() < date(2017,10,02) and form.cleaned_data['data'] > date(2017,12,31) )):
-                return render_to_response("salvo.html",{'mensagem':"Erro: Espaço bloqueado para reservas em 2018 até 02/10/2017 "})
+            if (request.POST['espacoFisico']=='3' and (form.cleaned_data['data'] > date(2018,07,30) )):
+                return render_to_response("salvo.html",{'mensagem':"Erro: Espaço bloqueado para reservas a cima de 30/Julho/18 "})
             
             if ((not request.user.groups.filter(name="CONSELHEIROS").exists()) and (request.POST['espacoFisico']=='4')):
                 return render_to_response("salvo.html",{'mensagem':"Erro: Você não é membro do grupo sala dos conselhos, você não pode reservar este espaço."})
@@ -125,12 +125,12 @@ def addreserva(request, espacoatual, ano=None, mes= None, dia=None):
             
             """Permite somente idufsc do grupo CCS:"""
             if(not request.user.groups.filter(name="CCS").exists()):
-                return render_to_response("salvo.html",{'mensagem':"Erro: Você não é membro do grupo CCS! Fale com o Mario!"})
+                return render_to_response("salvo.html",{'mensagem':"Erro: Você não é membro do grupo CCS! Fale com a Seção de Informática!"})
 
             instancia = form.save()
             #gambito para webconferencia
             if request.POST['espacoFisico']=='7':
-                msg = "Reserva realizada com sucesso!" + " É imprescindível que você faça contato com o Mário ou Amilcar na Seção de Informática do CCS, Ramal 4162, para orientações de uso da Sala de Web conferência."
+                msg = "Reserva realizada com sucesso!" + " É imprescindível que você faça contato com o Amilcar na Seção de Informática do CCS, Ramal 4162, para orientações de uso da Sala de Web conferência."
                 form.enviarEmail(request.user.email, 7)
             else:
                 msg = "Reserva realizada com sucesso!"
