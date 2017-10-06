@@ -115,7 +115,7 @@ def addreserva(request, espacoatual, ano=None, mes= None, dia=None):
             if ((not request.user.groups.filter(name="LABINFO").exists()) and (request.POST['espacoFisico']=='3')):
                 return render_to_response("salvo.html",{'mensagem':"Erro: Você não realizaou o curso para utilizar o labinfo "})
             if (request.POST['espacoFisico']=='3' and (form.cleaned_data['data'] > date(2018,07,30) )):
-                return render_to_response("salvo.html",{'mensagem':"Erro: Espaço bloqueado para reservas a cima de 30/Julho/18 "})
+                return render_to_response("salvo.html",{'mensagem':"Erro: Espaço bloqueado para reservas acima de 30/Julho/18 "})
             
             if ((not request.user.groups.filter(name="CONSELHEIROS").exists()) and (request.POST['espacoFisico']=='4')):
                 return render_to_response("salvo.html",{'mensagem':"Erro: Você não é membro do grupo sala dos conselhos, você não pode reservar este espaço."})
