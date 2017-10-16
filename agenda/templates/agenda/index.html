@@ -53,7 +53,7 @@
                                 <div class="collection col 8">
                                     <a class="collection-item" href="#"><b>{{ month.name }}</b></a>
                                         {% for espaco in espacosfisicos %}
-                                        <a  class="collection-item" href="{% url 'mes' espaco.id year month.n %}">{{espaco.nome}}</a>
+                                        <a  class="collection-item" href="{% url 'mes' 'f' espaco.id year month.n %}">{{espaco.nome}}</a>
                                         {% endfor %}
                                 {% if month.n == 6 %}</div><div class="row">{% endif %}
                                 </div>
@@ -78,7 +78,7 @@
                             <ul class="collection with-header col s2 m2 l2 left" style="border-width: 0 0 1 0;margin-top: 0;margin-bottom: 0; padding-left: 0; padding-right: 0">
                                                 <li class="collection-header"><h6>{{ month.name }}</h6></li>
                                                 {% for equipamento in equipamentos %}
-                                                    <li class="collection-item" style="font-size:10px;"><a href="{% url 'mese' equipamento.id year month.n %}" >{{equipamento.nome}}</a></li>
+                                                    <li class="collection-item" style="font-size:10px;"><a href="{% url 'mes' 'e' equipamento.id year month.n %}" >{{equipamento.nome}}</a></li>
                                                  {% endfor %}
                                     </ul>
                         {% endfor %}

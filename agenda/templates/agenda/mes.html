@@ -7,8 +7,8 @@
 {% block content %}
 <div class="row">
     <div class="container">
-        <a class="btn right" href="{%url 'mese' espaco.id year month 'next' %}">próximo</a>
-        <a class="btn right" href="{%url 'mese' espaco.id year month 'prev' %}">anterior</a>
+        <a class="btn right" href="{%url 'mes' tipo espaco.id year month 'next' %}">próximo</a>
+        <a class="btn right" href="{%url 'mes' tipo espaco.id year month 'prev' %}">anterior</a>
     </div>
     <div id="calendar"> </div>  
 </div>

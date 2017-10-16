@@ -84,7 +84,7 @@ def ano(request, unidade=None ,year=None):
 
     return render_to_response("ano.html", dict(years=lst, user=request.user, year=year, espacosfisicos=espacosfisicos))
 
-def mes(request, espaco, year, month, change=None, tipo=None):
+def mes(request, tipo=None, espaco=None, year=None, month=None, change=None):
     """Listing of days in `month`."""
     espaco, year, month = int(espaco), int(year), int(month)
     # apply next / previous change
@@ -117,16 +117,16 @@ def mes(request, espaco, year, month, change=None, tipo=None):
             week += 1
     if(tipo=="e"):
         espacofisico = Equipamento.objects.get(id=espaco)
-        print "equipamento"
     else:
         espacofisico = EspacoFisico.objects.get(id=espaco)
-        print "espaco fisico"
+        tipo = 'f'
     return render(
             request,
             "agenda/mes.html", 
             dict(
                 espaco=espacofisico, year=year, month=month, 
-                user=request.user, month_days=lst, mname=mnames[month-1]
+                user=request.user, month_days=lst, mname=mnames[month-1],
+                tipo=tipo
                 ))
 
 def mese(request, espaco, year, month, change=None):
