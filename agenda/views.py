@@ -62,7 +62,6 @@ def index(request, unidade=None):
 
 
 def sobre(request):
-	titulo = "Requisitos do Agendador CCS"
 	return render(request, "agenda/sobre.html", {'titulo':titulo})
 
 def ano(request, unidade=None ,year=None):
@@ -105,7 +104,10 @@ def mes(request, espaco, year, month, change=None, tipo=None):
     for day in month_days:
         entries = current = False
         if day:
-        	entries = ReservaEquipamento.objects.filter(data__year=year, data__month=month, data__day=day, equipamento=espaco)
+            if tipo=="e":
+                entries = ReservaEquipamento.objects.filter(data__year=year, data__month=month, data__day=day, equipamento=espaco)
+            else:
+                entries = ReservaEspacoFisico.objects.filter(data__year=year, data__month=month, data__day=day, espacoFisico=espaco)
         if day == nday and year == nyear and month == nmonth:
             current = True
 
@@ -113,10 +115,12 @@ def mes(request, espaco, year, month, change=None, tipo=None):
         if len(lst[week]) == 7:
             lst.append([])
             week += 1
-    if(tipo=="equi"):
+    if(tipo=="e"):
         espacofisico = Equipamento.objects.get(id=espaco)
+        print "equipamento"
     else:
         espacofisico = EspacoFisico.objects.get(id=espaco)
+        print "espaco fisico"
     return render(
             request,
             "agenda/mes.html", 
@@ -126,7 +130,7 @@ def mes(request, espaco, year, month, change=None, tipo=None):
                 ))
 
 def mese(request, espaco, year, month, change=None):
-    return mes(request, espaco, year, month, change, tipo="equi")
+    return mes(request, espaco, year, month, change, tipo="e")
 
 def dia(request, espaco, year, month, day):
     """Entries for the day."""
