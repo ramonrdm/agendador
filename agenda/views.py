@@ -16,10 +16,10 @@ from datetime import date
 from material.frontend import urls as frontend_urls
 
 
-mnames = "Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubro Novembro Dezembro"
-mnames = mnames.split()
+month_names = {1: 'Janeiro', 2: 'Fevereiro', 3: 'Março', 4: 'Abril', 5: 'Maio', 6: 'Junho', 7: 'Julho', 8: 'Agosto', 9: 'Setembro', 10: 'Outubro', 11: 'Novembro', 12: 'Dezembro'}
+unidade_default = 'ufsc'
 
-def index(request, unidade=None):
+def index(request, unidade=unidade_default):
     #titulo = "Agendador UFSC"
     #corpo = "Bem vindo ao Agendador de espaços físicos e equipamentos da UFSC"
 
@@ -38,17 +38,14 @@ def index(request, unidade=None):
     equipamentos = Equipamento.objects.filter(unidade=unidade)
 
     year = time.localtime()[0]
-    nowy, nowm = time.localtime()[:2]
+    now_year, now_month = time.localtime()[:2]
     lst = []
     # create a list of months for each year, indicating ones that contain entries and current
     for y in [year, year+1]:
-        mlst = []
-        for n, month in enumerate(mnames):
-            entry = current = False
-            if y == nowy and n+1 == nowm:
-                current = True
-            mlst.append(dict(n=n+1, name=month, current=current))
-        lst.append((y, mlst))
+        month_list = []
+        for n, month in enumerate(month_names):
+                month_list.append(dict(n=n+1, name=month_names[n+1]))
+        lst.append((y, month_list))
 
     return render(
         request,
@@ -73,7 +70,7 @@ def ano(request, unidade=None ,year=None):
     # create a list of months for each year, indicating ones that contain entries and current
     for y in [year, year+1]:
         mlst = []
-        for n, month in enumerate(mnames):
+        for n, month in enumerate(month_names):
             entry = current = False
             if y == nowy and n+1 == nowm:
                 current = True
@@ -105,9 +102,16 @@ def mes(request, tipo=None, espaco=None, year=None, month=None, change=None):
         entries = current = False
         if day:
             if tipo=="e":
-                entries = ReservaEquipamento.objects.filter(data__year=year, data__month=month, data__day=day, equipamento=espaco)
+                if request.user.is_superuser:
+                    entries = ReservaEquipamento.objects.filter(data__year=year, data__month=month, data__day=day, equipamento=espaco)
+                else:
+                    entries = ReservaEquipamento.objects.filter(data__year=year, data__month=month, data__day=day, equipamento=espaco, usuario=request.user)    
             else:
-                entries = ReservaEspacoFisico.objects.filter(data__year=year, data__month=month, data__day=day, espacoFisico=espaco)
+                if request.user.is_superuser:
+                    entries = ReservaEspacoFisico.objects.filter(data__year=year, data__month=month, data__day=day, espacoFisico=espaco)
+                else:
+                    entries = ReservaEspacoFisico.objects.filter(data__year=year, data__month=month, data__day=day, espacoFisico=espaco, usuario=request.user)
+
         if day == nday and year == nyear and month == nmonth:
             current = True
 
@@ -125,7 +129,7 @@ def mes(request, tipo=None, espaco=None, year=None, month=None, change=None):
             "agenda/mes.html", 
             dict(
                 espaco=espacofisico, year=year, month=month, 
-                user=request.user, month_days=lst, mname=mnames[month-1],
+                user=request.user, month_days=lst, mname=month_names[month-1],
                 tipo=tipo
                 ))
 
