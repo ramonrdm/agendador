@@ -37,13 +37,16 @@ def index(request, unidade=unidade_default):
     espacosFisicos = EspacoFisico.objects.filter(unidade=unidade)
     equipamentos = Equipamento.objects.filter(unidade=unidade)
 
+    print espacosFisicos
+
     year = time.localtime()[0]
-    now_year, now_month = time.localtime()[:2]
+    current_year, current_month = time.localtime()[:2]
     lst = []
     # create a list of months for each year, indicating ones that contain entries and current
     for y in [year, year+1]:
         month_list = []
         for n, month in enumerate(month_names):
+            if (n + 2) >= month_names.keys()[current_month] or y != year:
                 month_list.append(dict(n=n+1, name=month_names[n+1]))
         lst.append((y, month_list))
 
@@ -102,15 +105,9 @@ def mes(request, tipo=None, espaco=None, year=None, month=None, change=None):
         entries = current = False
         if day:
             if tipo=="e":
-                if request.user.is_superuser:
-                    entries = ReservaEquipamento.objects.filter(data__year=year, data__month=month, data__day=day, equipamento=espaco)
-                else:
-                    entries = ReservaEquipamento.objects.filter(data__year=year, data__month=month, data__day=day, equipamento=espaco, usuario=request.user)    
+                entries = ReservaEquipamento.objects.filter(data__year=year, data__month=month, data__day=day, equipamento=espaco)
             else:
-                if request.user.is_superuser:
-                    entries = ReservaEspacoFisico.objects.filter(data__year=year, data__month=month, data__day=day, espacoFisico=espaco)
-                else:
-                    entries = ReservaEspacoFisico.objects.filter(data__year=year, data__month=month, data__day=day, espacoFisico=espaco, usuario=request.user)
+                entries = ReservaEspacoFisico.objects.filter(data__year=year, data__month=month, data__day=day, espacoFisico=espaco)
 
         if day == nday and year == nyear and month == nmonth:
             current = True

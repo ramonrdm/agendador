@@ -1,4 +1,5 @@
 {% extends "agenda/base.html" %}
+{% load static %}
 {% block nav-global %}
 {% endblock %}
 {% block title %} Agendador - {{unidade.sigla}}{% endblock %}
@@ -7,83 +8,102 @@
 {% endblock %}
 
 {% block content %}
-<div class="col s12 m12 l12">
+<link rel="stylesheet" type="text/css" href="{% static 'agenda/css/index.css' %}" />
 
+<div id="index">
     {% if unidades %}
-        <div class="cards-content" >
-        <div class="row">
-            <div class="col s12">
-                Sub Unidades:
+        Sub Unidades:
+        <div class="row section">
+        <div class="col s12 m12 l12">
+        {% for subUnidade in unidades %}
+            <div class="card" id="unidade">
+                <div class="card-image">
+                    <a href="{% url 'Reservas-UFSC' subUnidade.sigla %}">
+                    <img width="100" height="100" src="/media/{{subUnidade.logo}}">
+                    </a>
+                </div>
+                <div class="card-action">
+                    <a class="black-text" href="{% url 'Reservas-UFSC' subUnidade.sigla %}">{{subUnidade.sigla}}</a>            
+                </div>
             </div>
+        {% endfor %}
         </div>
-            <div class="row">
-                {% for subUnidade in unidades %}
-                <div class="col s6 m6 l6">
-                    <div class="card">
-                        <div class="card-image">
-                            <a href="{% url 'Reservas-UFSC' subUnidade.sigla %}">
-                            <img width="100" height="100" src="/media/{{subUnidade.logo}}">
-                            </a>
-                        </div>
-                        <div class="card-action">
-                                <a class="black-text" href="{% url 'Reservas-UFSC' subUnidade.sigla %}">{{subUnidade.sigla}}</a>
-                            
-                        </div>
+        </div>
+    {% endif %}
+
+    <div class="divider"></div>
+    <div class="row">
+        <div class="col s12 inf">
+        <ul class="collapsible row" data-collapsible="accordion">
+            <li><div class="collapsible-header active col s12" ><i class="small material-icons">expand_more</i><h5>Espaços Físicos do {{unidade.sigla}}</h5></div>
+            {% if espacosfisicos %}
+            <div class='collapsible-body col s12' id="espacosCard">
+                <div class="card" id="espacosFisicos">
+                    <div class="card-tabs">
+                        <ul class="tabs">
+                        {% for year, months in years %}
+                            <li class='tab'><a href="'#year{{ forloop.counter }}Espaco"> {{ year }} </a></li>
+                        {% endfor %}
+                        </ul>
                     </div>
+                </div>
+                <div class="card-content white">
+                    {% for year, months in years %}
+                    <div id="year{{ forloop.counter }}Espaco" class="row">
+                        {% for month in months %}
+                            <div class="collection col l2 s4">
+                                <a class="collection-header"><b>{{ month.name }}</b></a>
+                                {% for espaco in espacosfisicos %}
+                                    <a  class="collection-item" href="{% url 'mes' 'f' espaco.id year month.n %}">{{ espaco.nome }}</a>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </li>
+            {% endif %}
+        </ul>
+
+        <div class="divider"></div>
+
+
+        <ul class="collapsible row" data-collapsible="accordion">
+            <li><div class="collapsible-header active col s12" ><i class="small material-icons">expand_more</i><h5>Equipamentos do setor {{unidade.sigla}}</h5></div>
+        {% if equipamentos %}
+        <div class='collapsible-body col s12' id="equipamentosCard">
+        <div class='col s12 m12 l12'>
+            <div class="card" id="equipamentos">
+                <div class="card-tabs">
+                    <ul class="tabs">
+                    {% for year, months in years %}
+                        <li class='tab'><a href="'#year{{ forloop.counter }}Equipamento"> {{ year }} </a></li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="card-content white">
+                {% for year, months in years %}
+                <div id="year{{ forloop.counter }}Equipamento">
+                    {% for month in months %}
+                        <div class="collection col l2 s4">
+                            <a class="collection-header"><b>{{ month.name }}</b></a>
+                            {% for equipamento in equipamentos %}
+                                <a  class="collection-item" href="{% url 'mes' 'e' equipamento.id year month.n %}">{{ equipamento.nome }}</a>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
                 </div>
                 {% endfor %}
             </div>
         </div>
-
-    {% endif %}
-
-    {% if espacosfisicos %}
-    <div class="card" id="espacosFisicos" >
-        <div class="card-content">
-            <span class="card-title">Espaços Físicos do {{unidade.sigla}}:</span>
-                <div class="row">
-                        {% for year, months in years %}
-                            <ul class="collapsible" data-collapsible="accordion">
-                            <li>
-                            <div class="collapsible-header active" >{{ year }}</div>
-                            <div class="collapsible-body">
-                            <div class="row">
-                            {% for month in months %}
-
-                                <div class="collection col 8">
-                                    <a class="collection-item" href="#"><b>{{ month.name }}</b></a>
-                                        {% for espaco in espacosfisicos %}
-                                        <a  class="collection-item" href="{% url 'mes' 'f' espaco.id year month.n %}">{{espaco.nome}}</a>
-                                        {% endfor %}
-                                {% if month.n == 6 %}</div><div class="row">{% endif %}
-                                </div>
-                            {% endfor %}
-                            </div>
-                            </div>
-                            </li>
-                        {% endfor %}
-                            </ul>
-                </div>
         </div>
+            </li>
+        {% endif %}
+        </ul>
     </div>
-    {% endif %}
-
-    {% if equipamentos %}
-    <div class="row ">
-        <span class="flow-text" >Equipamentos do setor {{unidade.sigla}}:</span>
-        
-            {% for year, months in years %}
-                <div align="center" class="ano" >{{ year }}</div>
-                        {% for month in months %}
-                            <ul class="collection with-header col s2 m2 l2 left" style="border-width: 0 0 1 0;margin-top: 0;margin-bottom: 0; padding-left: 0; padding-right: 0">
-                                                <li class="collection-header"><h6>{{ month.name }}</h6></li>
-                                                {% for equipamento in equipamentos %}
-                                                    <li class="collection-item" style="font-size:10px;"><a href="{% url 'mes' 'e' equipamento.id year month.n %}" >{{equipamento.nome}}</a></li>
-                                                 {% endfor %}
-                                    </ul>
-                        {% endfor %}
-            {% endfor %}      
-    </div>
-    {% endif %}
 </div>
+</div>
+
 {% endblock %}
