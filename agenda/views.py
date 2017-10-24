@@ -62,7 +62,7 @@ def index(request, unidade=unidade_default):
 
 
 def sobre(request):
-	return render(request, "agenda/sobre.html", {'titulo':titulo})
+	return render(request, "agenda/sobre.html")
 
 def ano(request, unidade=None ,year=None):
     # prev / next years
