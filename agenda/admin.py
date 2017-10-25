@@ -27,6 +27,7 @@ class UnidadeAdmin(admin.ModelAdmin):
 			return ['responsavel']
 		return []
 
+
 class ReservaEquipamentoAdmin(admin.ModelAdmin):
 	form = ReservaEquipamentoAdminForm
 	list_display = ('usuario', 'equipamento', 'data', 'ramal', 'finalidade')
@@ -46,7 +47,33 @@ class ReservaEquipamentoAdmin(admin.ModelAdmin):
 		qs = super(ReservaEquipamentoAdmin, self).get_queryset(request)
 		if request.user.is_superuser:
 			return qs
-		return qs.filter(usuario=request.user)
+
+		reserves = ReservaEquipamento.objects.none()
+		#Check if unity responsible
+		unity_responsible = Unidade.objects.filter(responsavel=request.user)
+		if unity_responsible:
+			reservable = Equipamento.objects.filter(unidade=unity_responsible)
+			for item in reservable:
+				reseves = reserves | ReservaEquipamento.objects.filter(equipamento=item)
+			#Check for children unity
+			children = Unidade.objects.filter(unidadePai=unity_responsible)
+			if children:
+				for child in children:
+					item = Equipamento.objects.filter(unidade=child)
+					if item:
+						for item_child in item:
+							reserves = reserves | place_child.reservaequipamento_set.all()
+
+		#Check if place responsible
+		item_responsible = Equipamento.objects.filter(responsavel=request.user)
+		if item_responsible:
+			reserves = reserves | ReservaEquipamento.objects.filter(equipamento=item_responsible)
+
+		#Add own reserves
+		reserves = reserves | ReservaEquipamento.objects.filter(usuario=request.user)
+
+		return reserves
+
 
 	# def get_form(self, request, obj=None, **kwargs):
 	# 	form = super(ReservaEquipamentoAdmin, self).get_form(request, obj, **kwargs)
@@ -85,9 +112,35 @@ class ReservaEspacoFisicoAdmin(admin.ModelAdmin):
 
 	def get_queryset(self, request):
 		qs = super(ReservaEspacoFisicoAdmin, self).get_queryset(request)
+		# Super user case
 		if request.user.is_superuser:
 			return qs
-		return qs.filter(usuario=request.user)
+
+		reserves = ReservaEspacoFisico.objects.none()
+		#Check if unity responsible
+		unity_responsible = Unidade.objects.filter(responsavel=request.user)
+		if unity_responsible:
+			reservable = EspacoFisico.objects.filter(unidade=unity_responsible)
+			for place in reservable:
+				reseves = reserves | ReservaEspacoFisico.objects.filter(espacoFisico=place)
+			#Check for children unity
+			children = Unidade.objects.filter(unidadePai=unity_responsible)
+			if children:
+				for child in children:
+					place = EspacoFisico.objects.filter(unidade=child)
+					if place:
+						for place_child in place:
+							reserves = reserves | place_child.reservaespacofisico_set.all()
+
+		#Check if place responsible
+		place_responsible = EspacoFisico.objects.filter(responsavel=request.user)
+		if place_responsible:
+			reserves = reserves | ReservaEspacoFisico.objects.filter(espacoFisico=place_responsible)
+
+		#Add own reserves
+		reserves = reserves | ReservaEspacoFisico.objects.filter(usuario=request.user)
+
+		return reserves
 
 admin.site.register(ReservaEspacoFisico, ReservaEspacoFisicoAdmin)
 
@@ -129,4 +182,4 @@ class EspacoFisicoAdmin(admin.ModelAdmin):
 			return ['responsavel', 'unidade']
 		return []
 
-admin.site.register(EspacoFisico, EspacoFisicoAdmin)	
+admin.site.register(EspacoFisico, EspacoFisicoAdmin)
