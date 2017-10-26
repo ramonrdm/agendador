@@ -16,7 +16,11 @@ class UnidadeAdmin(admin.ModelAdmin):
 		qs = super(UnidadeAdmin, self).get_queryset(request)
 		if request.user.is_superuser:
 			return qs
-		return qs.filter(responsavel=request.user)
+
+		units = Unidade.objects.none()
+		unit_responsible = Unidade.objects.filter(responsavel=request.user)
+		units = units | unit_responsible | Unidade.objects.filter(unidadePai=unit_responsible)
+		return units
 
 	def get_readonly_fields(self, request, obj=None):
 		qs = super(UnidadeAdmin, self).get_queryset(request)
@@ -49,20 +53,17 @@ class ReservaEquipamentoAdmin(admin.ModelAdmin):
 			return qs
 
 		reserves = ReservaEquipamento.objects.none()
-		#Check if unity responsible
-		unity_responsible = Unidade.objects.filter(responsavel=request.user)
-		if unity_responsible:
-			reservable = Equipamento.objects.filter(unidade=unity_responsible)
-			for item in reservable:
-				reseves = reserves | ReservaEquipamento.objects.filter(equipamento=item)
-			#Check for children unity
-			children = Unidade.objects.filter(unidadePai=unity_responsible)
-			if children:
-				for child in children:
-					item = Equipamento.objects.filter(unidade=child)
-					if item:
-						for item_child in item:
-							reserves = reserves | place_child.reservaequipamento_set.all()
+		#Check if unit responsible
+		unit_responsible = Unidade.objects.filter(responsavel=request.user)
+		if unit_responsible:
+			reservable = Equipamento.objects.filter(unidade=unit_responsible)
+			reseves = reserves | ReservaEquipamento.objects.filter(equipamento=reservable)
+			#Check for children unit
+			children = Unidade.objects.filter(unidadePai=unit_responsible)
+			for child in children:
+				item = Equipamento.objects.filter(unidade=child)
+				for item_child in item:
+					reserves = reserves | place_child.reservaequipamento_set.all()
 
 		#Check if place responsible
 		item_responsible = Equipamento.objects.filter(responsavel=request.user)
@@ -117,22 +118,19 @@ class ReservaEspacoFisicoAdmin(admin.ModelAdmin):
 			return qs
 
 		reserves = ReservaEspacoFisico.objects.none()
-		#Check if unity responsible
-		unity_responsible = Unidade.objects.filter(responsavel=request.user)
-		if unity_responsible:
-			reservable = EspacoFisico.objects.filter(unidade=unity_responsible)
-			for place in reservable:
-				reseves = reserves | ReservaEspacoFisico.objects.filter(espacoFisico=place)
-			#Check for children unity
-			children = Unidade.objects.filter(unidadePai=unity_responsible)
-			if children:
-				for child in children:
-					place = EspacoFisico.objects.filter(unidade=child)
-					if place:
-						for place_child in place:
-							reserves = reserves | place_child.reservaespacofisico_set.all()
+		# Check if unit responsible
+		unit_responsible = Unidade.objects.filter(responsavel=request.user)
+		if unit_responsible:
+			reservable = EspacoFisico.objects.filter(unidade=unit_responsible)
+			reseves = reserves | ReservaEspacoFisico.objects.filter(espacoFisico=reservable)
+			# Check for children unit
+			children = Unidade.objects.filter(unidadePai=unit_responsible)
+			for child in children:
+				place = EspacoFisico.objects.filter(unidade=child)
+				for place_child in place:
+					reserves = reserves | place_child.reservaespacofisico_set.all()
 
-		#Check if place responsible
+		# Check if place responsible
 		place_responsible = EspacoFisico.objects.filter(responsavel=request.user)
 		if place_responsible:
 			reserves = reserves | ReservaEspacoFisico.objects.filter(espacoFisico=place_responsible)
@@ -151,7 +149,20 @@ class EquipamentoAdmin(admin.ModelAdmin):
 		qs = super(EquipamentoAdmin, self).get_queryset(request)
 		if request.user.is_superuser:
 			return qs
-		return qs.filter(responsavel=request.user)
+		equipments = Equipamento.objects.none()
+		# Check if unit responsible
+		unit_responsible = Unidade.objects.filter(responsavel=request.user)
+		if unit_responsible:
+			for unit in unit_responsible:
+				equipments = equipments | unit.equipamento_set.all()
+			# Check for children unit
+			children = Unidade.objects.filter(unidadePai=unit_responsible)
+			for child in children:
+				equipments = equipments | child.equipamento_set.all()
+
+		# Get all equipments user's responsible
+		equipments = equipments | Equipamento.objects.filter(responsavel=request.user)
+		return equipments
 
 	def get_readonly_fields(self, request, obj=None):
 		qs = super(EquipamentoAdmin, self).get_queryset(request)
@@ -171,7 +182,20 @@ class EspacoFisicoAdmin(admin.ModelAdmin):
 		qs = super(EspacoFisicoAdmin, self).get_queryset(request)
 		if request.user.is_superuser:
 			return qs
-		return qs.filter(responsavel=request.user)
+		spaces = EspacoFisico.objects.none()
+		# Check if unit responsible
+		unit_responsible = Unidade.objects.filter(responsavel=request.user)
+		if unit_responsible:
+			for unit in unit_responsible:
+				spaces = spaces | unit.espacofisico_set.all()
+			# Check for children unit
+			children = Unidade.objects.filter(unidadePai=unit_responsible)
+			for child in children:
+				spaces = spaces | child.espacofisico_set.all()
+
+		# Get all spaces user's responsible
+		spaces = spaces | EspacoFisico.objects.filter(responsavel=request.user)
+		return spaces
 
 	def get_readonly_fields(self, request, obj=None):
 		qs = super(EspacoFisicoAdmin, self).get_queryset(request)

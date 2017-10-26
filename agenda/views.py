@@ -37,8 +37,6 @@ def index(request, unidade=unidade_default):
     espacosFisicos = EspacoFisico.objects.filter(unidade=unidade)
     equipamentos = Equipamento.objects.filter(unidade=unidade)
 
-    print espacosFisicos
-
     year = time.localtime()[0]
     current_year, current_month = time.localtime()[:2]
     lst = []
