@@ -16,7 +16,7 @@ from datetime import date
 from material.frontend import urls as frontend_urls
 
 
-month_names = {1: 'Janeiro', 2: 'Fevereiro', 3: 'Março', 4: 'Abril', 5: 'Maio', 6: 'Junho', 7: 'Julho', 8: 'Agosto', 9: 'Setembro', 10: 'Outubro', 11: 'Novembro', 12: 'Dezembro'}
+month_names = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 unidade_default = 'ufsc'
 
 def index(request, unidade=unidade_default):
@@ -39,13 +39,14 @@ def index(request, unidade=unidade_default):
 
     year = time.localtime()[0]
     current_year, current_month = time.localtime()[:2]
+    print current_month
     lst = []
     # create a list of months for each year, indicating ones that contain entries and current
     for y in [year, year+1]:
         month_list = []
         for n, month in enumerate(month_names):
-            if (n + 2) >= month_names.keys()[current_month] or y != year:
-                month_list.append(dict(n=n+1, name=month_names[n+1]))
+            if (n + 1) >= current_month or y != year:
+                month_list.append(dict(n=n+1, name=month_names[n]))
         lst.append((y, month_list))
 
     return render(

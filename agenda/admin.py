@@ -57,15 +57,15 @@ class ReservaEquipamentoAdmin(admin.ModelAdmin):
 		unit_responsible = Unidade.objects.filter(responsavel=request.user)
 		if unit_responsible:
 			reservable = Equipamento.objects.filter(unidade=unit_responsible)
-			reseves = reserves | ReservaEquipamento.objects.filter(equipamento=reservable)
+			reserves = reserves | ReservaEquipamento.objects.filter(equipamento=reservable)
 			#Check for children unit
 			children = Unidade.objects.filter(unidadePai=unit_responsible)
 			for child in children:
 				item = Equipamento.objects.filter(unidade=child)
 				for item_child in item:
-					reserves = reserves | place_child.reservaequipamento_set.all()
+					reserves = reserves | item_child.reservaequipamento_set.all()
 
-		#Check if place responsible
+		#Check if room responsible
 		item_responsible = Equipamento.objects.filter(responsavel=request.user)
 		if item_responsible:
 			reserves = reserves | ReservaEquipamento.objects.filter(equipamento=item_responsible)
@@ -122,18 +122,18 @@ class ReservaEspacoFisicoAdmin(admin.ModelAdmin):
 		unit_responsible = Unidade.objects.filter(responsavel=request.user)
 		if unit_responsible:
 			reservable = EspacoFisico.objects.filter(unidade=unit_responsible)
-			reseves = reserves | ReservaEspacoFisico.objects.filter(espacoFisico=reservable)
+			reserves = reserves | ReservaEspacoFisico.objects.filter(espacoFisico=reservable)
 			# Check for children unit
 			children = Unidade.objects.filter(unidadePai=unit_responsible)
 			for child in children:
-				place = EspacoFisico.objects.filter(unidade=child)
-				for place_child in place:
-					reserves = reserves | place_child.reservaespacofisico_set.all()
+				room = EspacoFisico.objects.filter(unidade=child)
+				for room_child in room:
+					reserves = reserves | room_child.reservaespacofisico_set.all()
 
-		# Check if place responsible
-		place_responsible = EspacoFisico.objects.filter(responsavel=request.user)
-		if place_responsible:
-			reserves = reserves | ReservaEspacoFisico.objects.filter(espacoFisico=place_responsible)
+		# Check if room responsible
+		room_responsible = EspacoFisico.objects.filter(responsavel=request.user)
+		if room_responsible:
+			reserves = reserves | ReservaEspacoFisico.objects.filter(espacoFisico=room_responsible)
 
 		#Add own reserves
 		reserves = reserves | ReservaEspacoFisico.objects.filter(usuario=request.user)
