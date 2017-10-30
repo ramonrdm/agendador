@@ -8,36 +8,56 @@ from django.core.mail import send_mail
 from django.forms.extras.widgets import SelectDateWidget
 from django.forms import ModelForm, Form, HiddenInput
 
-class ReservaEquipamentoAdminForm(forms.ModelForm):
+class ReservaAdminForm(forms.ModelForm):
+	class Meta:
+		model = Reserva
+		fields = '__all__'
+	def __init__(self, *args, **kwargs):
+		self.request = kwargs['request']
+		super(ReservaAdminForm, self).__init__(*args, **kwargs)
+		self.fields['usuario'].initial = self.request.user.id
+		try:
+			self.fields['data'].initial = self.request.session['data']
+		except:
+			pass
+		if not self.request.user.is_superuser:
+			self.fields['usuario'].widget = HiddenInput()
+			self.fields['usuario'].label = ""
+
+class ReservaEquipamentoAdminForm(ReservaAdminForm):
 	"""docstring for ReservaEquipamentoAdminForm"""
 	class Meta:
 		model = ReservaEquipamento
 		fields = '__all__'
 	def __init__(self, *args, **kwargs):
-		self.request = kwargs.pop("request", None)
+		self.request = kwargs["request"]
+		super(ReservaAdminForm, self).__init__(self.request)
 		super(ReservaEquipamentoAdminForm, self).__init__(*args, **kwargs)
 		self.fields['usuario'].initial = self.request.user.id
-		if self.request.session['data']:
-			self.fields['data'].initial = self.request.session['data']
+		try:
 			self.fields['equipamento'].initial = self.request.session['id_equip']
-		if not self.request.user.is_superuser:
-			self.fields['usuario'].widget = HiddenInput()
-			self.fields['usuario'].label = ""
+		except:
+			pass
 
-class FormReserva(forms.ModelForm):
+class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
 	"""Formulário de reservas CCS"""
-	dataReserva = forms.DateTimeField(initial=datetime.datetime.now)
+	#dataReserva = forms.DateTimeField(initial=datetime.datetime.now)
 	class Meta:
 		model = ReservaEspacoFisico
 		fields = '__all__'
-	#horaInicio = forms.DateTimeField(label="Data Inicio: (24:59)", initial="24:59")
 	def __init__(self, *args, **kwargs):
-		super(FormReserva, self).__init__(*args, **kwargs)
+		self.request = kwargs["request"]
+		super(ReservaAdminForm, self).__init__(self.request)
+		super(ReservaEspacoFisicoAdminForm, self).__init__(*args, **kwargs)
 		self.fields['data'].widget = widgets.AdminDateWidget()
 		self.fields['horaInicio'].widget = widgets.AdminTimeWidget()
 		#self.fields['horaInicio'].initial = "24:00"
 		self.fields['horaFim'].widget = widgets.AdminTimeWidget()
-		
+		try:
+			self.fields['espacoFisico'].initial = self.request.session['id_place']
+		except:
+			pass
+				
 		#espacoatual = args.pop("espacoatual")
 		#print "bluh"
 		#print espacoatual

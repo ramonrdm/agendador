@@ -11,7 +11,6 @@
 
 {% block breadcrumbs_items %}
 <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
-<a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
 <a class="active" href="{% url opts|admin_urlname:'changelist' %}">{% if add %}{% trans 'Add' %} {{ opts.verbose_name }}{% else %}{% trans 'Change' %}{% endif %}</a>
 {% endblock %}
 
