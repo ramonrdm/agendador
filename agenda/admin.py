@@ -107,19 +107,19 @@ class ReservaEquipamentoAdmin(admin.ModelAdmin):
 admin.site.register(ReservaEquipamento, ReservaEquipamentoAdmin)
 
 class ReservaEspacoFisicoAdmin(admin.ModelAdmin):
-#	form = ReservaEspacoFisicoAdminForm
-#	list_display = ('usuario', 'espacoFisico', 'data', 'ramal', 'finalidade')
-#	search_fields = ['finalidade', 'usuario__username']
-#	icon = '<i class="material-icons">room</i>'
-#
-#	def get_form(self, request, obj=None, **kwargs):
-#		AdminForm =  super(ReservaEspacoFisicoAdmin, self).get_form(request, obj, **kwargs)
-#		class AdminFormWithRequest(AdminForm):
-#			def __new__(cls, *args, **kwargs):
-#				kwargs["request"] = request
-#				return AdminForm(*args, **kwargs)
+	form = ReservaEspacoFisicoAdminForm
+	list_display = ('usuario', 'espacoFisico', 'data', 'ramal', 'finalidade')
+	search_fields = ['finalidade', 'usuario__username']
+	icon = '<i class="material-icons">room</i>'
 
-#		return AdminFormWithRequest
+	def get_form(self, request, obj=None, **kwargs):
+		AdminForm =  super(ReservaEspacoFisicoAdmin, self).get_form(request, obj, **kwargs)
+		class AdminFormWithRequest(AdminForm):
+			def __new__(cls, *args, **kwargs):
+				kwargs['request'] = request
+				return AdminForm(*args, **kwargs)
+
+		return AdminFormWithRequest
 
 	def get_queryset(self, request):
 		qs = super(ReservaEspacoFisicoAdmin, self).get_queryset(request)

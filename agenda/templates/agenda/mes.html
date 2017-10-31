@@ -38,7 +38,7 @@ jQuery(document).ready(function() {
                 if(value.className.indexOf("fc-other-month") === -1) {
                     var a = $(value).children().text();
                     var x = ("0"+a).slice(-2);
-                    $(value).append("<a href='/intermediaria/{{ tipo }}/{{espaco.id}}/"+x+"{{month|stringformat:"02d"}}{{year}}'  %}'><i class=material-icons>add_circle</i></a>");
+                    $(value).append("<a href='/reservar/{{ tipo }}/{{espaco.id}}/"+x+"{{month|stringformat:"02d"}}{{year}}'  %}'><i class=material-icons>add_circle</i></a>");
                     $(value).css('text-align', 'center');
 
                 }

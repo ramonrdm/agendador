@@ -13,7 +13,6 @@ class ReservaAdminForm(forms.ModelForm):
 		model = Reserva
 		fields = '__all__'
 	def __init__(self, *args, **kwargs):
-		self.request = kwargs['request']
 		super(ReservaAdminForm, self).__init__(*args, **kwargs)
 		self.fields['usuario'].initial = self.request.user.id
 		try:
@@ -30,10 +29,8 @@ class ReservaEquipamentoAdminForm(ReservaAdminForm):
 		model = ReservaEquipamento
 		fields = '__all__'
 	def __init__(self, *args, **kwargs):
-		self.request = kwargs["request"]
-		super(ReservaAdminForm, self).__init__(self.request)
+		self.request = kwargs.pop("request", None)
 		super(ReservaEquipamentoAdminForm, self).__init__(*args, **kwargs)
-		self.fields['usuario'].initial = self.request.user.id
 		try:
 			self.fields['equipamento'].initial = self.request.session['id_equip']
 		except:
@@ -46,8 +43,7 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
 		model = ReservaEspacoFisico
 		fields = '__all__'
 	def __init__(self, *args, **kwargs):
-		self.request = kwargs["request"]
-		super(ReservaAdminForm, self).__init__(self.request)
+		self.request = kwargs.pop("request", None)
 		super(ReservaEspacoFisicoAdminForm, self).__init__(*args, **kwargs)
 		self.fields['data'].widget = widgets.AdminDateWidget()
 		self.fields['horaInicio'].widget = widgets.AdminTimeWidget()
@@ -82,4 +78,3 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
 	def enviarEmail(self, mail):
 		mensagem_email="Reserva de espaço físico "+str(self.cleaned_data['horaInicio'])+'/'+str(self.cleaned_data['horaFim'])+' '+str(self.cleaned_data['data'])+' - '+str(self.cleaned_data['espacoFisico'])+", realizada com sucesso"
 		send_mail('Reserva CCS - '+str(self.cleaned_data['espacoFisico'])+' - '+str(self.cleaned_data['data']), mensagem_email, 'reservas.ccs@sistemas.ufsc.br', [mail], fail_silently=False)
-
