@@ -12,9 +12,9 @@
 
 <div id="index">
     {% if unidades %}
-        Sub Unidades:
         <div class="row section">
         <div class="col s12 m12 l12">
+        <h5>Sub Unidades:</h5>
         {% for subUnidade in unidades %}
             <div class="card" id="unidade">
                 <div class="card-image">
@@ -31,12 +31,12 @@
         </div>
     {% endif %}
 
+    {% if espacosfisicos %}
     <div class="divider"></div>
     <div class="row">
         <div class="col s12 inf">
         <ul class="collapsible row" data-collapsible="accordion">
             <li><div class="collapsible-header active col s12" ><i class="small material-icons">expand_more</i><h5>Espaços Físicos do {{unidade.sigla}}</h5></div>
-            {% if espacosfisicos %}
             <div class='collapsible-body col s12' id="espacosCard">
                 <div class="card" id="espacosFisicos">
                     <div class="card-tabs">
@@ -63,15 +63,15 @@
                 </div>
             </div>
         </li>
-            {% endif %}
         </ul>
+     {% endif %}
 
         <div class="divider"></div>
 
 
+        {% if equipamentos %}
         <ul class="collapsible row" data-collapsible="accordion">
             <li><div class="collapsible-header active col s12" ><i class="small material-icons">expand_more</i><h5>Equipamentos do setor {{unidade.sigla}}</h5></div>
-        {% if equipamentos %}
         <div class='collapsible-body col s12' id="equipamentosCard">
         <div class='col s12 m12 l12'>
             <div class="card" id="equipamentos">
@@ -100,8 +100,8 @@
         </div>
         </div>
             </li>
-        {% endif %}
         </ul>
+        {% endif %}
     </div>
 </div>
 </div>

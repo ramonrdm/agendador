@@ -32,7 +32,7 @@ urlpatterns = [
     url(r'^addreserva/(\d+)/(\d+)/(\d+)/(\d+)/$', views.addreserva, name='addreserva'),
 
     url(r'^(?P<unidade>\w+)$', views.index, name='Reservas-UFSC'),
-    url(r'^intermediaria/(?P<id_equip>\d+)/(?P<data_numero>\d+)$', views.intermediaria, name="intermediaria"),
+    url(r'^reservar/(?P<tipo>e|f|s)/(?P<id_equip>\d+)/(?P<data_numero>\d+)$', views.intermediaria, name="intermediaria"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

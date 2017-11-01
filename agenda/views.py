@@ -10,13 +10,14 @@ from django.forms.models import modelformset_factory
 from django.template import RequestContext, Library
 from django.views.decorators import csrf
 from agenda.models import *
-from agenda.forms import FormReserva
+from agenda.forms import ReservaEspacoFisicoAdminForm
 from django import forms
 from datetime import date
 from material.frontend import urls as frontend_urls
+from forms import *
 
 
-month_names = {1: 'Janeiro', 2: 'Fevereiro', 3: 'Março', 4: 'Abril', 5: 'Maio', 6: 'Junho', 7: 'Julho', 8: 'Agosto', 9: 'Setembro', 10: 'Outubro', 11: 'Novembro', 12: 'Dezembro'}
+month_names = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 unidade_default = 'ufsc'
 
 def index(request, unidade=unidade_default):
@@ -37,17 +38,16 @@ def index(request, unidade=unidade_default):
     espacosFisicos = EspacoFisico.objects.filter(unidade=unidade)
     equipamentos = Equipamento.objects.filter(unidade=unidade)
 
-    print espacosFisicos
-
     year = time.localtime()[0]
     current_year, current_month = time.localtime()[:2]
+    print current_month
     lst = []
     # create a list of months for each year, indicating ones that contain entries and current
     for y in [year, year+1]:
         month_list = []
         for n, month in enumerate(month_names):
-            if (n + 2) >= month_names.keys()[current_month] or y != year:
-                month_list.append(dict(n=n+1, name=month_names[n+1]))
+            if (n + 1) >= current_month or y != year:
+                month_list.append(dict(n=n+1, name=month_names[n]))
         lst.append((y, month_list))
 
     return render(
@@ -165,7 +165,7 @@ def addreserva(request, espacoatual, ano=None, mes= None, dia=None):
         request.POST = request.POST.copy()
         request.POST['estado'] = 1
         request.POST['usuario'] = request.user.id
-        form = FormReserva(request.POST, request.FILES)
+        form = ReservaEspacoFisicoAdminForm(request.POST, request.FILES)
         if form.is_valid():
             form.fields['usuario'] = forms.CharField(initial=request.user.id)
             
@@ -183,7 +183,7 @@ def addreserva(request, espacoatual, ano=None, mes= None, dia=None):
             form.enviarEmail(request.user.email)
             return render_to_response("salvo.html",{'mensagem': "Reserva realizada com sucesso!"})
     else:
-        form = FormReserva()
+        form = ReservaEspacoFisicoAdminForm()
         form.fields['usuario'].widget = forms.HiddenInput()
         form.fields['estado'].widget = forms.HiddenInput()
         form.fields['dataReserva'].widget = forms.HiddenInput()
@@ -201,9 +201,12 @@ def addreserva(request, espacoatual, ano=None, mes= None, dia=None):
 
     return render(request, "addreserva.html", {'form': form, "usuario": usuario, 'dados': dados })
 
-def intermediaria(request, id_equip, data_numero):
+def intermediaria(request, tipo, id_equip, data_numero):
     request.session['id_equip'] = id_equip
     data_string = str(data_numero)
     data = data_string[0]+data_string[1]+'/'+data_string[2]+data_string[3]+'/'+data_string[4]+data_string[5]+data_string[6]+data_string[7]
     request.session['data'] = data
-    return redirect('/adminagenda/reservaequipamento/add/')
+    if tipo == 'e':
+        return redirect('/adminagenda/reservaequipamento/add/')
+    elif tipo == 'f':
+        return redirect('/adminagenda/reservaespacofisico/add/')
