@@ -20,6 +20,7 @@ class UnidadeAdmin(admin.ModelAdmin):
 		units = Unidade.objects.none()
 		unit_responsible = Unidade.objects.filter(responsavel=request.user)
 		units = units | unit_responsible | Unidade.objects.filter(unidadePai=unit_responsible)
+		units = units.distinct()
 		return units
 
 	def get_readonly_fields(self, request, obj=None):
@@ -73,6 +74,7 @@ class ReservaEquipamentoAdmin(admin.ModelAdmin):
 		#Add own reserves
 		reserves = reserves | ReservaEquipamento.objects.filter(usuario=request.user)
 
+		reserves = reserves.distinct()
 		return reserves
 
 
@@ -148,12 +150,16 @@ class ReservaEspacoFisicoAdmin(admin.ModelAdmin):
 		#Add own reserves
 		reserves = reserves | ReservaEspacoFisico.objects.filter(usuario=request.user)
 
+		reserves = reserves.distinct()
 		return reserves
 
 admin.site.register(ReservaEspacoFisico, ReservaEspacoFisicoAdmin)
 
 class EquipamentoAdmin(admin.ModelAdmin):
-	list_display = ('nome','unidade','responsavel')
+	list_display = ('nome','unidade','get_responsavel')
+	def get_responsavel(self, obj):
+		return ", ".join(responsavel.username for responsavel in obj.responsavel.all())
+	get_responsavel.short_description = 'responsavel'
 
 	def get_queryset(self, request):
 		qs = super(EquipamentoAdmin, self).get_queryset(request)
@@ -172,6 +178,7 @@ class EquipamentoAdmin(admin.ModelAdmin):
 
 		# Get all equipments user's responsible
 		equipments = equipments | Equipamento.objects.filter(responsavel=request.user)
+		equipments = equipments.distinct()
 		return equipments
 
 	def get_readonly_fields(self, request, obj=None):
@@ -180,13 +187,17 @@ class EquipamentoAdmin(admin.ModelAdmin):
 		if request.user.is_superuser:
 			return []
 		else:
-			return ['responsavel', 'unidade']
+			return ['get_responsavel', 'unidade']
 
 
 admin.site.register(Equipamento, EquipamentoAdmin)
 
 class EspacoFisicoAdmin(admin.ModelAdmin):
-	list_display = ('nome','unidade','responsavel')
+	list_display = ('nome','unidade','get_responsavel')
+
+	def get_responsavel(self, obj):
+		return ", ".join([responsavel.username for responsavel in obj.responsavel.all()])
+	get_responsavel.short_description = 'responsavel'
 
 	def get_queryset(self, request):
 		qs = super(EspacoFisicoAdmin, self).get_queryset(request)
@@ -213,7 +224,7 @@ class EspacoFisicoAdmin(admin.ModelAdmin):
 		if request.user.is_superuser:
 			return []
 		if obj in qsResp:
-			return ['responsavel', 'unidade']
+			return ['get_responsavel', 'unidade']
 		return []
 
 admin.site.register(EspacoFisico, EspacoFisicoAdmin)

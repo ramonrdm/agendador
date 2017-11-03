@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib import admin
 from django.core.exceptions import ValidationError
 
@@ -32,8 +32,9 @@ class Locavel(models.Model):
 
     nome = models.TextField()
     descricao = models.TextField()
-    responsavel = models.ForeignKey(User)
+    responsavel = models.ManyToManyField(User)
     unidade = models.ForeignKey(Unidade)
+    grupo = models.ForeignKey(Group, blank=True, null=True)
     bloqueado = models.BooleanField(default=False)
     visivel = models.BooleanField(default=True)
     localizacao = models.TextField()
