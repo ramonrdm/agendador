@@ -14,14 +14,7 @@ class ReservaAdminForm(forms.ModelForm):
 		fields = '__all__'
 	def __init__(self, *args, **kwargs):
 		super(ReservaAdminForm, self).__init__(*args, **kwargs)
-		self.fields['usuario'].initial = self.request.user.id
-		try:
-			self.fields['data'].initial = self.request.session['data']
-		except:
-			pass
-		if not self.request.user.is_superuser:
-			self.fields['usuario'].widget = HiddenInput()
-			self.fields['usuario'].label = ""
+
 
 class ReservaEquipamentoAdminForm(ReservaAdminForm):
 	"""docstring for ReservaEquipamentoAdminForm"""
@@ -45,14 +38,7 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
 	def __init__(self, *args, **kwargs):
 		self.request = kwargs.pop("request", None)
 		super(ReservaEspacoFisicoAdminForm, self).__init__(*args, **kwargs)
-		self.fields['data'].widget = widgets.AdminDateWidget()
-		self.fields['horaInicio'].widget = widgets.AdminTimeWidget()
-		#self.fields['horaInicio'].initial = "24:00"
-		self.fields['horaFim'].widget = widgets.AdminTimeWidget()
-		try:
-			self.fields['espacoFisico'].initial = self.request.session['id_place']
-		except:
-			pass
+
 				
 		#espacoatual = args.pop("espacoatual")
 		#print "bluh"

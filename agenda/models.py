@@ -8,7 +8,8 @@ class Unidade(models.Model):
     sigla = models.CharField(max_length=10, unique=True)
     nome = models.TextField()
     unidadePai = models.ForeignKey('self', blank=True, null=True, default=1)
-    responsavel = models.ForeignKey(User)
+    grupo = models.ForeignKey(Group, blank=True, null=True)
+    responsavel = models.ManyToManyField(User)
     descricao = models.TextField()
     logo = models.FileField(blank=True)
 
@@ -65,7 +66,6 @@ class Reserva(models.Model):
     usuario = models.ForeignKey(User)
     ramal = models.PositiveIntegerField()
     finalidade = models.TextField()
-
     
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
@@ -73,7 +73,9 @@ class Reserva(models.Model):
 class ReservaEspacoFisico(Reserva):
     espacoFisico = models.ForeignKey(EspacoFisico)
 
-
+    def clean(self):
+        if self.espacoFisico.bloqueado:
+            raise ValidationError({'espacoFisico': 'Espaço físico bloqueado'})
 
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
@@ -83,8 +85,10 @@ class ReservaEquipamento(Reserva):
     equipamento = models.ForeignKey(Equipamento)
 
     def clean(self):
+        super(type(self), self).clean()
         reservas = type(self).objects.filter(equipamento=self.equipamento, data=self.data)
         for r in reservas:
+            print self.horaInicio
             if  (
                 (self.horaFim  > r.horaInicio and self.horaFim < r.horaFim) or 
                 (self.horaInicio > r.horaInicio and self.horaInicio < r.horaFim ) or 
@@ -93,6 +97,8 @@ class ReservaEquipamento(Reserva):
                 (self.horaInicio < r.horaFim < self.horaFim)
                 ):
                 raise ValidationError({'data': 'choque!'})
+            elif self.equipamento.bloqueado:
+                raise ValidationError({'equipamento': 'Equipamento bloqueado'})
 
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome

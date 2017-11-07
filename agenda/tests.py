@@ -37,10 +37,12 @@ class AdminViewPermissionsTests(TestCase):
         superuser.save()
 
         # Create units to their respective responsable
-        parentUnit = Unidade.objects.create(sigla='pu', nome='parent unit', responsavel=unit_responsable, descricao='test')
+        parentUnit = Unidade.objects.create(sigla='pu', nome='parent unit', descricao='test')
         parentUnit.save()
-        childUnit = Unidade.objects.create(sigla='cu', nome='child unit', responsavel=sub_unit_responsable, unidadePai=parentUnit, descricao='test')
+        parentUnit.responsavel.add(unit_responsable)
+        childUnit = Unidade.objects.create(sigla='cu', nome='child unit', unidadePai=parentUnit, descricao='test')
         parentUnit.save()
+        childUnit.responsavel.add(sub_unit_responsable)
 
         # Create a room and a equipment for each user (except common)
         room0 = EspacoFisico.objects.create(nome='room0', descricao='test', unidade=childUnit, capacidade=0)

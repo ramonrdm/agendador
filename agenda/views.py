@@ -5,13 +5,14 @@ import time, calendar
 from datetime import date, datetime, timedelta
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.forms.models import modelformset_factory
 from django.template import RequestContext, Library
 from django.views.decorators import csrf
 from agenda.models import *
 from agenda.forms import ReservaEspacoFisicoAdminForm
 from django import forms
+from django.contrib.admin.sites import AdminSite
 from datetime import date
 from material.frontend import urls as frontend_urls
 from forms import *
@@ -35,8 +36,8 @@ def index(request, unidade=unidade_default):
     
     unidades = Unidade.objects.filter(unidadePai=unidade)
 
-    espacosFisicos = EspacoFisico.objects.filter(unidade=unidade)
-    equipamentos = Equipamento.objects.filter(unidade=unidade)
+    espacosFisicos = EspacoFisico.objects.filter(unidade=unidade).filter(visivel=True)
+    equipamentos = Equipamento.objects.filter(unidade=unidade).filter(visivel=True)
 
     year = time.localtime()[0]
     current_year, current_month = time.localtime()[:2]

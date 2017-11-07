@@ -115,6 +115,7 @@ class ReservaEspacoFisicoAdmin(admin.ModelAdmin):
 	icon = '<i class="material-icons">room</i>'
 
 	def get_form(self, request, obj=None, **kwargs):
+		print request.user.username
 		AdminForm =  super(ReservaEspacoFisicoAdmin, self).get_form(request, obj, **kwargs)
 		class AdminFormWithRequest(AdminForm):
 			def __new__(cls, *args, **kwargs):
@@ -122,6 +123,23 @@ class ReservaEspacoFisicoAdmin(admin.ModelAdmin):
 				return AdminForm(*args, **kwargs)
 
 		return AdminFormWithRequest
+
+	def search_children(self, reserves, unit):
+		children = Unidade.objects.filter(unidadePai=unit)
+		for child in children:
+			if child.nome == unit.nome:
+				children = children.exclude(nome=unit.nome)
+		if children:
+			for child in children:
+				reserves = self.search_children(reserves, child)
+		else:
+			places = EspacoFisico.objects.filter(unidade = unit)
+			for place in places:
+				reserves = reserves | ReservaEspacoFisico.objects.filter(espacoFisico=place)
+			print reserves
+			return reserves
+		return reserves
+
 
 	def get_queryset(self, request):
 		qs = super(ReservaEspacoFisicoAdmin, self).get_queryset(request)
@@ -136,11 +154,14 @@ class ReservaEspacoFisicoAdmin(admin.ModelAdmin):
 			reservable = EspacoFisico.objects.filter(unidade=unit_responsible)
 			reserves = reserves | ReservaEspacoFisico.objects.filter(espacoFisico=reservable)
 			# Check for children unit
-			children = Unidade.objects.filter(unidadePai=unit_responsible)
-			for child in children:
-				room = EspacoFisico.objects.filter(unidade=child)
-				for room_child in room:
-					reserves = reserves | room_child.reservaespacofisico_set.all()
+			for unit in unit_responsible:		
+				reserves = self.search_children(reserves, unit)
+				
+#			children = Unidade.objects.filter(unidadePai=unit_responsible)
+#			for child in children:
+#				room = EspacoFisico.objects.filter(unidade=child)
+#				for room_child in room:
+#					reserves = reserves | room_child.reservaespacofisico_set.all()
 
 		# Check if room responsible
 		room_responsible = EspacoFisico.objects.filter(responsavel=request.user)
