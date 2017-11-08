@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from agenda.models import Reserva, EspacoFisico, ReservaEspacoFisico, ReservaEquipamento
+from agenda.models import Reserva, EspacoFisico, ReservaEspacoFisico, ReservaEquipamento, Equipamento
 from django import forms
 from django.contrib.admin import widgets
 import datetime
 from django.core.mail import send_mail
 from django.forms.extras.widgets import SelectDateWidget
 from django.forms import ModelForm, Form, HiddenInput
+from django.contrib.admin.sites import AdminSite
+from django.core.exceptions import ValidationError
+import admin
 
 class ReservaAdminForm(forms.ModelForm):
 	class Meta:
@@ -24,6 +27,9 @@ class ReservaEquipamentoAdminForm(ReservaAdminForm):
 	def __init__(self, *args, **kwargs):
 		self.request = kwargs.pop("request", None)
 		super(ReservaEquipamentoAdminForm, self).__init__(*args, **kwargs)
+		ma = admin.EquipamentoAdmin(Equipamento, AdminSite())
+		queryset = ma.get_queryset(self.request).exclude(visivel=False)
+		self.fields['equipamento'].queryset = queryset
 		try:
 			self.fields['equipamento'].initial = self.request.session['id_equip']
 		except:
@@ -38,7 +44,13 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
 	def __init__(self, *args, **kwargs):
 		self.request = kwargs.pop("request", None)
 		super(ReservaEspacoFisicoAdminForm, self).__init__(*args, **kwargs)
-
+		ma = admin.EspacoFisicoAdmin(EspacoFisico, AdminSite())
+		queryset = ma.get_queryset(self.request).exclude(visivel=False)
+		self.fields['espacoFisico'].queryset = queryset
+		try:
+			self.fields['espacoFisico'].initial = self.request.session['id_equip']
+		except:
+			pass
 				
 		#espacoatual = args.pop("espacoatual")
 		#print "bluh"
@@ -47,9 +59,16 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
         #self.fields['espacoFisico'] = espacoatual
         #form.fields['evento'].queryset = espacoatual[0].eventosPermitidos
 
+	def clean(self):
+		self.choque()
+		self.bloqueado()
+
+	def bloqueado(self):
+		if self.cleaned_data['espacoFisico'].bloqueado:
+			raise ValidationError({'espacoFisico': 'Espaço físico bloqueado'})
 
 	def choque(self):
-		reservas = Reserva.objects.filter(espacoFisico=self.cleaned_data['espacoFisico'], data=self.cleaned_data['data'])
+		reservas = ReservaEspacoFisico.objects.filter(espacoFisico=self.cleaned_data['espacoFisico'], data=self.cleaned_data['data'])
 		for r in reservas:
 			if  (
 				(self.cleaned_data['horaFim']  > r.horaInicio and self.cleaned_data['horaFim'] < r.horaFim) or 
@@ -58,8 +77,7 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
 				(r.horaInicio > self.cleaned_data['horaInicio'] and r.horaInicio < self.cleaned_data['horaFim']) or
 				(self.cleaned_data['horaInicio'] < r.horaFim < self.cleaned_data['horaFim'])
 				):
-				return True
-		return False
+			    raise ValidationError({'data': 'choque!'})
 		
 	def enviarEmail(self, mail):
 		mensagem_email="Reserva de espaço físico "+str(self.cleaned_data['horaInicio'])+'/'+str(self.cleaned_data['horaFim'])+' '+str(self.cleaned_data['data'])+' - '+str(self.cleaned_data['espacoFisico'])+", realizada com sucesso"

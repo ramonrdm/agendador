@@ -73,10 +73,6 @@ class Reserva(models.Model):
 class ReservaEspacoFisico(Reserva):
     espacoFisico = models.ForeignKey(EspacoFisico)
 
-    def clean(self):
-        if self.espacoFisico.bloqueado:
-            raise ValidationError({'espacoFisico': 'Espaço físico bloqueado'})
-
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
 
