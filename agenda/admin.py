@@ -145,7 +145,6 @@ class ReservaEspacoFisicoAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">room</i>'
 
     def get_form(self, request, obj=None, **kwargs):
-        print request.user.username
         AdminForm =  super(ReservaEspacoFisicoAdmin, self).get_form(request, obj, **kwargs)
         class AdminFormWithRequest(AdminForm):
             def __new__(cls, *args, **kwargs):
@@ -228,6 +227,8 @@ class EquipamentoAdmin(admin.ModelAdmin):
                 if not group:
                     equipments = equipments | Equipamento.objects.filter(id=equipment.id)
             return equipments
+        # You may also have a son AND equipments
+        equipments = equipments | Equipamento.objects.filter(unidade=unit)
         return equipments
 
     def get_queryset(self, request):
@@ -293,6 +294,8 @@ class EspacoFisicoAdmin(admin.ModelAdmin):
                 if not group:
                     spaces = spaces | EspacoFisico.objects.filter(id=space.id)
             return spaces
+        # You may also have a child AND spacaces
+        spaces = spaces | EspacoFisico.objects.filter(unidade=unit)
         return spaces
 
     def get_queryset(self, request):

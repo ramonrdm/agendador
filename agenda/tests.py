@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User, Permission
 from django.contrib.admin.sites import AdminSite
 
+from .forms import *
 from .models import *
 from .admin import *
 
@@ -190,3 +191,120 @@ class AdminViewPermissionsTests(TestCase):
         temp.pop()
         self.assertItemsEqual(temp, room_reserves)
         print '-COMMON USER CASE PASS'
+
+class UserFilterTests(TestCase):
+    def createPreset(self):
+        # Create one superuser to be responsable for everything
+        superuser = User.objects.create(username='superuser', password='a')
+        # Create the units in a binary tree fashion
+        root = Unidade.objects.create(sigla='rt', nome='root', descricao='test')
+        root.save()
+        root.responsavel.add(superuser)
+        child_left = Unidade.objects.create(sigla='cl', nome='child_left', unidadePai=root, descricao='test')
+        child_left.save()
+        child_left.responsavel.add(superuser)
+        child_left.responsavel.add(superuser)
+        child_left_left = Unidade.objects.create(sigla='cll', nome='child_left_left', unidadePai=child_left, descricao='q')
+        child_left_left.save()
+        child_left_left.responsavel.add(superuser)
+        child_left_right = Unidade.objects.create(sigla='clr', nome='child_left_right', unidadePai=child_left, descricao='')
+        child_left_right.save()
+        child_left_right.responsavel.add(superuser)
+        child_right = Unidade.objects.create(sigla='cr', nome='child_right', unidadePai=root, descricao='q')
+        child_right.save()
+        child_left_right.responsavel.add(superuser)
+        child_right_left = Unidade.objects.create(sigla='crl', nome='child_right_left', unidadePai=child_right, descricao='q')
+        child_right_left.save()
+        child_right_left.responsavel.add(superuser)
+        child_right_right = Unidade.objects.create(sigla='crr', nome='child_right_right', unidadePai=child_right, descricao='q')
+        child_right_right.save()
+        child_right_right.responsavel.add(superuser)
+        child_right_right_left = Unidade.objects.create(sigla='crrl', nome='child_right_right_left', unidadePai=child_right_right, descricao='q')
+        child_right_right_left.save()
+        child_right_right_left.responsavel.add(superuser)
+
+        # Create equipments and places with different characteristics in "leaf" units
+        invisible_place = EspacoFisico.objects.create(nome='inivisible_place', descricao='q', unidade=child_left_left, visivel=False, localizacao='q', capacidade=1)
+        invisible_place.save()
+        invisible_equipment = Equipamento.objects.create(nome='invisible_equipment', descricao='q', unidade=child_left_left, visivel=False, localizacao='q', patrimonio=3)
+        invisible_equipment.save()
+        group_place = EspacoFisico.objects.create(nome='group_place', descricao='q', unidade=child_left_left, localizacao='q', capacidade=2)
+        group_place.save()
+        group_equipment = Equipamento.objects.create(nome='group_equipment', descricao='q', unidade=child_left_left, localizacao='q', patrimonio=2)
+        group_equipment.save()
+        place0 = EspacoFisico.objects.create(nome='place0', descricao='q', unidade=child_left_right, localizacao='q', capacidade=2)
+        place0.save()
+        equipment0 = Equipamento.objects.create(nome='equipment0', descricao='q', unidade=child_left_right, localizacao='q', patrimonio=2)
+        equipment0.save()
+        place1 = EspacoFisico.objects.create(nome='place1', descricao='q', unidade=child_right_left, localizacao='q', capacidade=2)
+        place1.save()
+        equipment1 = Equipamento.objects.create(nome='equipment1', descricao='q', unidade=child_right_left, localizacao='q', patrimonio=1)
+        equipment1.save()
+        place2 = EspacoFisico.objects.create(nome='place2', descricao='q', unidade=child_right_right_left, localizacao='q', capacidade=2)
+        place2.save()
+        equipment2 = Equipamento.objects.create(nome='equipment2', descricao='q', unidade=child_right_right_left, localizacao='q', patrimonio=2)
+        equipment2.save()
+        blocked_place = EspacoFisico.objects.create(nome='blocked_place', descricao='q', unidade=child_right_right, bloqueado=True, localizacao='q', capacidade=2)
+        blocked_place.save()
+        blocked_equipment = Equipamento.objects.create(nome='blocked_equipment', descricao='q', unidade=child_right_right, bloqueado=True, localizacao=2, patrimonio=2)
+        blocked_equipment.save()
+
+        # Create common users
+        root_user = User.objects.create(username='root_user', password='a')
+        root_user.save()
+        child_left_user = User.objects.create(username='child_left_user', password='a')
+        child_left_user.save()
+        child_right_right_user = User.objects.create(username='child_right_right_user', password='a')
+        child_right_right_user.save()
+
+        # Creat unit groups and add people, units and place/equiptment to it
+        unit_root = Group.objects.create(name='unit_root')
+        unit_root.unidade_set.add(root)
+        unit_root.user_set.add(root_user)
+        unit_child_left = Group.objects.create(name='unit_child_left')
+        unit_child_left.unidade_set.add(child_left)
+        unit_child_left.user_set.add(child_left_user)
+        unit_child_right_right = Group.objects.create(name='unit_child_right_right')
+        unit_child_right_right.unidade_set.add(child_right_right)
+        unit_child_right_right.user_set.add(child_right_right_user)
+        permission = Group.objects.create(name='permission')
+        permission.espacofisico_set.add(group_place)
+        permission.equipamento_set.add(group_equipment)
+        permission.user_set.add(child_right_right_user)
+
+        return {
+            'places': [invisible_place, group_place, place0, place1, place2, blocked_place],
+            'equipments': [invisible_equipment, group_equipment, equipment0, equipment1, equipment2, blocked_equipment]
+        }
+
+    def makeChecks(self, items, user, pop_items):
+        # pop items user shouldn't see
+        places = list(items['places'])
+        equipments = list(items['equipments'])
+        for item in pop_items:
+            places.pop(item)
+            equipments.pop(item)
+
+        # Create user, get options and compare
+        user = User.objects.get(username=user)
+        request.user = user
+        ma = EspacoFisicoAdmin(EspacoFisico, AdminSite())
+        bd_places = list(ma.get_queryset(request).exclude(visivel=False))
+        self.assertItemsEqual(bd_places, places)
+        ma = EquipamentoAdmin(Equipamento, AdminSite())
+        bd_equipments = list(ma.get_queryset(request).exclude(visivel=False))
+        self.assertItemsEqual(bd_equipments, equipments)
+
+    def test_user_groups_filter(self):
+        items = self.createPreset()
+
+        print '-TESTING GROUP FILTERS'
+
+        # Root user must see everything but invisible and group
+        self.makeChecks(items, 'root_user', [0, 0])
+        # Child_left user must see only item 0
+        self.makeChecks(items, 'child_left_user', [0, 0, 1, 1, 1])
+        # Child_right_right must see item 2, blocked and group
+        self.makeChecks(items, 'child_right_right_user', [0, 1, 1])
+
+        print '-GROUP FILTERS PASS'
