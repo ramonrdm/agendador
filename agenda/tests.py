@@ -289,10 +289,10 @@ class UserFilterTests(TestCase):
         user = User.objects.get(username=user)
         request.user = user
         ma = EspacoFisicoAdmin(EspacoFisico, AdminSite())
-        bd_places = list(ma.get_queryset(request).exclude(visivel=False))
+        bd_places = list(ma.get_queryset(request))
         self.assertItemsEqual(bd_places, places)
         ma = EquipamentoAdmin(Equipamento, AdminSite())
-        bd_equipments = list(ma.get_queryset(request).exclude(visivel=False))
+        bd_equipments = list(ma.get_queryset(request))
         self.assertItemsEqual(bd_equipments, equipments)
 
     def test_user_groups_filter(self):
@@ -300,6 +300,8 @@ class UserFilterTests(TestCase):
 
         print '-TESTING GROUP FILTERS'
 
+        # Superuser must see everything since he's responsable
+        self.makeChecks(items, 'superuser', [])
         # Root user must see everything but invisible and group
         self.makeChecks(items, 'root_user', [0, 0])
         # Child_left user must see only item 0
