@@ -11,7 +11,7 @@ admin.site.register(Atividade)
 
 @admin.register(Unidade)
 class UnidadeAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">group</i>'
+    icon = '<i class="material-icons">account_balance</i>'
 
 
     def search_children(self, units, unit):

@@ -1,14 +1,16 @@
-{% extends "agenda/base.html" %}
+{% extends "agenda/base_module.html" %}
+{% load i18n material_frontend %}
 {% load static %}
-{% block nav-global %}
-{% endblock %}
 {% block title %} Agendador - {{unidade.sigla}}{% endblock %}
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/index.css' %}" />
+{% endblock %}
 {% block page_title %}
     <strong>Unidade: {{unidade.sigla}}</strong>
 {% endblock %}
 
 {% block content %}
-<link rel="stylesheet" type="text/css" href="{% static 'agenda/css/index.css' %}" />
 
 <div id="index">
     {% if unidades %}

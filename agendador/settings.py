@@ -22,7 +22,7 @@ SECRET_KEY = '&vn=ld^l+t0bo3r_3uy!3*6&x3x6_ppru#1lhm(gku!z+s6=kc'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0','127.0.0.1','testserver', 'localhost']
+ALLOWED_HOSTS = ['0.0.0.0','127.0.0.1', 'localhost']
 INTERNAL_IPS = ['127.0.0.1']
 
 # Application definition
@@ -68,7 +68,7 @@ WSGI_APPLICATION = 'agendador.wsgi.application'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-DATABASES = {
+"""DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'submitlibras',
@@ -78,22 +78,24 @@ DATABASES = {
         'PORT': '3306',
     }
 }
-
+"""
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
 TEMPLATES = [
         {
             'BACKEND': 'django.template.backends.django.DjangoTemplates',
-            'DIRS': [os.path.join(BASE_DIR, 'templates')],
+            'DIRS': [],
             'APP_DIRS': True,
             'OPTIONS': {
-                'debug': DEBUG,
-                #'DEBUG': DEBUG,
-                #'TEMPLATE_DEBUG': DEBUG,
                 'context_processors': [
                     'django.template.context_processors.debug',
                     'django.template.context_processors.request',
                     'django.contrib.auth.context_processors.auth',
                     'django.contrib.messages.context_processors.messages',
-                    'material.frontend.context_processors.modules',
                 ],
             },
         },

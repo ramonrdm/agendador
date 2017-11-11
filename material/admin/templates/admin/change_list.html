@@ -42,11 +42,15 @@
     });
 
     $(".admin_filter").change(function() {
-      window.location.href = $(this).val();
+      if(this.tagName === 'SELECT') {
+        window.location.href = $(this).val();
+      }
     });
 
     $(".date_hierarchy").change(function() {
-      window.location.href = $(this).val();
+      if(this.tagName === 'SELECT') {
+        window.location.href = $(this).val();
+      }
     });
   });
   })(jQuery);
@@ -70,7 +74,6 @@
 
 
 {% block main_content %}
-
 <form method="POST" class="content">
     {% csrf_token %}
     <div class="left-panel{% if action_form or cl.date_hierarchy or cl.list_filter or cl.search_fields %}{% else %} wide{% endif %}">
@@ -84,6 +87,7 @@
             </div>
         </div>
     </div>
+
     {% if action_form or cl.date_hierarchy or cl.list_filter or cl.search_fields %}
     <div class="right-panel">
         {% if action_form and actions_on_top and cl.show_admin_actions %}

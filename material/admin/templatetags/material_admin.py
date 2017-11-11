@@ -66,7 +66,8 @@ def get_app_list(request):
                     'name': capfirst(model._meta.verbose_name_plural),
                     'object_name': model._meta.object_name,
                     'perms': perms,
-                    'icon': mark_safe(model_icon)
+                    'icon': mark_safe(model_icon),
+                    'active': False,
                 }
                 if perms.get('change', False):
                     try:
@@ -96,6 +97,7 @@ def get_app_list(request):
                         'app_url': reverse('admin:app_list', kwargs={'app_label': app_label}, current_app=site.name),
                         'has_module_perms': has_module_perms,
                         'models': [model_dict],
+                        'active': False,
                     }
 
                     if request.path.startswith(app_dict[app_label]['app_url']):
@@ -172,7 +174,7 @@ def paginator_number(cl, i):
     elif i == 'next':
         if current_page.has_next():
             return format_html(
-                '<li class="disabled"><a href="{}"><i class="material-icons">chevron_right</i></i></a></li>',
+                '<li class="disabled"><a href="{}"><i class="material-icons">chevron_right</i></a></li>',
                 cl.get_query_string({PAGE_VAR: current_page.next_page_number()}))
         else:
             return format_html(

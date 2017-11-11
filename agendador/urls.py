@@ -9,14 +9,12 @@ from django.views import generic
 admin.autodiscover()
 
 urlpatterns = [
-    #url('^$', generic.TemplateView.as_view(template_name="index.html"), name="index"),
-    url(r'^$', views.index, name="index"),
     #url(r'^accounts/login/$', views2.login, name="cas_ng_login"),
     #url(r'^accounts/logout/$', views2.logout, name="cas_ng_logout"),
-    url(r'^admin', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
     url(r'', include(frontend_urls)),
+    url(r'^$', views.index, name="index"),
     url(r'^$', views.index, name='Reservas UFSC'),
-    #url(r'^sobre$', views.Sobre2.as_view(template_name="agenda/sobre.html, content_type='text/plain'"), name='sobre'),
     url(r'^sobre$', views.sobre, name="sobre"),
     url(r'^espacos/$', views.espacos, name='espacos'),
     url(r'^equipamentos/$', views.equipamentos, name='equipamentos'),
@@ -30,7 +28,6 @@ urlpatterns = [
     url(r'^addreserva/$', views.addreserva, name='addreserva'),
     url(r'^addreserva/(\d+)/$', views.addreserva, name='addreserva'),
     url(r'^addreserva/(\d+)/(\d+)/(\d+)/(\d+)/$', views.addreserva, name='addreserva'),
-
     url(r'^(?P<unidade>\w+)$', views.index, name='Reservas-UFSC'),
     url(r'^reservar/(?P<tipo>e|f|s)/(?P<id_equip>\d+)/(?P<data_numero>\d+)$', views.intermediaria, name="intermediaria"),
 

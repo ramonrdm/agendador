@@ -1,7 +1,10 @@
+from __future__ import unicode_literals
+
 from django.contrib.auth import get_permission_codename
 from django.core.urlresolvers import reverse
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import models
+from django.http import Http404
 from django.views import generic
 
 
@@ -21,11 +24,11 @@ class DetailModelView(generic.DetailView):
             elif field.auto_created:
                 continue
             else:
-                choice_display_attr = "get_{}_display".format(field.get_attname())
+                choice_display_attr = "get_{}_display".format(field.name)
             if hasattr(self.object, choice_display_attr):
                 value = getattr(self.object, choice_display_attr)()
             else:
-                value = getattr(self.object, field.get_attname())
+                value = getattr(self.object, field.name)
 
             if value is not None:
                 yield (field.verbose_name.title(), value)
@@ -87,6 +90,15 @@ class DetailModelView(generic.DetailView):
 
         Check object view permission at the same time.
         """
+        queryset = self.get_queryset()
+        model = queryset.model
+        pk = self.kwargs.get(self.pk_url_kwarg)
+        if pk is not None:
+            try:
+                self.kwargs[self.pk_url_kwarg] = model._meta.pk.to_python(pk)
+            except (ValidationError, ValueError):
+                raise Http404
+
         obj = super(DetailModelView, self).get_object()
         if not self.has_view_permission(self.request, obj):
             raise PermissionDenied

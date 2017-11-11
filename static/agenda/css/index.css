@@ -1,0 +1,21 @@
+#index {
+	overflow-x: hidden;	
+}
+
+#unidade {
+	float: left;
+	margin-right: 1vw;
+}
+
+#espacosCard, #equipamentosCard {
+	background-color: white;
+}
+
+.divider {
+	width: 100vw;
+}
+
+.collection-header, .collapsible-header {
+	width: 100vw;
+	cursor: default;
+}
