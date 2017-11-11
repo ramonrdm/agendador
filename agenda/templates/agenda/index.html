@@ -6,6 +6,10 @@
     {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/index.css' %}" />
 {% endblock %}
+{% block js %}
+    <script src="{% static 'material/js/jquery.js' %}"></script>
+    <script src="{% static 'material/js/materialize.js' %}"></script>
+{% endblock %}
 {% block page_title %}
     <strong>Unidade: {{unidade.sigla}}</strong>
 {% endblock %}
