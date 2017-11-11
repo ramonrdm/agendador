@@ -214,6 +214,6 @@ def intermediaria(request, tipo, id_equip, data_numero):
     data = data_string[0]+data_string[1]+'/'+data_string[2]+data_string[3]+'/'+data_string[4]+data_string[5]+data_string[6]+data_string[7]
     request.session['data'] = data
     if tipo == 'e':
-        return redirect('/adminagenda/reservaequipamento/add/')
+        return redirect('/admin/agenda/reservaequipamento/add/')
     elif tipo == 'f':
-        return redirect('/adminagenda/reservaespacofisico/add/')
+        return redirect('/admin/agenda/reservaespacofisico/add/')
