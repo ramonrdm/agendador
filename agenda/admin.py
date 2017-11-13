@@ -77,6 +77,9 @@ class ReservaEquipamentoAdmin(admin.ModelAdmin):
             for equipment in equipments:
                 reserves = reserves | ReservaEquipamento.objects.filter(equipamento=equipment)
             return reserves
+        equipments = Equipamento.objects.filter(unidade=unit)
+        for equipment in equipments:
+            reserves = reserves | ReservaEquipamento.objects.filter(equipamento=equipment)
         return reserves
 
     def get_queryset(self, request):
@@ -166,6 +169,9 @@ class ReservaEspacoFisicoAdmin(admin.ModelAdmin):
             for place in places:
                 reserves = reserves | ReservaEspacoFisico.objects.filter(espacoFisico=place)
             return reserves
+        places = EspacoFisico.objects.filter(unidade = unit)
+        for place in places:
+            reserves = reserves | ReservaEspacoFisico.objects.filter(espacoFisico=place)
         return reserves
 
 
