@@ -59,7 +59,7 @@
                     {% for year, months in years %}
                     <div id="year{{ forloop.counter }}Espaco" class="row">
                         {% for month in months %}
-                            <div class="collection col l2 s4">
+                            <div class="collection col l2 m4 s6">
                                 <a class="collection-header"><b>{{ month.name }}</b></a>
                                 {% for espaco in espacosfisicos %}
                                     <a  class="collection-item" href="{% url 'mes' 'f' espaco.id year month.n %}">{{ espaco.nome }}</a>
@@ -79,7 +79,7 @@
 
         {% if equipamentos %}
         <ul class="collapsible row" data-collapsible="accordion">
-            <li><div class="collapsible-header active col s12" ><i class="small material-icons">expand_more</i><h5>Equipamentos de {{unidade.sigla}}</h5></div>
+            <li><div class="collapsible-header active col s12" ><i class="small material-icons">expand_more</i><span class="flow-text"><h5>Equipamentos de {{unidade.sigla}}</h5></span></div>
         <div class='collapsible-body col s12' id="equipamentosCard">
         <div class='col s12 m12 l12'>
             <div class="card" id="equipamentos">
@@ -95,7 +95,7 @@
                 {% for year, months in years %}
                 <div id="year{{ forloop.counter }}Equipamento">
                     {% for month in months %}
-                        <div class="collection col l2 s4">
+                        <div class="collection col l2 m4 s6">
                             <a class="collection-header"><b>{{ month.name }}</b></a>
                             {% for equipamento in equipamentos %}
                                 <a  class="collection-item" href="{% url 'mes' 'e' equipamento.id year month.n %}">{{ equipamento.nome }}</a>
