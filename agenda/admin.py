@@ -246,13 +246,13 @@ class EquipamentoAdmin(admin.ModelAdmin):
         # Check if unit responsible
         unit_responsible = Unidade.objects.filter(responsavel=request.user)
         # Also check user unit via group, for form list purposes
-        try:
-            group = request.user.groups.get(name__contains='unit')
-            unit = group.unidade_set.all()
+        groups = request.user.groups.all()
+        unit = Unidade.objects.none()
+        for group in groups:
+            if group.unidade_set:
+                unit = unit | group.unidade_set.all()
 
-            unit_responsible = unit | unit_responsible
-        except:
-            pass
+        unit_responsible = unit | unit_responsible
         if unit_responsible:
             for unit in unit_responsible:
                 equipments = equipments | unit.equipamento_set.all()
@@ -321,12 +321,13 @@ class EspacoFisicoAdmin(admin.ModelAdmin):
         # Check if unit responsible. 
         unit_responsible = Unidade.objects.filter(responsavel=request.user)
         # Also check user unit via group, for form list purposes
-        try:
-            group = request.user.groups.get(name__contains='unit')
-            unit = group.unidade_set.all()
-            unit_responsible = unit | unit_responsible
-        except:
-            pass
+        groups = request.user.groups.all()
+        unit = Unidade.objects.none()
+        for group in groups:
+            if group.unidade_set:
+                unit = unit | group.unidade_set.all()
+        unit_responsible = unit | unit_responsible
+
         if unit_responsible:
             for unit in unit_responsible:
                 spaces = self.search_children(spaces, unit, request.user)

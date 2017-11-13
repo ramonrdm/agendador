@@ -19,3 +19,8 @@
 	width: 100vw;
 	cursor: default;
 }
+
+strong {
+	max-width: 100%;
+	overflow-wrap: break-word;
+}

@@ -11,7 +11,9 @@
     <script src="{% static 'material/js/materialize.js' %}"></script>
 {% endblock %}
 {% block page_title %}
-    <strong>Unidade: {{unidade.sigla}}</strong>
+    <div class='row section'>
+        <strong>Unidade: {{unidade.sigla}}</strong>
+    </div>
 {% endblock %}
 
 {% block content %}
@@ -42,7 +44,7 @@
     <div class="row">
         <div class="col s12 inf">
         <ul class="collapsible row" data-collapsible="accordion">
-            <li><div class="collapsible-header active col s12" ><i class="small material-icons">expand_more</i><h5>Espaços Físicos do {{unidade.sigla}}</h5></div>
+            <li><div class="collapsible-header active col s12" ><i class="small material-icons">expand_more</i><h5>Espaços Físicos de {{unidade.sigla}}</h5></div>
             <div class='collapsible-body col s12' id="espacosCard">
                 <div class="card" id="espacosFisicos">
                     <div class="card-tabs">
@@ -77,7 +79,7 @@
 
         {% if equipamentos %}
         <ul class="collapsible row" data-collapsible="accordion">
-            <li><div class="collapsible-header active col s12" ><i class="small material-icons">expand_more</i><h5>Equipamentos do setor {{unidade.sigla}}</h5></div>
+            <li><div class="collapsible-header active col s12" ><i class="small material-icons">expand_more</i><h5>Equipamentos de {{unidade.sigla}}</h5></div>
         <div class='collapsible-body col s12' id="equipamentosCard">
         <div class='col s12 m12 l12'>
             <div class="card" id="equipamentos">
