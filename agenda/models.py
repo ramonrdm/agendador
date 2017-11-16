@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.core.exceptions import ValidationError
 
 class Unidade(models.Model):
-    sigla = models.CharField(max_length=10, unique=True)
+    sigla = models.CharField(max_length=20, unique=True)
     nome = models.TextField()
     unidadePai = models.ForeignKey('self', blank=True, null=True, default=1)
     grupo = models.ForeignKey(Group, blank=True, null=True)

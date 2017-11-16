@@ -5,15 +5,14 @@
 {% block css %}
     {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/index.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/topbar.css' %}" />
 {% endblock %}
 {% block js %}
     <script src="{% static 'material/js/jquery.js' %}"></script>
     <script src="{% static 'material/js/materialize.js' %}"></script>
 {% endblock %}
 {% block page_title %}
-    <div class='row section'>
-        <strong>Unidade: {{unidade.sigla}}</strong>
-    </div>
+    <strong>{{unidade.nome}}</strong>
 {% endblock %}
 
 {% block content %}

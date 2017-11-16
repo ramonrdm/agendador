@@ -3,16 +3,12 @@
 {% load static %}
 {% block css %}
     {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/mes.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/topbar.css' %}" />
 {% endblock %}
 {% block title %}{{ espaco.nome }} - {{ mname }}/{{ year }}{% endblock %}
 
 {% block page_title %}
-    <div class='title row'>
-        <div class='col s12'>
-            <p class="flow-text">Resevas de {{ espaco.nome }} - {{ mname }}/{{ year }}</p>
-        </div>
-    </div>
+    <span class="name">{{ espaco.nome }}</span>
 {% endblock %}
 
 
@@ -61,6 +57,7 @@ jQuery(document).ready(function() {
     });     
     setMonth();
     jQuery(".fc-right").hide();
+
 });
 
 function setMonth() {
@@ -73,5 +70,6 @@ function setMonth() {
         }
 }
 </script>
+
 
 {% endblock %}
