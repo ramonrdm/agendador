@@ -30,7 +30,6 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['usuario'].label = ''
 
 class ReservaEquipamentoAdminForm(ReservaAdminForm):
-    """docstring for ReservaEquipamentoAdminForm"""
     class Meta:
         model = ReservaEquipamento
         fields = '__all__'
@@ -41,17 +40,15 @@ class ReservaEquipamentoAdminForm(ReservaAdminForm):
         except:
             self.id_equip = None
         if self.id_equip:
-            self.fields['equipamento'].initial = self.id_equip
-            self.fields['equipamento'].queryset = Equipamento.objects.filter(id=self.id_equip)
+            self.fields['locavel'].initial = self.id_equip
+            self.fields['locavel'].queryset = Equipamento.objects.filter(id=self.id_equip)
         else:
             ma = admin.EquipamentoAdmin(Equipamento, AdminSite())
             queryset = ma.get_queryset(self.request).exclude(visivel=False)
-            self.fields['equipamento'].queryset = queryset
+            self.fields['locavel'].queryset = queryset
         self.request.session['id_equip'] = None
 
 class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
-    """Formulário de reservas CCS"""
-    #dataReserva = forms.DateTimeField(initial=datetime.datetime.now)
     class Meta:
         model = ReservaEspacoFisico
         fields = '__all__'
@@ -62,40 +59,13 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
         except:
             self.id_equip = None
         if self.id_equip:
-            self.fields['espacoFisico'].initial = self.id_equip
-            self.fields['espacoFisico'].queryset = EspacoFisico.objects.filter(id=self.id_equip)
+            self.fields['locavel'].initial = self.id_equip
+            self.fields['locavel'].queryset = EspacoFisico.objects.filter(id=self.id_equip)
         else:
             ma = admin.EspacoFisicoAdmin(EspacoFisico, AdminSite())
             queryset = ma.get_queryset(self.request).exclude(visivel=False)
-            self.fields['espacoFisico'].queryset = queryset
+            self.fields['locavel'].queryset = queryset
         self.request.session['id_equip'] = None
-                
-        #espacoatual = args.pop("espacoatual")
-        #print "bluh"
-        #print espacoatual
-        #espacoatual = EspacoFisico.objects.filter(id=6)
-        #self.fields['espacoFisico'] = espacoatual
-        #form.fields['evento'].queryset = espacoatual[0].eventosPermitidos
-
-    def clean(self):
-        self.choque()
-        self.bloqueado()
-
-    def bloqueado(self):
-        if self.cleaned_data['espacoFisico'].bloqueado:
-            raise ValidationError({'espacoFisico': 'Espaço físico bloqueado'})
-
-    def choque(self):
-        reservas = ReservaEspacoFisico.objects.filter(espacoFisico=self.cleaned_data['espacoFisico'], data=self.cleaned_data['data'])
-        for r in reservas:
-            if  (
-                (self.cleaned_data['horaFim']  > r.horaInicio and self.cleaned_data['horaFim'] < r.horaFim) or 
-                (self.cleaned_data['horaInicio'] > r.horaInicio and self.cleaned_data['horaInicio'] < r.horaFim ) or 
-                (self.cleaned_data['horaInicio'] == r.horaInicio and self.cleaned_data['horaFim'] == r.horaFim) or
-                (r.horaInicio > self.cleaned_data['horaInicio'] and r.horaInicio < self.cleaned_data['horaFim']) or
-                (self.cleaned_data['horaInicio'] < r.horaFim < self.cleaned_data['horaFim'])
-                ):
-                raise ValidationError({'data': 'choque!'})
         
     def enviarEmail(self, mail):
         mensagem_email="Reserva de espaço físico "+str(self.cleaned_data['horaInicio'])+'/'+str(self.cleaned_data['horaFim'])+' '+str(self.cleaned_data['data'])+' - '+str(self.cleaned_data['espacoFisico'])+", realizada com sucesso"
