@@ -11,6 +11,15 @@
     <span class="name">{{ espaco.nome }}</span>
 {% endblock %}
 
+{% block userphoto %}
+{% if espaco.foto %}
+<a href="#"><img class="circle" src="{{ espaco.foto.url }}"></a>
+{% elif tipo == 'f' %}
+<a href="#"><img class="circle" src="{% static 'agenda/img/place_default_white.png' %}"></a>
+{% elif tipo == 'e' %}
+<a href="#"><img class="circle" src="{% static 'agenda/img/equipment_default_white.png' %}"></a>
+{% endif %}
+{% endblock %}
 
 {% block content %}
 <div class="row">

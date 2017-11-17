@@ -19,8 +19,10 @@ class ReservaAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)
         super(ReservaAdminForm, self).__init__(*args, **kwargs)
-        if self.request.session['data']:
+        try:
             self.fields['data'].initial = self.request.session['data']
+        except:
+            pass
         self.request.session['data'] = None
         if not self.request.user.is_superuser:
             self.fields['usuario'].initial = self.request.user
@@ -34,10 +36,10 @@ class ReservaEquipamentoAdminForm(ReservaAdminForm):
         fields = '__all__'
     def __init__(self, *args, **kwargs):
         super(ReservaEquipamentoAdminForm, self).__init__(*args, **kwargs)
-        if self.request.session['id_equip']:
+        try:
             self.fields['equipamento'].initial = self.request.session['id_equip']
             self.fields['equipamento'].queryset = Equipamento.objects.filter(id=self.request.session['id_equip'])
-        else:
+        except:
             ma = admin.EquipamentoAdmin(Equipamento, AdminSite())
             queryset = ma.get_queryset(self.request).exclude(visivel=False)
             print queryset
@@ -52,10 +54,10 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
         fields = '__all__'
     def __init__(self, *args, **kwargs):
         super(ReservaEspacoFisicoAdminForm, self).__init__(*args, **kwargs)
-        if self.request.session['id_equip']:
+        try:
             self.fields['espacoFisico'].initial = self.request.session['id_equip']
             self.fields['espacoFisico'].queryset = EspacoFisico.objects.filter(id=self.request.session['id_equip'])
-        else:
+        except:
             ma = admin.EspacoFisicoAdmin(EspacoFisico, AdminSite())
             queryset = ma.get_queryset(self.request).exclude(visivel=False)
             self.fields['espacoFisico'].queryset = queryset
