@@ -37,12 +37,15 @@ class ReservaEquipamentoAdminForm(ReservaAdminForm):
     def __init__(self, *args, **kwargs):
         super(ReservaEquipamentoAdminForm, self).__init__(*args, **kwargs)
         try:
-            self.fields['equipamento'].initial = self.request.session['id_equip']
-            self.fields['equipamento'].queryset = Equipamento.objects.filter(id=self.request.session['id_equip'])
+            self.id_equip = self.request.session['id_equip']
         except:
+            self.id_equip = None
+        if self.id_equip:
+            self.fields['equipamento'].initial = self.id_equip
+            self.fields['equipamento'].queryset = Equipamento.objects.filter(id=self.id_equip)
+        else:
             ma = admin.EquipamentoAdmin(Equipamento, AdminSite())
             queryset = ma.get_queryset(self.request).exclude(visivel=False)
-            print queryset
             self.fields['equipamento'].queryset = queryset
         self.request.session['id_equip'] = None
 
@@ -55,9 +58,13 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
     def __init__(self, *args, **kwargs):
         super(ReservaEspacoFisicoAdminForm, self).__init__(*args, **kwargs)
         try:
-            self.fields['espacoFisico'].initial = self.request.session['id_equip']
-            self.fields['espacoFisico'].queryset = EspacoFisico.objects.filter(id=self.request.session['id_equip'])
+            self.id_equip = self.request.session['id_equip']
         except:
+            self.id_equip = None
+        if self.id_equip:
+            self.fields['espacoFisico'].initial = self.id_equip
+            self.fields['espacoFisico'].queryset = EspacoFisico.objects.filter(id=self.id_equip)
+        else:
             ma = admin.EspacoFisicoAdmin(EspacoFisico, AdminSite())
             queryset = ma.get_queryset(self.request).exclude(visivel=False)
             self.fields['espacoFisico'].queryset = queryset
