@@ -23,7 +23,7 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['data'].initial = self.request.session['data']
         except:
             pass
-        self.request.session['data'] = None
+        self.request.session['data'] = ''
         if not self.request.user.is_superuser:
             self.fields['usuario'].initial = self.request.user
             self.fields['usuario'].widget = forms.HiddenInput()

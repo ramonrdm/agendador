@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User, Group
 from django.contrib import admin
 from django.core.exceptions import ValidationError
+from datetime import date
 
 class Unidade(models.Model):
     sigla = models.CharField(max_length=20, unique=True)
@@ -67,10 +68,22 @@ class Reserva(models.Model):
     ramal = models.PositiveIntegerField()
     finalidade = models.TextField()
 
+    def clean(self, reservas):
+        self.verificaChoque(reservas)
+        self.verificaBloqueado()
+        self.verificaCoerencia()
+
+    def verificaCoerencia(self):
+        print date.today()
+        if self.horaInicio > self.horaFim or date.today() > self.data:
+                raise ValidationError({'data': 'Data e/ou hora incoerente'})
+
+    def verificaBloqueado(self):
+        if self.locavel.bloqueado:
+            raise ValidationError({'locavel': 'Locavel bloqueado'})
+
     def verificaChoque(self, reservas):
-        
         for r in reservas:
-            print self.horaInicio
             if  (
                 (self.horaFim  > r.horaInicio and self.horaFim < r.horaFim) or 
                 (self.horaInicio > r.horaInicio and self.horaInicio < r.horaFim ) or 
@@ -78,20 +91,17 @@ class Reserva(models.Model):
                 (r.horaInicio > self.horaInicio and r.horaInicio < self.horaFim) or
                 (self.horaInicio < r.horaFim < self.horaFim)
                 ):
-                raise ValidationError({'data': 'choque!'})
-            elif self.equipamento.bloqueado:
-                raise ValidationError({'equipamento': 'Equipamento bloqueado'})
+                raise ValidationError({'data': 'Já existem reservas para esse dia e hora'})
     
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
 
 class ReservaEspacoFisico(Reserva):
-    teste = models.CharField(max_length=1,default='0')
     locavel = models.ForeignKey(EspacoFisico)
     
     def clean(self):
-        reservas = ReservaEspacoFisico.objects.filter(locavel=self.locavel, data=self.data)
-        self.verificaChoque(reservas)
+        reservas = ReservaEspacoFisico.objects.filter(locavel=self.locavel, data=self.data).exclude(id=self.id)
+        super(ReservaEspacoFisico, self).clean(reservas)
 
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
@@ -100,7 +110,9 @@ class ReservaEspacoFisico(Reserva):
 class ReservaEquipamento(Reserva):
     locavel = models.ForeignKey(Equipamento)
 
-    
+    def clean(self):
+        reservas = ReservaEquipamento.objects.filter(locavel=self.locavel, data=self.data).exclude(id=self.id)
+        super(ReservaEquipamento, self).clean(reservas)
 
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
