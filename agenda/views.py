@@ -47,7 +47,6 @@ def index(request, unidade=unidade_default):
 
     year = time.localtime()[0]
     current_year, current_month = time.localtime()[:2]
-    print current_month
     lst = []
     # create a list of months for each year, indicating ones that contain entries and current
     for y in [year, year+1]:
@@ -112,9 +111,9 @@ def mes(request, tipo=None, espaco=None, year=None, month=None, change=None):
         entries = current = False
         if day:
             if tipo=="e":
-                entries = ReservaEquipamento.objects.filter(data__year=year, data__month=month, data__day=day, equipamento=espaco)
+                entries = ReservaEquipamento.objects.filter(data__year=year, data__month=month, data__day=day, locavel=espaco)
             else:
-                entries = ReservaEspacoFisico.objects.filter(data__year=year, data__month=month, data__day=day, espacoFisico=espaco)
+                entries = ReservaEspacoFisico.objects.filter(data__year=year, data__month=month, data__day=day, locavel=espaco)
 
         if day == nday and year == nyear and month == nmonth:
             current = True

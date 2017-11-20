@@ -51,7 +51,7 @@ class UnidadeAdmin(admin.ModelAdmin):
 
 class ReservaEquipamentoAdmin(admin.ModelAdmin):
     form = forms.ReservaEquipamentoAdminForm
-    list_display = ('usuario', 'equipamento', 'data', 'ramal', 'finalidade')
+    list_display = ('usuario', 'locavel', 'data', 'ramal', 'finalidade')
     search_fields = ['finalidade', 'usuario__username']
     icon = '<i class="material-icons">power</i>'
 
@@ -75,11 +75,11 @@ class ReservaEquipamentoAdmin(admin.ModelAdmin):
         else:
             equipments = Equipamento.objects.filter(unidade = unit)
             for equipment in equipments:
-                reserves = reserves | ReservaEquipamento.objects.filter(equipamento=equipment)
+                reserves = reserves | ReservaEquipamento.objects.filter(locavel=equipment)
             return reserves
         equipments = Equipamento.objects.filter(unidade=unit)
         for equipment in equipments:
-            reserves = reserves | ReservaEquipamento.objects.filter(equipamento=equipment)
+            reserves = reserves | ReservaEquipamento.objects.filter(locavel=equipment)
         return reserves
 
     def get_queryset(self, request):
@@ -92,17 +92,17 @@ class ReservaEquipamentoAdmin(admin.ModelAdmin):
         unit_responsible = Unidade.objects.filter(responsavel=request.user)
         if unit_responsible:
             reservable = Equipamento.objects.filter(unidade=unit_responsible)
-            reserves = reserves | ReservaEquipamento.objects.filter(equipamento=reservable)
+            reserves = reserves | ReservaEquipamento.objects.filter(locavel=reservable)
             #Check for children unit
             for unit in unit_responsible:
                 reserves = self.search_children(reserves, unit)
 #               item = Equipamento.objects.filter(unidade=child)
 #               for item_child in item:
-#                   reserves = reserves | item_child.reservaequipamento_set.all()
+#                   reserves = reserves | item_child.reservalocavel_set.all()
         #Check if room responsible
         item_responsible = Equipamento.objects.filter(responsavel=request.user)
         if item_responsible:
-            reserves = reserves | ReservaEquipamento.objects.filter(equipamento=item_responsible)
+            reserves = reserves | ReservaEquipamento.objects.filter(locavel=item_responsible)
 
         #Add own reserves
         reserves = reserves | ReservaEquipamento.objects.filter(usuario=request.user)
@@ -116,7 +116,7 @@ class ReservaEquipamentoAdmin(admin.ModelAdmin):
     #   if 'id_equip' in request.session:
     #       form.base_fields['usuario'].initial = request.user.id
     #       form.base_fields['data'].initial = request.session['data']
-    #       form.base_fields['espacoFisico'].initial = request.session['id_equip']
+    #       form.base_fields['locavel'].initial = request.session['id_equip']
 
     #   if not request.user.is_superuser:
     #       form.base_fields['usuario'].widget = HiddenInput()
@@ -131,7 +131,7 @@ class ReservaEquipamentoAdmin(admin.ModelAdmin):
     #           kwargs["queryset"] = User.objects.all()
     #       else:
     #           kwargs["queryset"] = User.objects.filter(id=request.user.id)
-    #   if db_field.name == "espacoFisico":
+    #   if db_field.name == "locavel":
     #       if request.user.is_superuser:
     #           kwargs["queryset"] = Equipamento.objects.all()
     #       else:
@@ -143,7 +143,7 @@ admin.site.register(ReservaEquipamento, ReservaEquipamentoAdmin)
 
 class ReservaEspacoFisicoAdmin(admin.ModelAdmin):
     form = forms.ReservaEspacoFisicoAdminForm
-    list_display = ('usuario', 'espacoFisico', 'data', 'ramal', 'finalidade')
+    list_display = ('usuario', 'locavel', 'data', 'ramal', 'finalidade')
     search_fields = ['finalidade', 'usuario__username']
     icon = '<i class="material-icons">room</i>'
 
@@ -167,11 +167,11 @@ class ReservaEspacoFisicoAdmin(admin.ModelAdmin):
         else:
             places = EspacoFisico.objects.filter(unidade = unit)
             for place in places:
-                reserves = reserves | ReservaEspacoFisico.objects.filter(espacoFisico=place)
+                reserves = reserves | ReservaEspacoFisico.objects.filter(locavel=place)
             return reserves
         places = EspacoFisico.objects.filter(unidade = unit)
         for place in places:
-            reserves = reserves | ReservaEspacoFisico.objects.filter(espacoFisico=place)
+            reserves = reserves | ReservaEspacoFisico.objects.filter(locavel=place)
         return reserves
 
 
@@ -186,7 +186,7 @@ class ReservaEspacoFisicoAdmin(admin.ModelAdmin):
         unit_responsible = Unidade.objects.filter(responsavel=request.user)
         if unit_responsible:
             reservable = EspacoFisico.objects.filter(unidade=unit_responsible)
-            reserves = reserves | ReservaEspacoFisico.objects.filter(espacoFisico=reservable)
+            reserves = reserves | ReservaEspacoFisico.objects.filter(locavel=reservable)
             # Check for children unit
             for unit in unit_responsible:       
                 reserves = self.search_children(reserves, unit)
@@ -200,7 +200,7 @@ class ReservaEspacoFisicoAdmin(admin.ModelAdmin):
         # Check if room responsible
         room_responsible = EspacoFisico.objects.filter(responsavel=request.user)
         if room_responsible:
-            reserves = reserves | ReservaEspacoFisico.objects.filter(espacoFisico=room_responsible)
+            reserves = reserves | ReservaEspacoFisico.objects.filter(locavel=room_responsible)
 
         #Add own reserves
         reserves = reserves | ReservaEspacoFisico.objects.filter(usuario=request.user)

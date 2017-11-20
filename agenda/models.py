@@ -66,23 +66,9 @@ class Reserva(models.Model):
     usuario = models.ForeignKey(User)
     ramal = models.PositiveIntegerField()
     finalidade = models.TextField()
-    
-    def __unicode__(self):
-        return self.usuario.username+"/"+self.atividade.nome
 
-class ReservaEspacoFisico(Reserva):
-    espacoFisico = models.ForeignKey(EspacoFisico)
-
-    def __unicode__(self):
-        return self.usuario.username+"/"+self.atividade.nome
-
-
-class ReservaEquipamento(Reserva):
-    equipamento = models.ForeignKey(Equipamento)
-
-    def clean(self):
-        super(type(self), self).clean()
-        reservas = type(self).objects.filter(equipamento=self.equipamento, data=self.data)
+    def verificaChoque(self, reservas):
+        
         for r in reservas:
             print self.horaInicio
             if  (
@@ -95,6 +81,26 @@ class ReservaEquipamento(Reserva):
                 raise ValidationError({'data': 'choque!'})
             elif self.equipamento.bloqueado:
                 raise ValidationError({'equipamento': 'Equipamento bloqueado'})
+    
+    def __unicode__(self):
+        return self.usuario.username+"/"+self.atividade.nome
+
+class ReservaEspacoFisico(Reserva):
+    teste = models.CharField(max_length=1,default='0')
+    locavel = models.ForeignKey(EspacoFisico)
+    
+    def clean(self):
+        reservas = ReservaEspacoFisico.objects.filter(locavel=self.locavel, data=self.data)
+        self.verificaChoque(reservas)
+
+    def __unicode__(self):
+        return self.usuario.username+"/"+self.atividade.nome
+
+
+class ReservaEquipamento(Reserva):
+    locavel = models.ForeignKey(Equipamento)
+
+    
 
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
