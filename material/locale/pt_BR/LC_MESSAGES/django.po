@@ -1,0 +1,424 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-11-21 15:02-0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: material/admin/apps.py:17 material/admin/templates/admin/base.html:89
+msgid "Administration"
+msgstr ""
+
+#: material/admin/templates/admin/actions.html:4
+#: material/admin/templates/admin/object_history.html:21
+msgid "Action"
+msgstr ""
+
+#: material/admin/templates/admin/actions.html:17
+msgid "Click here to select the objects across all pages"
+msgstr ""
+
+#: material/admin/templates/admin/actions.html:17
+#, python-format
+msgid "Select all %(total_count)s %(module_name)s"
+msgstr ""
+
+#: material/admin/templates/admin/actions.html:19
+msgid "Clear selection"
+msgstr ""
+
+#: material/admin/templates/admin/actions.html:26
+msgid "Run the selected action"
+msgstr ""
+
+#: material/admin/templates/admin/actions.html:27
+msgid "Go"
+msgstr ""
+
+#: material/admin/templates/admin/app_index.html:8
+#: material/admin/templates/admin/change_form.html:13
+#: material/admin/templates/admin/change_list.html:71
+#: material/admin/templates/admin/delete_confirmation.html:10
+#: material/admin/templates/admin/delete_selected_confirmation.html:10
+#: material/admin/templates/admin/index.html:5
+#: material/admin/templates/admin/object_history.html:5
+#: material/admin/templates/registration/password_change_done.html:6
+#: material/admin/templates/registration/password_change_form.html:6
+msgid "Home"
+msgstr ""
+
+#: material/admin/templates/admin/auth/user/change_password.html:10
+#: material/admin/templates/admin/auth/user/change_password.html:20
+#: material/admin/templates/admin/base.html:101
+msgid "Change password"
+msgstr ""
+
+#: material/admin/templates/admin/base.html:56
+#: material/frontend/templates/400.html:11
+#: material/frontend/templates/404.html:16
+#: material/frontend/templates/500.html:18
+msgid "View site"
+msgstr ""
+
+#: material/admin/templates/admin/base.html:97
+msgid "Documentation"
+msgstr ""
+
+#: material/admin/templates/admin/base.html:104
+#: material/frontend/templates/material/frontend/base.html:73
+msgid "Log out"
+msgstr ""
+
+#: material/admin/templates/admin/base.html:106
+#: material/admin/templates/admin/login.html:34
+#: material/frontend/templates/403.html:22
+#: material/frontend/templates/material/frontend/base.html:75
+#: material/frontend/templates/registration/login.html:4
+#: material/frontend/templates/registration/login.html:24
+msgid "Log in"
+msgstr ""
+
+#: material/admin/templates/admin/base_site.html:3
+msgid "Django site admin"
+msgstr ""
+
+#: material/admin/templates/admin/change_form.html:15
+#: material/frontend/templates/material/frontend/views/form.html:7
+#: material/frontend/templates/material/frontend/views/form.html:17
+msgid "Add"
+msgstr ""
+
+#: material/admin/templates/admin/change_form.html:15
+#: material/frontend/templates/material/frontend/views/detail.html:34
+#: material/frontend/templates/material/frontend/views/form.html:7
+msgid "Change"
+msgstr ""
+
+#: material/admin/templates/admin/change_form.html:27
+msgid "New"
+msgstr "Criar"
+
+#: material/admin/templates/admin/change_form.html:32
+msgid "Please correct the error below."
+msgstr ""
+
+#: material/admin/templates/admin/change_form.html:32
+msgid "Please correct the errors below."
+msgstr ""
+
+#: material/admin/templates/admin/change_form.html:57
+msgid "Tools"
+msgstr ""
+
+#: material/admin/templates/admin/change_form.html:61
+#: material/admin/templates/admin/object_history.html:8
+msgid "History"
+msgstr ""
+
+#: material/admin/templates/admin/change_form.html:65
+msgid "View on site"
+msgstr ""
+
+#: material/admin/templates/admin/change_list.html:99
+msgid "Filter"
+msgstr ""
+
+#: material/admin/templates/admin/change_list_results.html:28
+msgid "Toggle sorting"
+msgstr ""
+
+#: material/admin/templates/admin/change_list_results.html:30
+msgid "Remove from sorting"
+msgstr ""
+
+#: material/admin/templates/admin/delete_confirmation.html:12
+#: material/admin/templates/admin/submit_line.html:32
+#: material/admin/templates/material/admin/edit_inline/stacked.html:59
+#: material/frontend/templates/material/frontend/views/confirm_delete.html:7
+#: material/frontend/templates/material/frontend/views/detail.html:33
+msgid "Delete"
+msgstr ""
+
+#: material/admin/templates/admin/delete_confirmation.html:21
+#, python-format
+msgid ""
+"Deleting the %(object_name)s '%(escaped_object)s' would result in deleting "
+"related objects, but your account doesn't have permission to delete the "
+"following types of objects:"
+msgstr ""
+
+#: material/admin/templates/admin/delete_confirmation.html:29
+#, python-format
+msgid ""
+"Deleting the %(object_name)s '%(escaped_object)s' would require deleting the "
+"following protected related objects:"
+msgstr ""
+
+#: material/admin/templates/admin/delete_confirmation.html:37
+#, python-format
+msgid ""
+"Are you sure you want to delete the %(object_name)s \"%(escaped_object)s\"? "
+"All of the following related items will be deleted:"
+msgstr ""
+
+#: material/admin/templates/admin/delete_confirmation.html:44
+#: material/admin/templates/admin/delete_selected_confirmation.html:53
+#: material/frontend/templates/material/frontend/views/confirm_delete.html:27
+msgid "Yes, I'm sure"
+msgstr ""
+
+#: material/admin/templates/admin/delete_selected_confirmation.html:12
+msgid "Delete multiple objects"
+msgstr ""
+
+#: material/admin/templates/admin/delete_selected_confirmation.html:21
+#, python-format
+msgid ""
+"Deleting the selected %(objects_name)s would result in deleting related "
+"objects, but your account doesn't have permission to delete the following "
+"types of objects:"
+msgstr ""
+
+#: material/admin/templates/admin/delete_selected_confirmation.html:29
+#, python-format
+msgid ""
+"Deleting the selected %(objects_name)s would require deleting the following "
+"protected related objects:"
+msgstr ""
+
+#: material/admin/templates/admin/delete_selected_confirmation.html:37
+#, python-format
+msgid ""
+"Are you sure you want to delete the selected %(objects_name)s? All of the "
+"following objects and their related items will be deleted:"
+msgstr ""
+
+#: material/admin/templates/admin/filter.html:3
+#: material/admin/templates/admin/filter.html:4
+#, python-format
+msgid " By %(filter_title)s "
+msgstr ""
+
+#: material/admin/templates/admin/login.html:30
+#: material/frontend/templates/registration/login.html:20
+msgid "Forgotten your password or username?"
+msgstr ""
+
+#: material/admin/templates/admin/object_history.html:19
+msgid "Date/time"
+msgstr ""
+
+#: material/admin/templates/admin/object_history.html:20
+msgid "User"
+msgstr ""
+
+#: material/admin/templates/admin/object_history.html:35
+msgid ""
+"This object doesn't have a change history. It probably wasn't added via this "
+"admin site."
+msgstr ""
+
+#: material/admin/templates/admin/pagination.html:21
+#: material/admin/templates/admin/search_form.html:9
+msgid "Show all"
+msgstr ""
+
+#: material/admin/templates/admin/search_form.html:6
+msgid "Search"
+msgstr ""
+
+#: material/admin/templates/admin/search_form.html:9
+#, python-format
+msgid "%(counter)s result"
+msgid_plural "%(counter)s results"
+msgstr[0] ""
+msgstr[1] ""
+
+#: material/admin/templates/admin/search_form.html:9
+#, python-format
+msgid "%(full_result_count)s total"
+msgstr ""
+
+#: material/admin/templates/admin/submit_line.html:12
+msgid "Save as new"
+msgstr ""
+
+#: material/admin/templates/admin/submit_line.html:17
+msgid "Save and add another"
+msgstr ""
+
+#: material/admin/templates/admin/submit_line.html:22
+msgid "Save and continue editing"
+msgstr ""
+
+#: material/admin/templates/admin/submit_line.html:35
+#: material/frontend/templates/material/frontend/views/form.html:39
+msgid "Save"
+msgstr ""
+
+#: material/admin/templates/material/fields/django_admindatewidget.html:21
+#: material/admin/templates/material/fields/django_adminsplitdatetime.html:50
+msgid "Today"
+msgstr ""
+
+#: material/admin/templates/material/fields/django_adminfilewidget.html:8
+#: material/templates/material/fields/django_fileinput.html:8
+msgid "File"
+msgstr ""
+
+#: material/admin/templates/material/fields/django_admintimewidget.html:21
+msgid "Now"
+msgstr "Agora"
+
+#: material/admin/templates/material/fields/django_relatedfieldwidgetwrapper.html:14
+#, python-format
+msgid "Change selected %(bound_field_urls.model)s"
+msgstr ""
+
+#: material/admin/templates/material/fields/django_relatedfieldwidgetwrapper.html:22
+#, python-format
+msgid "Add another %(bound_field_urls.model)s"
+msgstr ""
+
+#: material/admin/templates/material/fields/django_relatedfieldwidgetwrapper.html:30
+#, python-format
+msgid "Delete selected %(bound_field_urls.model)s"
+msgstr ""
+
+#: material/admin/templates/registration/logged_out.html:15
+#: material/frontend/templates/registration/logged_out.html:7
+msgid "Thanks for spending some quality time with the Web site today."
+msgstr ""
+
+#: material/admin/templates/registration/logged_out.html:20
+#: material/frontend/templates/registration/logged_out.html:12
+msgid "Log in again"
+msgstr ""
+
+#: material/admin/templates/registration/password_change_done.html:7
+#: material/admin/templates/registration/password_change_form.html:7
+msgid "Password change"
+msgstr ""
+
+#: material/admin/templates/registration/password_change_done.html:15
+msgid "Your password was changed."
+msgstr ""
+
+#: material/admin/templates/registration/password_change_form.html:18
+msgid ""
+"Please enter your old password, for security's sake, and then enter your new "
+"password twice so we can verify you typed it in correctly."
+msgstr ""
+
+#: material/admin/templates/registration/password_change_form.html:25
+msgid "Change my password"
+msgstr ""
+
+#: material/admin/templatetags/material_admin.py:258
+msgid "All dates"
+msgstr ""
+
+#: material/admin/templatetags/material_admin.py:269
+msgid "All"
+msgstr ""
+
+#: material/frontend/apps.py:142
+msgid "Frontend"
+msgstr ""
+
+#: material/frontend/models.py:25
+msgid "label"
+msgstr ""
+
+#: material/frontend/models.py:26
+msgid "installed"
+msgstr ""
+
+#: material/frontend/models.py:31
+msgid "module"
+msgstr ""
+
+#: material/frontend/models.py:32
+msgid "modules"
+msgstr ""
+
+#: material/frontend/templates/400.html:4
+#: material/frontend/templates/400.html:6
+msgid "Bad Request"
+msgstr ""
+
+#: material/frontend/templates/403.html:4
+#: material/frontend/templates/403.html:10
+msgid "Access Forbidden"
+msgstr ""
+
+#: material/frontend/templates/403.html:14
+msgid "You are not logged in"
+msgstr ""
+
+#: material/frontend/templates/403.html:16
+#, python-format
+msgid "%(user)s have no rights to access to the page"
+msgstr ""
+
+#: material/frontend/templates/404.html:4
+#: material/frontend/templates/404.html:6
+msgid "Page not found"
+msgstr ""
+
+#: material/frontend/templates/404.html:11
+msgid "We're sorry, but the requested page could not be found."
+msgstr ""
+
+#: material/frontend/templates/500.html:4
+#: material/frontend/templates/500.html:10
+msgid "Server error"
+msgstr ""
+
+#: material/frontend/templates/500.html:13
+msgid ""
+"There's been an error. It's been reported to the site administrators via "
+"email and should be fixed shortly. Thanks for your patience."
+msgstr ""
+
+#: material/frontend/templates/material/frontend/base_site.html:4
+#: material/frontend/templates/material/frontend/base_site.html:5
+msgid "Django Material"
+msgstr ""
+
+#: material/frontend/templates/material/frontend/views/confirm_delete.html:16
+#, python-format
+msgid "Are you sure you want to delete the %(object)s and related items?"
+msgstr ""
+
+#: material/frontend/views/create.py:40
+#, python-brace-format
+msgid "The {name} \"{link}\" was added successfully."
+msgstr ""
+
+#: material/frontend/views/delete.py:99
+#, python-brace-format
+msgid "The {name} \"{link}\"  was deleted successfully."
+msgstr ""
+
+#: material/frontend/views/update.py:40
+#, python-brace-format
+msgid "The {name} \"{link}\" was changed successfully."
+msgstr ""
+
+#: material/templates/material/fields/django_selectmultiple.html:7
+msgid "Choose your option"
+msgstr "Escolha as opções"
