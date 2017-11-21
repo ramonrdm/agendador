@@ -69,24 +69,28 @@ class Reserva(models.Model):
     finalidade = models.TextField()
 
     def clean(self):
+        errors = {}
         try:
-            self.verificaSelecionado()
-            self.verificaChoque()
-            self.verificaBloqueado()
-            self.verificaCoerencia()
+            self.verificaChoque(errors)
+            self.verificaBloqueado(errors)
+            self.verificaCoerencia(errors)
         except:
-            raise ValidationError({})
+            pass
+        if bool(errors):
+            print errors
+            raise ValidationError(errors)
 
-    def verificaCoerencia(self):
+    def verificaCoerencia(self, errors):
         print date.today()
         if self.horaInicio > self.horaFim or date.today() > self.data:
-                raise ValidationError({'data': 'Data e/ou hora incoerente'})
+            errors['data'] = 'Data e/ou hora incoerente'
 
-    def verificaBloqueado(self):
+    def verificaBloqueado(self, errors):
         if self.locavel.bloqueado:
-            raise ValidationError({'locavel': 'Locavel bloqueado'})
+            error = " Locavel " + self.locavel.nome + ' bloqueado.'
+            errors['locavel'] = error
 
-    def verificaChoque(self):
+    def verificaChoque(self, errors):
         reservas = type(self).objects.filter(locavel=self.locavel, data=self.data).exclude(id=self.id)
         for r in reservas:
             if  (
@@ -96,7 +100,7 @@ class Reserva(models.Model):
                 (r.horaInicio > self.horaInicio and r.horaInicio < self.horaFim) or
                 (self.horaInicio < r.horaFim < self.horaFim)
                 ):
-                raise ValidationError({'data': 'Já existem reservas para esse dia e hora'})
+                errors['data'] = 'Já existem reservas para esse dia e hora'
     
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
