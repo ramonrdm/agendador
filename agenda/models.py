@@ -68,10 +68,14 @@ class Reserva(models.Model):
     ramal = models.PositiveIntegerField()
     finalidade = models.TextField()
 
-    def clean(self, reservas):
-        self.verificaChoque(reservas)
-        self.verificaBloqueado()
-        self.verificaCoerencia()
+    def clean(self):
+        try:
+            self.verificaSelecionado()
+            self.verificaChoque()
+            self.verificaBloqueado()
+            self.verificaCoerencia()
+        except:
+            raise ValidationError({})
 
     def verificaCoerencia(self):
         print date.today()
@@ -82,7 +86,8 @@ class Reserva(models.Model):
         if self.locavel.bloqueado:
             raise ValidationError({'locavel': 'Locavel bloqueado'})
 
-    def verificaChoque(self, reservas):
+    def verificaChoque(self):
+        reservas = type(self).objects.filter(locavel=self.locavel, data=self.data).exclude(id=self.id)
         for r in reservas:
             if  (
                 (self.horaFim  > r.horaInicio and self.horaFim < r.horaFim) or 
@@ -100,8 +105,7 @@ class ReservaEspacoFisico(Reserva):
     locavel = models.ForeignKey(EspacoFisico)
     
     def clean(self):
-        reservas = ReservaEspacoFisico.objects.filter(locavel=self.locavel, data=self.data).exclude(id=self.id)
-        super(ReservaEspacoFisico, self).clean(reservas)
+        super(ReservaEspacoFisico, self).clean()
 
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
@@ -111,8 +115,7 @@ class ReservaEquipamento(Reserva):
     locavel = models.ForeignKey(Equipamento)
 
     def clean(self):
-        reservas = ReservaEquipamento.objects.filter(locavel=self.locavel, data=self.data).exclude(id=self.id)
-        super(ReservaEquipamento, self).clean(reservas)
+        super(ReservaEquipamento, self).clean()
 
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
