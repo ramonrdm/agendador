@@ -21,12 +21,6 @@ from material.frontend.views import ModelViewSet
 month_names = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 unidade_default = 'ufsc'
 
-class MyModel(models.Model):
-    name = models.CharField(max_length=250)
-
-class MyModelViewSet(ModelViewSet):
-    model = MyModel
-
 def index(request, unidade=unidade_default):
     #titulo = "Agendador UFSC"
     #corpo = "Bem vindo ao Agendador de espaços físicos e equipamentos da UFSC"

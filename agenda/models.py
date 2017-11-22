@@ -70,7 +70,6 @@ class Reserva(models.Model):
 
     def clean(self):
         try:
-            self.verificaSelecionado()
             self.verificaChoque()
             self.verificaBloqueado()
             self.verificaCoerencia()
