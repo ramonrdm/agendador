@@ -216,32 +216,32 @@ class EquipamentoAdmin(admin.ModelAdmin):
         return ", ".join(responsavel.username for responsavel in obj.responsavel.all())
     get_responsavel.short_description = 'responsavel'
 
-    def add_equipment(self, user, unit, equipment, equipments):
+    def add_equipment(self, user, unit, equipment, equipments, responsable):
         group = equipment.grupo
-        if not group and unit not in user.unidade_set.all():
+        if not group and unit not in user.unidade_set.all() and not responsable:
             equipments = equipments | Equipamento.objects.filter(id=equipment.id).exclude(visivel=False)
-        elif unit in user.unidade_set.all():
+        elif unit in user.unidade_set.all() or responsable:
             equipments = equipments | Equipamento.objects.filter(id=equipment.id)
         return equipments
 
-    def search_children(self, equipments, unit, user):
+    def search_children(self, equipments, unit, user, responsable):
         children = Unidade.objects.filter(unidadePai=unit)
         for child in children:
             if child.nome == unit.nome:
                 children = children.exclude(nome=unit.nome)
         if children:
             for child in children:
-                equipments = self.search_children(equipments, child, user)
+                equipments = self.search_children(equipments, child, user, responsable)
         else:
             child_equipments = Equipamento.objects.filter(unidade=unit)
             ## Test if equipment isn't bound to a specific group
             for equipment in child_equipments:
-                equipments = self.add_equipment(user, unit, equipment, equipments)
+                equipments = self.add_equipment(user, unit, equipment, equipments, responsable)
             return equipments
         # You may also have a son AND equipments, this equipment may also belong to a group
         unit_equipments = Equipamento.objects.filter(unidade=unit)
         for equipment in unit_equipments:
-            equipments = self.add_equipment(user, unit, equipment, equipments)
+            equipments = self.add_equipment(user, unit, equipment, equipments, responsable)
         return equipments
 
     def get_queryset(self, request):
@@ -250,19 +250,20 @@ class EquipamentoAdmin(admin.ModelAdmin):
             return qs
         equipments = Equipamento.objects.none()
         # Check if unit responsible
-        unit_responsible = Unidade.objects.filter(responsavel=request.user)
         # Also check user unit via group, for form list purposes
         groups = request.user.groups.all()
-        unit = Unidade.objects.none()
+        group_units = Unidade.objects.none()
         for group in groups:
             if group.unidade_set:
-                unit = unit | group.unidade_set.all()
+                group_units = group_units | group.unidade_set.all()
+        if group_units:
+            for unit in group_units:
+                equipments = self.search_children(equipments, unit, request.user, False)
 
-        unit_responsible = unit | unit_responsible
+        unit_responsible = Unidade.objects.filter(responsavel=request.user)
         if unit_responsible:
             for unit in unit_responsible:
-                equipments = equipments | unit.equipamento_set.all()
-                equipments = self.search_children(equipments, unit, request.user)
+                equipments = self.search_children(equipments, unit, request.user, True)
 
         # Get all equipments user's responsible
         equipments = equipments | Equipamento.objects.filter(responsavel=request.user)
@@ -291,32 +292,32 @@ class EspacoFisicoAdmin(admin.ModelAdmin):
         return ", ".join([responsavel.username for responsavel in obj.responsavel.all()])
     get_responsavel.short_description = 'responsavel'
 
-    def add_space(self, user, unit, space, spaces):
+    def add_space(self, user, unit, space, spaces, responsable):
         group = space.grupo
-        if not group and unit not in user.unidade_set.all():
+        if not group and unit not in user.unidade_set.all() and not responsable:
             spaces = spaces | EspacoFisico.objects.filter(id=space.id).exclude(visivel=False)
-        elif unit in user.unidade_set.all():
+        elif unit in user.unidade_set.all() or responsable:
             spaces = spaces | EspacoFisico.objects.filter(id=space.id)
         return spaces
 
-    def search_children(self, spaces, unit, user):
+    def search_children(self, spaces, unit, user, responsable):
         children = Unidade.objects.filter(unidadePai=unit)
         for child in children:
             if child.nome == unit.nome:
                 children = children.exclude(nome=unit.nome)
         if children:
             for child in children:
-                spaces = self.search_children(spaces, child, user)
+                spaces = self.search_children(spaces, child, user, responsable)
         else:
             child_spaces = EspacoFisico.objects.filter(unidade=unit)
             ## Test if place isn't bound to a specific group
             for space in child_spaces:
-                spaces = self.add_space(user, unit, space, spaces)
+                spaces = self.add_space(user, unit, space, spaces, responsable)
             return spaces
         # You may also have a child AND spacaces, this space may also belong to a group
         unit_spaces = EspacoFisico.objects.filter(unidade=unit)
         for space in unit_spaces:
-            spaces = self.add_space(user, unit, space, spaces)
+            spaces = self.add_space(user, unit, space, spaces, responsable)
         return spaces
 
     def get_queryset(self, request):
@@ -324,19 +325,21 @@ class EspacoFisicoAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return qs
         spaces = EspacoFisico.objects.none()
-        # Check if unit responsible. 
-        unit_responsible = Unidade.objects.filter(responsavel=request.user)
         # Also check user unit via group, for form list purposes
         groups = request.user.groups.all()
-        unit = Unidade.objects.none()
+        group_units = Unidade.objects.none()
         for group in groups:
             if group.unidade_set:
-                unit = unit | group.unidade_set.all()
-        unit_responsible = unit | unit_responsible
+                group_units = group_units | group.unidade_set.all()
+        if group_units:
+            for unit in group_units:
+                spaces = self.search_children(spaces, unit, request.user, False)
 
+        # Check if unit responsible. 
+        unit_responsible = Unidade.objects.filter(responsavel=request.user)
         if unit_responsible:
             for unit in unit_responsible:
-                spaces = self.search_children(spaces, unit, request.user)
+                spaces = self.search_children(spaces, unit, request.user, True)
         # Get all spaces user's responsible
         spaces = spaces | EspacoFisico.objects.filter(responsavel=request.user)
 

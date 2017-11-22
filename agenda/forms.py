@@ -44,7 +44,7 @@ class ReservaEquipamentoAdminForm(ReservaAdminForm):
             self.fields['locavel'].queryset = Equipamento.objects.filter(id=self.id_equip)
         else:
             ma = admin.EquipamentoAdmin(Equipamento, AdminSite())
-            queryset = ma.get_queryset(self.request).exclude(visivel=False)
+            queryset = ma.get_queryset(self.request)
             self.fields['locavel'].queryset = queryset
         self.request.session['id_equip'] = None
 
@@ -63,7 +63,7 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
             self.fields['locavel'].queryset = EspacoFisico.objects.filter(id=self.id_equip)
         else:
             ma = admin.EspacoFisicoAdmin(EspacoFisico, AdminSite())
-            queryset = ma.get_queryset(self.request).exclude(visivel=False)
+            queryset = ma.get_queryset(self.request)
             self.fields['locavel'].queryset = queryset
         self.request.session['id_equip'] = None
         
