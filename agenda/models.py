@@ -86,7 +86,19 @@ class Reserva(models.Model):
             errors['data'] = 'Data e/ou hora incoerente'
 
     def verificaBloqueado(self, errors):
-        if self.locavel.bloqueado:
+        # Check if superuser
+        responsable = self.usuario.is_superuser
+        # Check if responsable for locable
+        locable_responsables = self.locavel.responsavel.all()
+        for locable_responsable in locable_responsables:
+            if locable_responsable.id == self.usuario.id:
+                responsable = True
+        # Check if unit responsable
+        unit_responsables = self.locavel.unidade.responsavel.all()
+        for unit_responsable in unit_responsables:
+            if unit_responsable.id == self.usuario.id:
+                responsable = True
+        if self.locavel.bloqueado and not responsable:
             error = " Locavel " + self.locavel.nome + ' bloqueado.'
             errors['locavel'] = error
 
