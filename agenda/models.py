@@ -12,7 +12,7 @@ class Unidade(models.Model):
     grupo = models.ForeignKey(Group, blank=True, null=True)
     responsavel = models.ManyToManyField(User)
     descricao = models.TextField()
-    logo = models.FileField(blank=True)
+    logoLink = models.URLField(blank=True)
 
     def __unicode__(self):
         return self.sigla
@@ -40,7 +40,7 @@ class Locavel(models.Model):
     bloqueado = models.BooleanField(default=False)
     visivel = models.BooleanField(default=True)
     localizacao = models.TextField()
-    foto = models.FileField(blank=True)
+    fotoLink = models.URLField(blank=True)
     def __unicode__(self):
         return self.nome
     def __str__(self):
