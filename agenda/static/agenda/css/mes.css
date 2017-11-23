@@ -1,0 +1,33 @@
+.row {
+	margin-top: 5px;
+}
+
+.arrow_right {
+	float: right;
+}
+
+.arrow_left {
+	float: left;
+}
+
+@media screen and (max-width: 507px) {
+	h2 {
+		font-size: 2em;
+	}
+}
+
+@media screen and (max-width: 439px) {
+	.btn {
+		font-size: 0.85em;
+		padding: 0 0 1rem;
+	}
+}
+
+@media screen and (max-width: 410px) {
+	.text {
+		display: none;
+	}
+	.arrow_right, .arrow_left {
+		float: none;
+	}
+}

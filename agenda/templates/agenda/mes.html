@@ -3,6 +3,7 @@
 {% load static %}
 {% block css %}
     {{ block.super }}
+    <link rel='stylesheet' href="{% static 'agenda/css/mes.css' %}" type='text/css' />
     <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/topbar.css' %}" />
 {% endblock %}
 {% block title %}{{ espaco.nome }} - {{ mname }}/{{ year }}{% endblock %}
@@ -23,10 +24,10 @@
 
 {% block content %}
 <div class="row">
-    <div class="container">
+    <!--<div class="container">
         <a class="btn right" href="{%url 'mes' tipo espaco.id year month 'next' %}">próximo</a>
         <a class="btn right" href="{%url 'mes' tipo espaco.id year month 'prev' %}">anterior</a>
-    </div>
+    </div>-->
     <div id="calendar"> </div>  
 </div>
 <script type="text/javascript">
@@ -65,8 +66,8 @@ jQuery(document).ready(function() {
 
     });     
     setMonth();
-    jQuery(".fc-right").hide();
-
+    var m = jQuery(".fc-left").text();
+    jQuery(".fc-header-toolbar").html("<div class='row'><a class='btn right col s3' href='{%url 'mes' tipo espaco.id year month 'next' %}'><i class='material-icons medium arrow_right'>arrow_forward</i><span class='text'>próximo</span></a><a class='btn left col s3' href='{%url 'mes' tipo espaco.id year month 'prev' %}'><i class='material-icons medium arrow_left'>arrow_back</i><span class='text'>anterior</span></a><h2 class='col s6'>" + m + "</h2></div>");
 });
 
 function setMonth() {
