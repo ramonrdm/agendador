@@ -12,8 +12,18 @@ nav.breadcrumbs{
 	height: 0px;
 }
 
-.circle {
+.circle.material-icons{
 	border-radius: 0px;
+	color: white;
+}
+
+.unit-default {
+	color: black;
+}
+
+.material-icons {
+	text-align: center;
+	vertical-align: middle;
 }
 
 nav.topbar {

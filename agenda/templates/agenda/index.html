@@ -18,7 +18,7 @@
 {% if unidade.logoLink %}
     <a href="#"><img class="circle" src="{{ unidade.logoLink }}"></a>
 {% else %}
-    <a href="#"><img class="circle" src="{% static 'agenda/img/unit_default_white.png' %}"></a>
+    <a href="#"><i class="circle medium material-icons">account_balance</i></a>
 {% endif %}
 {% endblock %}
 
@@ -36,7 +36,7 @@
                     {% if subUnidade.logo %}
                     <img width="100" height="100" src="/media/{{subUnidade.logo}}">
                     {% else %}
-                    <img width="100" height="100" src="{% static 'agenda/img/unit_default_black.png' %}">
+                    <i width="100" height="100" class="large material-icons unit-default">account_balance</i>
                     {% endif %}
                     </a>
                 </div>
