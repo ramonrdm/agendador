@@ -1,0 +1,48 @@
+nav.topbar .brand-logo {
+	word-wrap: break-word;
+	white-space: normal;
+/*	transform: none;
+	left: auto; */
+	line-height: normal;
+	height: auto;
+	width: calc(100% - 178px);
+}
+
+nav.breadcrumbs{
+	height: 0px;
+}
+
+.circle.material-icons{
+	border-radius: 0px;
+	color: white;
+}
+
+.unit-default {
+	color: black;
+}
+
+.material-icons {
+	text-align: center;
+	vertical-align: middle;
+}
+
+nav.topbar {
+	height: 102px;
+	box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 0px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+	overflow: auto;
+	position: relative;
+}
+
+@media screen and (max-width: 600px) {
+	nav.topbar .brand-logo {
+		font-size: 2rem;
+		padding-left: 60px;
+		width: 100%;
+	}
+
+	nav.topbar .button-collapse {
+		position: sticky;
+		position: -webkit-sticky;
+		top: 0;
+	}
+}
