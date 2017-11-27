@@ -9,6 +9,7 @@ from django.forms.extras.widgets import SelectDateWidget
 from django.forms import ModelForm, Form, HiddenInput
 from django.contrib.admin.sites import AdminSite
 from django.core.exceptions import ValidationError
+from widgets import CustomTimeWidget
 import admin
 
 class ReservaAdminForm(forms.ModelForm):
@@ -28,7 +29,7 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['usuario'].initial = self.request.user
             self.fields['usuario'].widget = forms.HiddenInput()
             self.fields['usuario'].label = ''
-        self.fields['horaInicio'] = forms.TimeField(input_formats=['%H:%M'])
+        self.fields['horaInicio'] = forms.TimeField(input_formats=['%H:%M'], widget=CustomTimeWidget())
         self.fields['horaFim'] = forms.TimeField(input_formats=['%H:%M'])
 
 class ReservaEquipamentoAdminForm(ReservaAdminForm):

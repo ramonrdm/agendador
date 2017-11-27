@@ -50,6 +50,7 @@ class UnidadeAdmin(admin.ModelAdmin):
 
 
 class ReservaEquipamentoAdmin(admin.ModelAdmin):
+
     form = forms.ReservaEquipamentoAdminForm
     list_display = ('usuario', 'locavel', 'data', 'ramal', 'finalidade')
     search_fields = ['finalidade', 'usuario__username']
