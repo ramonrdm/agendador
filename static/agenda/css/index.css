@@ -19,3 +19,7 @@
 	width: 100vw;
 	cursor: default;
 }
+
+.collection-item {
+	word-wrap: break-word;
+}
