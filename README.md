@@ -20,4 +20,4 @@ Agendador de espaço físico
 Reponsavel Ramon Dutra Miranda
 
 carregando dados iniciais:
-./manage.py loaddata fixtures/data_dump.json
+./manage.py loaddata data_dump.json
