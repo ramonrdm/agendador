@@ -1,0 +1,1582 @@
+[
+{
+  "model": "frontend.module",
+  "pk": 1,
+  "fields": {
+    "label": "agenda",
+    "installed": true
+  }
+},
+{
+  "model": "frontend.module",
+  "pk": 2,
+  "fields": {
+    "label": "material_admin",
+    "installed": true
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 1,
+  "fields": {
+    "app_label": "frontend",
+    "model": "module"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 2,
+  "fields": {
+    "app_label": "admin",
+    "model": "logentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 3,
+  "fields": {
+    "app_label": "auth",
+    "model": "group"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 4,
+  "fields": {
+    "app_label": "auth",
+    "model": "permission"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 5,
+  "fields": {
+    "app_label": "auth",
+    "model": "user"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 6,
+  "fields": {
+    "app_label": "contenttypes",
+    "model": "contenttype"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 7,
+  "fields": {
+    "app_label": "sessions",
+    "model": "session"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 8,
+  "fields": {
+    "app_label": "agenda",
+    "model": "equipamento"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 9,
+  "fields": {
+    "app_label": "agenda",
+    "model": "reservaequipamento"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 10,
+  "fields": {
+    "app_label": "agenda",
+    "model": "reservaespacofisico"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 11,
+  "fields": {
+    "app_label": "agenda",
+    "model": "unidade"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 12,
+  "fields": {
+    "app_label": "agenda",
+    "model": "atividade"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 13,
+  "fields": {
+    "app_label": "agenda",
+    "model": "espacofisico"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "3ggkvpnlibqnblqlju828i68k3jrj2ie",
+  "fields": {
+    "session_data": "NWFhNWFmYWY4MGU1MDM4Mzc1ODdhMmFlYWYwNjk3ODY1ZmQ1MzkzMzp7ImlkX2VxdWlwIjpudWxsLCJfYXV0aF91c2VyX2hhc2giOiIwYWYzOTJkZmQxYzg3ZTRiNTU5YWY3ZGFhOWZhZjRkY2I3ZmExNmIzIiwiZGF0YSI6IiIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX2F1dGhfdXNlcl9pZCI6IjQifQ==",
+    "expire_date": "2017-11-29T09:02:00.627"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "5csvd8lqnt4ik4m1twwrhvbli1gobw2k",
+  "fields": {
+    "session_data": "Yzg1NTFlOWIxMjhlMzE5MjVmNGJkYzlkOGU1MjFkMzdiOGViNGU4Nzp7ImlkX2VxdWlwIjpudWxsLCJfYXV0aF91c2VyX2hhc2giOiIwYWYzOTJkZmQxYzg3ZTRiNTU5YWY3ZGFhOWZhZjRkY2I3ZmExNmIzIiwiZGF0YSI6IiIsIl9hdXRoX3VzZXJfaWQiOiI0IiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQifQ==",
+    "expire_date": "2017-11-29T09:03:19.088"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "7vsldphh9nj2j7byhrxf7lmz09mo3npu",
+  "fields": {
+    "session_data": "Yzg1NTFlOWIxMjhlMzE5MjVmNGJkYzlkOGU1MjFkMzdiOGViNGU4Nzp7ImlkX2VxdWlwIjpudWxsLCJfYXV0aF91c2VyX2hhc2giOiIwYWYzOTJkZmQxYzg3ZTRiNTU5YWY3ZGFhOWZhZjRkY2I3ZmExNmIzIiwiZGF0YSI6IiIsIl9hdXRoX3VzZXJfaWQiOiI0IiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQifQ==",
+    "expire_date": "2017-11-29T09:17:10.550"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "fepuazi40ua358wsq065ef37728atjq2",
+  "fields": {
+    "session_data": "MDg1OTkzNzY5OWU4OWUwMzQ3ZjIyZjAwZTRhZjA0OWQ2ZjFjNzM3NTp7ImlkX2VxdWlwIjpudWxsLCJfYXV0aF91c2VyX2hhc2giOiI2ZGMyMmY3OWMxNjRkMGJjOWIyZGRmMmQ5MDBlNGIwZTI4YTFhNzE3IiwiZGF0YSI6IiIsIl9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQifQ==",
+    "expire_date": "2017-11-29T05:44:46.391"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "hj28gw8kciksvio67sibogtnhtrw1eel",
+  "fields": {
+    "session_data": "MDg1OTkzNzY5OWU4OWUwMzQ3ZjIyZjAwZTRhZjA0OWQ2ZjFjNzM3NTp7ImlkX2VxdWlwIjpudWxsLCJfYXV0aF91c2VyX2hhc2giOiI2ZGMyMmY3OWMxNjRkMGJjOWIyZGRmMmQ5MDBlNGIwZTI4YTFhNzE3IiwiZGF0YSI6IiIsIl9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQifQ==",
+    "expire_date": "2017-11-25T09:50:10.575"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "spygwz2v7bbggev8aicsfl64ekfsbepr",
+  "fields": {
+    "session_data": "ZDYxZTEwZTgzMzNjZDYxZWFiNDcwMWRiZjg5ZGI4ODYyOGYwMmZkNjp7Il9hdXRoX3VzZXJfaGFzaCI6IjZkYzIyZjc5YzE2NGQwYmM5YjJkZGYyZDkwMGU0YjBlMjhhMWE3MTciLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=",
+    "expire_date": "2017-11-29T09:18:46.210"
+  }
+},
+{
+  "model": "agenda.atividade",
+  "pk": 1,
+  "fields": {
+    "nome": "Aula",
+    "descricao": "Uma aula normal"
+  }
+},
+{
+  "model": "agenda.atividade",
+  "pk": 2,
+  "fields": {
+    "nome": "Palestra",
+    "descricao": "Palestra"
+  }
+},
+{
+  "model": "agenda.atividade",
+  "pk": 3,
+  "fields": {
+    "nome": "Aula Pr\u00e1tica",
+    "descricao": "Aula pr\u00e1tica que requer espa\u00e7o diferenciado ou laborat\u00f3rio"
+  }
+},
+{
+  "model": "agenda.atividade",
+  "pk": 4,
+  "fields": {
+    "nome": "Defesa de monografia",
+    "descricao": "Defesa de monografia"
+  }
+},
+{
+  "model": "agenda.atividade",
+  "pk": 5,
+  "fields": {
+    "nome": "Defesa Tese",
+    "descricao": "Defesa Tese"
+  }
+},
+{
+  "model": "agenda.atividade",
+  "pk": 6,
+  "fields": {
+    "nome": "Defesa disserta\u00e7\u00e3o",
+    "descricao": "Defesa disserta\u00e7\u00e3o"
+  }
+},
+{
+  "model": "agenda.atividade",
+  "pk": 7,
+  "fields": {
+    "nome": "Reuni\u00e3o",
+    "descricao": "Reuni\u00e3o"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 1,
+  "fields": {
+    "name": "Can add module",
+    "content_type": 1,
+    "codename": "add_module"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 2,
+  "fields": {
+    "name": "Can change module",
+    "content_type": 1,
+    "codename": "change_module"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 3,
+  "fields": {
+    "name": "Can delete module",
+    "content_type": 1,
+    "codename": "delete_module"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 4,
+  "fields": {
+    "name": "Can add log entry",
+    "content_type": 2,
+    "codename": "add_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 5,
+  "fields": {
+    "name": "Can change log entry",
+    "content_type": 2,
+    "codename": "change_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 6,
+  "fields": {
+    "name": "Can delete log entry",
+    "content_type": 2,
+    "codename": "delete_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 7,
+  "fields": {
+    "name": "Can add group",
+    "content_type": 3,
+    "codename": "add_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 8,
+  "fields": {
+    "name": "Can change group",
+    "content_type": 3,
+    "codename": "change_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 9,
+  "fields": {
+    "name": "Can delete group",
+    "content_type": 3,
+    "codename": "delete_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 10,
+  "fields": {
+    "name": "Can add permission",
+    "content_type": 4,
+    "codename": "add_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 11,
+  "fields": {
+    "name": "Can change permission",
+    "content_type": 4,
+    "codename": "change_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 12,
+  "fields": {
+    "name": "Can delete permission",
+    "content_type": 4,
+    "codename": "delete_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 13,
+  "fields": {
+    "name": "Can add user",
+    "content_type": 5,
+    "codename": "add_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 14,
+  "fields": {
+    "name": "Can change user",
+    "content_type": 5,
+    "codename": "change_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 15,
+  "fields": {
+    "name": "Can delete user",
+    "content_type": 5,
+    "codename": "delete_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 16,
+  "fields": {
+    "name": "Can add content type",
+    "content_type": 6,
+    "codename": "add_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 17,
+  "fields": {
+    "name": "Can change content type",
+    "content_type": 6,
+    "codename": "change_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 18,
+  "fields": {
+    "name": "Can delete content type",
+    "content_type": 6,
+    "codename": "delete_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 19,
+  "fields": {
+    "name": "Can add session",
+    "content_type": 7,
+    "codename": "add_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 20,
+  "fields": {
+    "name": "Can change session",
+    "content_type": 7,
+    "codename": "change_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 21,
+  "fields": {
+    "name": "Can delete session",
+    "content_type": 7,
+    "codename": "delete_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 22,
+  "fields": {
+    "name": "Can add equipamento",
+    "content_type": 8,
+    "codename": "add_equipamento"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 23,
+  "fields": {
+    "name": "Can change equipamento",
+    "content_type": 8,
+    "codename": "change_equipamento"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 24,
+  "fields": {
+    "name": "Can delete equipamento",
+    "content_type": 8,
+    "codename": "delete_equipamento"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 25,
+  "fields": {
+    "name": "Can add reserva equipamento",
+    "content_type": 9,
+    "codename": "add_reservaequipamento"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 26,
+  "fields": {
+    "name": "Can change reserva equipamento",
+    "content_type": 9,
+    "codename": "change_reservaequipamento"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 27,
+  "fields": {
+    "name": "Can delete reserva equipamento",
+    "content_type": 9,
+    "codename": "delete_reservaequipamento"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 28,
+  "fields": {
+    "name": "Can add reserva espaco fisico",
+    "content_type": 10,
+    "codename": "add_reservaespacofisico"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 29,
+  "fields": {
+    "name": "Can change reserva espaco fisico",
+    "content_type": 10,
+    "codename": "change_reservaespacofisico"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 30,
+  "fields": {
+    "name": "Can delete reserva espaco fisico",
+    "content_type": 10,
+    "codename": "delete_reservaespacofisico"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 31,
+  "fields": {
+    "name": "Can add unidade",
+    "content_type": 11,
+    "codename": "add_unidade"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 32,
+  "fields": {
+    "name": "Can change unidade",
+    "content_type": 11,
+    "codename": "change_unidade"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 33,
+  "fields": {
+    "name": "Can delete unidade",
+    "content_type": 11,
+    "codename": "delete_unidade"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 34,
+  "fields": {
+    "name": "Can add atividade",
+    "content_type": 12,
+    "codename": "add_atividade"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 35,
+  "fields": {
+    "name": "Can change atividade",
+    "content_type": 12,
+    "codename": "change_atividade"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 36,
+  "fields": {
+    "name": "Can delete atividade",
+    "content_type": 12,
+    "codename": "delete_atividade"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 37,
+  "fields": {
+    "name": "Can add espaco fisico",
+    "content_type": 13,
+    "codename": "add_espacofisico"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 38,
+  "fields": {
+    "name": "Can change espaco fisico",
+    "content_type": 13,
+    "codename": "change_espacofisico"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 39,
+  "fields": {
+    "name": "Can delete espaco fisico",
+    "content_type": 13,
+    "codename": "delete_espacofisico"
+  }
+},
+{
+  "model": "auth.group",
+  "pk": 1,
+  "fields": {
+    "name": "CCE",
+    "permissions": [
+      25,
+      26,
+      27,
+      28,
+      29,
+      30
+    ]
+  }
+},
+{
+  "model": "auth.group",
+  "pk": 2,
+  "fields": {
+    "name": "CCS",
+    "permissions": [
+      25,
+      26,
+      27,
+      28,
+      29,
+      30
+    ]
+  }
+},
+{
+  "model": "auth.group",
+  "pk": 3,
+  "fields": {
+    "name": "CFM",
+    "permissions": [
+      25,
+      26,
+      27,
+      28,
+      29,
+      30
+    ]
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$30000$q3YDJ1nb5Vkr$Cyot0do0Ob1JAssub1Wxi+HIgzHo3TJ4krpdaFlHUC0=",
+    "last_login": "2017-11-28T20:23:27.705",
+    "is_superuser": true,
+    "username": "ramon.rdm",
+    "first_name": "",
+    "last_name": "",
+    "email": "ramon.rdm@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2017-11-24T21:29:05.625",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$30000$efVFCA56fdbN$WyIRWw9ubGRu5AS1A49p9tHzv5JTRYVb7lC+V9Y0F50=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "mario",
+    "first_name": "",
+    "last_name": "",
+    "email": "mario@mario.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2017-11-28T20:23:44",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$30000$Ahbsrh4JtOaC$haK7VgbgNG4UPlTlgWdsD0dB8IY3O+dcClIL8IYje9Y=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "maique",
+    "first_name": "",
+    "last_name": "",
+    "email": "maique@maique.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2017-11-28T20:24:04",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$30000$rLCfj5PEMcr4$8r12gOMQY+awex27BHMCa8pRgdNyncTCbi5fEm5DX5g=",
+    "last_login": "2017-11-28T21:05:28",
+    "is_superuser": false,
+    "username": "teste",
+    "first_name": "",
+    "last_name": "",
+    "email": "teste@teste.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2017-11-28T20:50:45",
+    "groups": [
+      1
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "agenda.unidade",
+  "pk": 1,
+  "fields": {
+    "sigla": "UFSC",
+    "nome": "ufsc",
+    "unidadePai": null,
+    "grupo": null,
+    "descricao": "universidade",
+    "logoLink": "http://identidade.ufsc.br/wp-content/themes/brasilGovInterno/img/brasao_site_ufsc.svg?ver=1493729238",
+    "responsavel": [
+      1
+    ]
+  }
+},
+{
+  "model": "agenda.unidade",
+  "pk": 2,
+  "fields": {
+    "sigla": "CCE",
+    "nome": "Centro de Comunica\u00e7\u00e3o e Express\u00e3o",
+    "unidadePai": 1,
+    "grupo": 1,
+    "descricao": "1234",
+    "logoLink": "http://www.cce.ufsc.br/files/2011/03/marca_colorida-2.jpg",
+    "responsavel": [
+      1
+    ]
+  }
+},
+{
+  "model": "agenda.unidade",
+  "pk": 3,
+  "fields": {
+    "sigla": "CFM",
+    "nome": "Centro de ci\u00eancias f\u00edsicas e matem\u00e1ticas",
+    "unidadePai": 1,
+    "grupo": 3,
+    "descricao": "Centro de ci\u00eancias f\u00edsicas e matem\u00e1ticas",
+    "logoLink": "http://cfm.ufsc.br/files/2012/12/cropped-cropped-CFM11.jpg",
+    "responsavel": [
+      1
+    ]
+  }
+},
+{
+  "model": "agenda.unidade",
+  "pk": 4,
+  "fields": {
+    "sigla": "CCS",
+    "nome": "Centro de ci\u00eancias da sa\u00fade",
+    "unidadePai": 1,
+    "grupo": 2,
+    "descricao": "Centro de ci\u00eancias da sa\u00fade",
+    "logoLink": "https://odoesc.files.wordpress.com/2010/10/logo-ccs-ufsc.png",
+    "responsavel": [
+      1
+    ]
+  }
+},
+{
+  "model": "agenda.unidade",
+  "pk": 5,
+  "fields": {
+    "sigla": "VideoconferenciaCCE",
+    "nome": "Video conferencia do CCE",
+    "unidadePai": 2,
+    "grupo": null,
+    "descricao": "Laborat\u00f3rio que conta com x cadeiras, videoconferencia e duas telas de TV",
+    "logoLink": "http://www.videoconferencia.cce.ufsc.br/images/stories/site/logo-cafofo-search2.png",
+    "responsavel": [
+      1
+    ]
+  }
+},
+{
+  "model": "agenda.unidade",
+  "pk": 6,
+  "fields": {
+    "sigla": "NALS",
+    "nome": "N\u00facleo de aquisi\u00e7\u00e3o de l\u00edngua de sinais",
+    "unidadePai": 2,
+    "grupo": null,
+    "descricao": "N\u00facleo de aquisi\u00e7\u00e3o de l\u00edngua de sinais, localizado no bloco B CCE sala 417",
+    "logoLink": "http://nals.cce.ufsc.br/wp-content/themes/libras2011/images/logoNALS.png",
+    "responsavel": [
+      1
+    ]
+  }
+},
+{
+  "model": "agenda.espacofisico",
+  "pk": 1,
+  "fields": {
+    "nome": "Audit\u00f3rio CCS",
+    "descricao": "Audit\u00f3rio gradua\u00e7\u00e3o CCS",
+    "unidade": 4,
+    "grupo": null,
+    "bloqueado": false,
+    "visivel": true,
+    "localizacao": "bloco B",
+    "fotoLink": "",
+    "capacidade": 150,
+    "responsavel": [
+      3
+    ],
+    "atividadesPermitidas": [
+      2,
+      4,
+      5,
+      6
+    ]
+  }
+},
+{
+  "model": "agenda.espacofisico",
+  "pk": 2,
+  "fields": {
+    "nome": "Estudio01",
+    "descricao": "Est\u00fadio de filmagens da video conferencia 01",
+    "unidade": 5,
+    "grupo": null,
+    "bloqueado": false,
+    "visivel": true,
+    "localizacao": "CCE bloco B 007",
+    "fotoLink": "",
+    "capacidade": 15,
+    "responsavel": [
+      1
+    ],
+    "atividadesPermitidas": [
+      1,
+      2,
+      4,
+      5,
+      6
+    ]
+  }
+},
+{
+  "model": "agenda.espacofisico",
+  "pk": 3,
+  "fields": {
+    "nome": "Estudio02",
+    "descricao": "Estudio02",
+    "unidade": 5,
+    "grupo": null,
+    "bloqueado": false,
+    "visivel": true,
+    "localizacao": "CCE B 007",
+    "fotoLink": "http://www.videoconferencia.cce.ufsc.br/images/stories/site/logo-cafofo-search2.png",
+    "capacidade": 15,
+    "responsavel": [
+      1
+    ],
+    "atividadesPermitidas": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ]
+  }
+},
+{
+  "model": "agenda.espacofisico",
+  "pk": 4,
+  "fields": {
+    "nome": "salaReuni\u00e3o",
+    "descricao": "Sala de reuni\u00f5es NALS",
+    "unidade": 6,
+    "grupo": null,
+    "bloqueado": false,
+    "visivel": true,
+    "localizacao": "nals cce",
+    "fotoLink": "http://nals.cce.ufsc.br/wp-content/themes/libras2011/images/logoNALS.png",
+    "capacidade": 12,
+    "responsavel": [
+      1
+    ],
+    "atividadesPermitidas": [
+      7
+    ]
+  }
+},
+{
+  "model": "agenda.equipamento",
+  "pk": 1,
+  "fields": {
+    "nome": "Notebook ACer",
+    "descricao": "Um notebook Acer com processador core i5, 4 GB de Ram, tela de 14\".",
+    "unidade": 6,
+    "grupo": null,
+    "bloqueado": false,
+    "visivel": true,
+    "localizacao": "NALS",
+    "fotoLink": "https://i5.walmartimages.ca/images/Enlarge/681/1_1/999999-888863126811_1.jpg",
+    "patrimonio": 1234,
+    "responsavel": [
+      1
+    ]
+  }
+},
+{
+  "model": "agenda.equipamento",
+  "pk": 2,
+  "fields": {
+    "nome": "C\u00e2mera de v\u00eddeo JVC",
+    "descricao": "Camera de filmagem JVC, 12 mega pixel, 120 GB de disco interno",
+    "unidade": 5,
+    "grupo": null,
+    "bloqueado": false,
+    "visivel": true,
+    "localizacao": "Video conferencia CCE",
+    "fotoLink": "https://http2.mlstatic.com/filmadora-jvc-everio-gz-mg680bub-hdd-120gb-e-micro-sd-D_NQ_NP_950011-MLB20448463979_102015-F.jpg",
+    "patrimonio": 99999,
+    "responsavel": [
+      1
+    ]
+  }
+},
+{
+  "model": "agenda.equipamento",
+  "pk": 3,
+  "fields": {
+    "nome": "Totem madeira",
+    "descricao": "Totem indicativo de madeira",
+    "unidade": 2,
+    "grupo": null,
+    "bloqueado": false,
+    "visivel": true,
+    "localizacao": "Dire\u00e7\u00e3o CCE",
+    "fotoLink": "http://www.oficinadesinalizacao.com.br/site/wp-content/gallery/sinalizacao-secundaria/totem-indicativo.jpg",
+    "patrimonio": 0,
+    "responsavel": [
+      1
+    ]
+  }
+},
+{
+  "model": "agenda.reservaequipamento",
+  "pk": 1,
+  "fields": {
+    "estado": "E",
+    "data": "2017-11-25",
+    "horaInicio": "22:44:00",
+    "horaFim": "23:44:00",
+    "dataReserva": "2017-11-24T21:45:13.012",
+    "atividade": 1,
+    "usuario": 1,
+    "ramal": 134,
+    "finalidade": "1234",
+    "locavel": 1
+  }
+},
+{
+  "model": "agenda.reservaequipamento",
+  "pk": 2,
+  "fields": {
+    "estado": "E",
+    "data": "2017-12-01",
+    "horaInicio": "07:30:00",
+    "horaFim": "11:50:00",
+    "dataReserva": "2017-11-28T17:43:35.696",
+    "atividade": 1,
+    "usuario": 1,
+    "ramal": 1234,
+    "finalidade": "teste",
+    "locavel": 1
+  }
+},
+{
+  "model": "agenda.reservaequipamento",
+  "pk": 3,
+  "fields": {
+    "estado": "E",
+    "data": "2017-11-29",
+    "horaInicio": "07:30:00",
+    "horaFim": "08:20:00",
+    "dataReserva": "2017-11-28T21:15:13.331",
+    "atividade": 1,
+    "usuario": 4,
+    "ramal": 1324,
+    "finalidade": "Uma apresenta\u00e7\u00e3o de poster",
+    "locavel": 3
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2017-11-24T21:43:03.252",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "1",
+    "object_repr": "UFSC",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2017-11-24T21:43:24.483",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "1",
+    "object_repr": "aula",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2017-11-24T21:43:46.675",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "2",
+    "object_repr": "CCE",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2017-11-24T21:44:22.650",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "1",
+    "object_repr": "Notebook",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 5,
+  "fields": {
+    "action_time": "2017-11-24T21:45:13.012",
+    "user": 1,
+    "content_type": 9,
+    "object_id": "1",
+    "object_repr": "ramon.rdm/aula",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 6,
+  "fields": {
+    "action_time": "2017-11-28T17:43:35.697",
+    "user": 1,
+    "content_type": 9,
+    "object_id": "2",
+    "object_repr": "ramon.rdm/aula",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 7,
+  "fields": {
+    "action_time": "2017-11-28T20:23:44.852",
+    "user": 1,
+    "content_type": 5,
+    "object_id": "2",
+    "object_repr": "mario",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 8,
+  "fields": {
+    "action_time": "2017-11-28T20:23:52.726",
+    "user": 1,
+    "content_type": 5,
+    "object_id": "2",
+    "object_repr": "mario",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"is_staff\", \"date_joined\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 9,
+  "fields": {
+    "action_time": "2017-11-28T20:24:04.847",
+    "user": 1,
+    "content_type": 5,
+    "object_id": "3",
+    "object_repr": "maique",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 10,
+  "fields": {
+    "action_time": "2017-11-28T20:24:36.427",
+    "user": 1,
+    "content_type": 5,
+    "object_id": "3",
+    "object_repr": "maique",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"email\", \"is_staff\", \"date_joined\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 11,
+  "fields": {
+    "action_time": "2017-11-28T20:24:52.887",
+    "user": 1,
+    "content_type": 5,
+    "object_id": "2",
+    "object_repr": "mario",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"email\", \"date_joined\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 12,
+  "fields": {
+    "action_time": "2017-11-28T20:25:28.315",
+    "user": 1,
+    "content_type": 3,
+    "object_id": "1",
+    "object_repr": "CCE",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 13,
+  "fields": {
+    "action_time": "2017-11-28T20:25:44.227",
+    "user": 1,
+    "content_type": 3,
+    "object_id": "2",
+    "object_repr": "CCS",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 14,
+  "fields": {
+    "action_time": "2017-11-28T20:26:02.310",
+    "user": 1,
+    "content_type": 3,
+    "object_id": "3",
+    "object_repr": "CFM",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 15,
+  "fields": {
+    "action_time": "2017-11-28T20:26:29.522",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "1",
+    "object_repr": "Aula",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"nome\", \"descricao\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 16,
+  "fields": {
+    "action_time": "2017-11-28T20:26:42.063",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "2",
+    "object_repr": "Palestra",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 17,
+  "fields": {
+    "action_time": "2017-11-28T20:27:17.339",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "3",
+    "object_repr": "Aula Pr\u00e1tica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 18,
+  "fields": {
+    "action_time": "2017-11-28T20:27:39.683",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "4",
+    "object_repr": "Defesa de monografia",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 19,
+  "fields": {
+    "action_time": "2017-11-28T20:27:53.790",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "5",
+    "object_repr": "Defesa Tese",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 20,
+  "fields": {
+    "action_time": "2017-11-28T20:28:20.461",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "6",
+    "object_repr": "Defesa disserta\u00e7\u00e3o",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 21,
+  "fields": {
+    "action_time": "2017-11-28T20:30:13.687",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "1",
+    "object_repr": "Notebook ACer",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"nome\", \"descricao\", \"grupo\", \"localizacao\", \"fotoLink\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 22,
+  "fields": {
+    "action_time": "2017-11-28T20:32:01.343",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "2",
+    "object_repr": "C\u00e2mera de v\u00eddeo JVC",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 23,
+  "fields": {
+    "action_time": "2017-11-28T20:33:18.607",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "3",
+    "object_repr": "CFM",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 24,
+  "fields": {
+    "action_time": "2017-11-28T20:34:53.609",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "4",
+    "object_repr": "CCS",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 25,
+  "fields": {
+    "action_time": "2017-11-28T20:36:01.622",
+    "user": 1,
+    "content_type": 13,
+    "object_id": "1",
+    "object_repr": "Audit\u00f3rio CCS",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 26,
+  "fields": {
+    "action_time": "2017-11-28T20:37:25.100",
+    "user": 1,
+    "content_type": 13,
+    "object_id": "2",
+    "object_repr": "Estudio01",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 27,
+  "fields": {
+    "action_time": "2017-11-28T20:39:09.892",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "5",
+    "object_repr": "VideoconferenciaCCE",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 28,
+  "fields": {
+    "action_time": "2017-11-28T20:39:25.171",
+    "user": 1,
+    "content_type": 13,
+    "object_id": "2",
+    "object_repr": "Estudio01",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"unidade\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 29,
+  "fields": {
+    "action_time": "2017-11-28T20:40:35.988",
+    "user": 1,
+    "content_type": 13,
+    "object_id": "3",
+    "object_repr": "Estudio02",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 30,
+  "fields": {
+    "action_time": "2017-11-28T20:43:36.160",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "1",
+    "object_repr": "UFSC",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"logoLink\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 31,
+  "fields": {
+    "action_time": "2017-11-28T20:44:08.542",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "2",
+    "object_repr": "CCE",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"logoLink\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 32,
+  "fields": {
+    "action_time": "2017-11-28T20:45:17.485",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "2",
+    "object_repr": "CCE",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"nome\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 33,
+  "fields": {
+    "action_time": "2017-11-28T20:48:24.510",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "6",
+    "object_repr": "NALS",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 34,
+  "fields": {
+    "action_time": "2017-11-28T20:49:33.236",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "7",
+    "object_repr": "Reuni\u00e3o",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 35,
+  "fields": {
+    "action_time": "2017-11-28T20:49:41.663",
+    "user": 1,
+    "content_type": 13,
+    "object_id": "4",
+    "object_repr": "salaReuni\u00e3o",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 36,
+  "fields": {
+    "action_time": "2017-11-28T20:50:45.625",
+    "user": 1,
+    "content_type": 5,
+    "object_id": "4",
+    "object_repr": "teste",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 37,
+  "fields": {
+    "action_time": "2017-11-28T20:50:54.832",
+    "user": 1,
+    "content_type": 5,
+    "object_id": "4",
+    "object_repr": "teste",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"is_staff\", \"date_joined\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 38,
+  "fields": {
+    "action_time": "2017-11-28T20:51:09.541",
+    "user": 1,
+    "content_type": 5,
+    "object_id": "4",
+    "object_repr": "teste",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"email\", \"date_joined\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 39,
+  "fields": {
+    "action_time": "2017-11-28T20:51:43.033",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "1",
+    "object_repr": "Notebook ACer",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"unidade\", \"grupo\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 40,
+  "fields": {
+    "action_time": "2017-11-28T20:52:13.073",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "2",
+    "object_repr": "C\u00e2mera de v\u00eddeo JVC",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"unidade\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 41,
+  "fields": {
+    "action_time": "2017-11-28T20:56:21.460",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "3",
+    "object_repr": "Totem madeira",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 42,
+  "fields": {
+    "action_time": "2017-11-28T20:59:00.546",
+    "user": 1,
+    "content_type": 5,
+    "object_id": "4",
+    "object_repr": "teste",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"last_login\", \"date_joined\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 43,
+  "fields": {
+    "action_time": "2017-11-28T21:00:50.025",
+    "user": 1,
+    "content_type": 5,
+    "object_id": "4",
+    "object_repr": "teste",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"last_login\", \"date_joined\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 44,
+  "fields": {
+    "action_time": "2017-11-28T21:06:27.694",
+    "user": 1,
+    "content_type": 5,
+    "object_id": "4",
+    "object_repr": "teste",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"last_login\", \"date_joined\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 45,
+  "fields": {
+    "action_time": "2017-11-28T21:13:49.897",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "2",
+    "object_repr": "CCE",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"grupo\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 46,
+  "fields": {
+    "action_time": "2017-11-28T21:15:13.332",
+    "user": 4,
+    "content_type": 9,
+    "object_id": "3",
+    "object_repr": "teste/Aula",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+}
+]

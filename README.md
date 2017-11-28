@@ -17,4 +17,7 @@ Agendador de espaço físico
  + Django-material:
 	https://github.com/viewflow/django-material/
 
-Bolsista: Antônio Besen de Miranda Gomes
+Reponsavel Ramon Dutra Miranda
+
+carregando dados iniciais:
+./manage.py loaddata fixtures/data_dump.json

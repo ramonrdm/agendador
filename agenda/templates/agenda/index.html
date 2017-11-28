@@ -33,8 +33,8 @@
             <div class="card" id="unidade">
                 <div class="card-image">
                     <a href="{% url 'Reservas-UFSC' subUnidade.sigla %}">
-                    {% if subUnidade.logo %}
-                    <img width="100" height="100" src="/media/{{subUnidade.logo}}">
+                    {% if subUnidade.logoLink %}
+                    <img width="100" height="100" src="{{subUnidade.logoLink}}">
                     {% else %}
                     <i width="100" height="100" class="large material-icons unit-default">account_balance</i>
                     {% endif %}
