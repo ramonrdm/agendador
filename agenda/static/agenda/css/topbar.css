@@ -17,6 +17,10 @@ nav.breadcrumbs{
 	color: white;
 }
 
+.circle {
+	border-radius: 0px;
+}
+
 .unit-default {
 	color: black;
 }

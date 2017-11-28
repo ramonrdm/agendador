@@ -5,7 +5,7 @@ import time, calendar
 from datetime import date, datetime, timedelta
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse, HttpResponseNotFound
 from django.forms.models import modelformset_factory
 from django.template import RequestContext, Library
 from django.views.decorators import csrf
@@ -83,6 +83,26 @@ def ano(request, unidade=None ,year=None):
     espacosfisicos = EspacoFisico.objects.filter(unidade=unidade)
 
     return render_to_response("ano.html", dict(years=lst, user=request.user, year=year, espacosfisicos=espacosfisicos))
+
+def locavel(request, tipo=None, locavel=None):
+    specific = dict()
+    if tipo == 'e':
+        locavel = Equipamento.objects.get(id=locavel)
+        specific['patrimonio'] = locavel.patrimonio
+    else:
+        locavel = EspacoFisico.objects.get(id=locavel)
+        specific['capacidade'] = locavel.capacidade
+        atividadesPermitidas = locavel.atividadesPermitidas.all()
+        atividades = list()
+        for atividade in atividadesPermitidas:
+            atividades.append(atividade.nome)
+        specific['atividades permitidas'] = (", ").join(atividades)
+    if not locavel.visivel:
+        return HttpResponseNotFound()
+    responsaveis = locavel.responsavel.all()
+    grupo = locavel.grupo
+    ret = previous_url = request.META.get('HTTP_REFERER')
+    return render(request, 'agenda/locavel.html', dict(tipo=tipo, locavel=locavel, responsaveis=responsaveis, grupo=grupo, specific=specific, ret=ret))
 
 def mes(request, tipo=None, espaco=None, year=None, month=None, change=None):
     """Listing of days in `month`."""

@@ -1,0 +1,17 @@
+.image img {
+	display: block;
+	margin: auto;
+	max-width: 100%
+}
+
+.image, #info {
+	margin-top: 5px;
+}
+
+#locavel {
+	width: 100%;
+}
+
+.return {
+	text-align: center;
+}

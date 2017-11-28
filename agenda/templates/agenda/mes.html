@@ -67,7 +67,7 @@ jQuery(document).ready(function() {
     });     
     setMonth();
     var m = jQuery(".fc-left").text();
-    jQuery(".fc-header-toolbar").html("<div class='row'><a class='btn right col s3' href='{%url 'mes' tipo espaco.id year month 'next' %}'><i class='material-icons medium arrow_right'>arrow_forward</i><span class='text'>próximo</span></a><a class='btn left col s3' href='{%url 'mes' tipo espaco.id year month 'prev' %}'><i class='material-icons medium arrow_left'>arrow_back</i><span class='text'>anterior</span></a><h2 class='col s6'>" + m + "</h2></div>");
+    jQuery(".fc-header-toolbar").html("<div class='row'><a class='btn right col s3' href='{%url 'mes' tipo espaco.id year month 'next' %}'><i class='material-icons medium arrow_right'>arrow_forward</i><span class='text'>próximo</span></a><a class='btn left col s3' href='{%url 'mes' tipo espaco.id year month 'prev' %}'><i class='material-icons medium arrow_left'>arrow_back</i><span class='text'>anterior</span></a><div class='col s6'><h2>" + m + "</h2><a href='{% url 'locavel' tipo espaco.id %}' class='flow-text'>Detalhes do locável</a></div></div>");
 });
 
 function setMonth() {
