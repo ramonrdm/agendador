@@ -101,7 +101,8 @@ def locavel(request, tipo=None, locavel=None):
         return HttpResponseNotFound()
     responsaveis = locavel.responsavel.all()
     grupo = locavel.grupo
-    ret = previous_url = request.META.get('HTTP_REFERER')
+    ret = request.META.get('HTTP_REFERER')
+    print ret
     return render(request, 'agenda/locavel.html', dict(tipo=tipo, locavel=locavel, responsaveis=responsaveis, grupo=grupo, specific=specific, ret=ret))
 
 def mes(request, tipo=None, espaco=None, year=None, month=None, change=None):

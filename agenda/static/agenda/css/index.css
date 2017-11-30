@@ -23,3 +23,7 @@
 .collection-item {
 	word-wrap: break-word;
 }
+
+.card .card-image img {
+	width: auto;
+}
