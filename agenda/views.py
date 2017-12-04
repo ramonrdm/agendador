@@ -13,6 +13,7 @@ from agenda.models import *
 from agenda.forms import ReservaEspacoFisicoAdminForm
 from django import forms
 from django.contrib.admin.sites import AdminSite
+from dal import autocomplete
 from datetime import date
 from forms import *
 
@@ -231,3 +232,4 @@ def intermediaria(request, tipo, id_equip, data_numero):
         return redirect('/admin/agenda/reservaequipamento/add/')
     elif tipo == 'f':
         return redirect('/admin/agenda/reservaespacofisico/add/')
+

@@ -9,7 +9,7 @@ from django.forms.extras.widgets import SelectDateWidget
 from django.forms import ModelForm, Form, HiddenInput
 from django.contrib.admin.sites import AdminSite
 from django.core.exceptions import ValidationError
-from widgets import SelectTimeWidget, AutocompleteWidget
+from widgets import SelectTimeWidget
 from django.contrib.auth.models import User
 import admin
 
