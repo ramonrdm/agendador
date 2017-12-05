@@ -5,11 +5,11 @@ from django import forms
 from django.contrib.admin import widgets
 import datetime
 from django.core.mail import send_mail
-from django.forms.extras.widgets import SelectDateWidget
 from django.forms import ModelForm, Form, HiddenInput
 from django.contrib.admin.sites import AdminSite
 from django.core.exceptions import ValidationError
-from widgets import SelectTimeWidget
+from django.contrib.admin import widgets
+from widgets import SelectTimeWidget, SelectDateWidget
 from django.contrib.auth.models import User
 import admin
 
@@ -32,6 +32,7 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['usuario'].label = ''
         self.fields['horaInicio'] = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
         self.fields['horaFim'] = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
+        print self.fields['data'].widget
 
 class ReservaEquipamentoAdminForm(ReservaAdminForm):
     class Meta:
@@ -78,3 +79,14 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
          'reservas.ccs@sistemas.ufsc.br',
          [mail],
          fail_silently=False)
+
+class SearchFilterForm(forms.Form):
+    dia = forms.DateField(input_formats=['%d/%m/%Y'], widget=SelectDateWidget())
+    dia.label = ''
+    horaInicio = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
+    horaInicio.label = ''
+    horaFim = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
+    horaFim.label = ''
+
+    def clean(self):
+        cleaned_data = super(SearchFilterForm, self).clean()

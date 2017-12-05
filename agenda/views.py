@@ -22,6 +22,12 @@ month_names = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julh
 unidade_default = 'ufsc'
 
 def index(request, unidade=unidade_default):
+    if request.method == 'POST':
+        search_form = SearchFilterForm(request.POST)
+        if search_form.is_valid():
+            pass
+    else:
+        search_form = SearchFilterForm()
     #titulo = "Agendador UFSC"
     #corpo = "Bem vindo ao Agendador de espaços físicos e equipamentos da UFSC"
 
@@ -50,13 +56,14 @@ def index(request, unidade=unidade_default):
                 month_list.append(dict(n=n+1, name=month_names[n]))
         lst.append((y, month_list))
 
+
     return render(
         request,
         "agenda/index.html",
         dict(
             unidade=unidade, unidades=unidades,
             espacosfisicos=espacosFisicos, equipamentos=equipamentos,
-            years=lst, user=request.user
+            years=lst, user=request.user, search_form=search_form
             )
         )
 

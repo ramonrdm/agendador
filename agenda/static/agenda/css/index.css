@@ -27,3 +27,21 @@
 .card .card-image img {
 	width: auto;
 }
+
+.form {
+	background-color: white;
+}
+
+.btn {
+	margin-top: 6px;
+}
+
+.material-icons {
+	height: 1rem;
+}
+
+.errorlist li {
+	margin-top: -20px;
+	color: #F44336;
+	font-size: 75%;
+}

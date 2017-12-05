@@ -11,7 +11,7 @@ class SelectTimeWidget(Widget):
         self.attrs = attrs or {}
 
     class Media():
-		js = ('agenda/js/time_options.js',)
+		js = ('material/js/jquery.datetimepicker.full.js', 'agenda/js/time_options.js',)
 
     def render(self, name, value, attrs=None):
         if value:
@@ -23,4 +23,24 @@ class SelectTimeWidget(Widget):
             inp='<input class="ufsc_time" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text">'
     	label='<label for="id_'+name+'">'+name.title()+'</label>'
     	output = label + inp
+        return output
+
+class SelectDateWidget(Widget):
+
+    def __init__(self, attrs=None):
+        self.attrs = attrs or {}
+
+    class Media():
+        js = ('material/js/jquery.datetimepicker.full.js', 'agenda/js/date.js',)
+
+    def render(self, name, value, attrs=None):
+        if value:
+            try:
+                inp='<input class="date_picker" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text" value="'+value.strftime('%d/%m/%Y')+'">'
+            except:
+                inp='<input class="date_picker" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text" value="'+datetime.strptime(value, '%d/%m/%Y').strftime('%d/%m/%Y')+'">'
+        else:
+            inp='<input class="date_picker" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text">'
+        label='<label for="id_'+name+'">'+name.title()+'</label>'
+        output = label + inp
         return output
