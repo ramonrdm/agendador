@@ -15,3 +15,7 @@
 .return {
 	text-align: center;
 }
+
+.modal-trigget {
+	float: left;
+}

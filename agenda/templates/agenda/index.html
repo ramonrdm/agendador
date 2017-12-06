@@ -14,7 +14,20 @@
 {% block js %}
     <script src="{% static 'material/js/jquery.js' %}"></script>
     <script src="{% static 'material/js/materialize.js' %}"></script>
-    <script src="{% static 'agenda/js/index.js' %}"></script>
+    <script>
+        $(document).ready(function(){
+            $('.modal').modal();
+        });
+    </script>
+    {% for field in search_form.visible_fields %}
+        {% if field.errors %}
+        <script>
+            $(document).ready(function(){
+                $('.modal').modal('open');
+            });
+        </script>
+        {% endif %}
+    {% endfor %}
 {% endblock %}
 {% block page_title %}
     <strong>{{unidade.nome}}</strong>
@@ -60,10 +73,10 @@
         <div class="col s12 inf">
         <ul class="collapsible row" data-collapsible="accordion">
             <li><div class="collapsible-header active col s12">
-                <div class='col s8'>
+                <div class='col s8 m10 l11'>
                 <i class="small material-icons">expand_more</i><h5>Espaços Físicos de {{unidade.sigla}}</h5>
                 </div>
-                <a class="light-blue darken-4 btn modal-trigger col s4 left waves-effect waves-light" href="#filter_f">Filtrar</a>
+                <a class="light-blue darken-4 btn modal-trigger col s4 m2 l1 left waves-effect waves-light" href="#filter_f">Filtrar</a>
             </div>
             <div class='collapsible-body col s12' id="espacosCard">
                 <div class="card" id="espacosFisicos">

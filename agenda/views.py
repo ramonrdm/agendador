@@ -25,7 +25,10 @@ def index(request, unidade=unidade_default):
     if request.method == 'POST':
         search_form = SearchFilterForm(request.POST)
         if search_form.is_valid():
-            pass
+            data = search_form.cleaned_data['data'].strftime('%d%m%y')
+            horaInicio = search_form.cleaned_data['horaInicio'].strftime('%H%M')
+            horaFim = search_form.cleaned_data['horaFim'].strftime('%H%M')
+            return redirect('/resultado/f/' + data + '/' + horaInicio + '/' + horaFim + '/')
     else:
         search_form = SearchFilterForm()
     #titulo = "Agendador UFSC"
@@ -109,7 +112,6 @@ def locavel(request, tipo=None, locavel=None):
     responsaveis = locavel.responsavel.all()
     grupo = locavel.grupo
     ret = request.META.get('HTTP_REFERER')
-    print ret
     return render(request, 'agenda/locavel.html', dict(tipo=tipo, locavel=locavel, responsaveis=responsaveis, grupo=grupo, specific=specific, ret=ret))
 
 def mes(request, tipo=None, espaco=None, year=None, month=None, change=None):
@@ -229,8 +231,9 @@ def addreserva(request, espacoatual, ano=None, mes= None, dia=None):
 
     return render(request, "addreserva.html", {'form': form, "usuario": usuario, 'dados': dados })
 
-def intermediaria(request, tipo, id_equip, data_numero):
+def intermediaria(request, tipo, id_equip, data_numero, horaInicio=None, horaFim=None):
     request.session['id_equip'] = id_equip
+    print data_numero
     data_string = str(data_numero)
     data = data_string[0]+data_string[1]+'/'+data_string[2]+data_string[3]+'/'+data_string[4]+data_string[5]+data_string[6]+data_string[7]
     request.session['data'] = data
@@ -238,3 +241,21 @@ def intermediaria(request, tipo, id_equip, data_numero):
         return redirect('/admin/agenda/reservaequipamento/add/')
     elif tipo == 'f':
         return redirect('/admin/agenda/reservaespacofisico/add/')
+
+def resultado(request, tipo, data, horaInicio, horaFim):
+    data = datetime.datetime.strptime(data, '%d%m%y')
+    horaInicio = datetime.datetime.strptime(horaInicio, '%H%M').time()
+    horaFim = datetime.datetime.strptime(horaFim, '%H%M').time()
+    if tipo == 'f':
+        query = EspacoFisico.objects.all()
+    for i in query:
+        for r in i.reservaespacofisico_set.filter(data=data):
+            if  (
+                (horaFim  > r.horaInicio and horaFim < r.horaFim) or 
+                (horaInicio > r.horaInicio and horaInicio < r.horaFim ) or 
+                (horaInicio == r.horaInicio and horaFim == r.horaFim) or
+                (r.horaInicio > horaInicio and r.horaInicio < horaFim) or
+                (horaInicio < r.horaFim < horaFim)
+                ):
+                query = query.exclude(id=i.id)
+    return render(request, "agenda/search_result.html", dict(query=query))

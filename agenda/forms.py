@@ -81,8 +81,8 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
          fail_silently=False)
 
 class SearchFilterForm(forms.Form):
-    dia = forms.DateField(input_formats=['%d/%m/%Y'], widget=SelectDateWidget())
-    dia.label = ''
+    data = forms.DateField(input_formats=['%d/%m/%Y'], widget=SelectDateWidget())
+    data.label = ''
     horaInicio = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
     horaInicio.label = ''
     horaFim = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())

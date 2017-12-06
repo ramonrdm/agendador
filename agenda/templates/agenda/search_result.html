@@ -1,0 +1,44 @@
+{% extends "agenda/base_module.html" %}
+{% load i18n material_frontend %}
+{% load static %}
+{% block title %} Resultados da pesquisa {{unidade.sigla}}{% endblock %}
+{% block css %}
+	{{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/topbar.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/search_result.css' %}" />
+{% endblock %}
+{% block page_title %}
+    <strong>Resultados da pesquisa</strong>
+{% endblock %}
+{% block userphoto %}
+    <a href="#"><i class="circle medium material-icons">search</i></a>
+{% endblock %}
+
+{% block content %}
+<div id='results'>
+	<div class='row'>
+		<div class='col s12'>
+			<div class='card'>
+				<div class='card-content'>
+					<table class='bordered'>
+						<thead>
+							<tr>
+								<th>Locavel</th>
+								<th>Responsáveis</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for locavel in query %}
+							<tr>
+								<td>{{ locavel.nome }}</td>
+								<td>{{ locavel.responsavel.all|join:", " }}</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
