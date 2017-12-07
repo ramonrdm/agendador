@@ -41,6 +41,7 @@ class Locavel(models.Model):
     visivel = models.BooleanField(default=True)
     localizacao = models.TextField()
     fotoLink = models.URLField(blank=True)
+    atividadesPermitidas = models.ManyToManyField(Atividade)
     def __unicode__(self):
         return self.nome
     def __str__(self):
@@ -48,7 +49,7 @@ class Locavel(models.Model):
 
 class EspacoFisico(Locavel):
     capacidade = models.PositiveSmallIntegerField()
-    atividadesPermitidas = models.ManyToManyField(Atividade)
+    
 
 class Equipamento(Locavel):
     patrimonio = models.PositiveIntegerField()
