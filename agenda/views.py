@@ -25,12 +25,14 @@ def index(request, unidade=unidade_default):
     if request.method == 'POST':
         search_form = SearchFilterForm(request.POST)
         if search_form.is_valid():
-            data = search_form.cleaned_data['data'].strftime('%d%m%y')
+            data = search_form.cleaned_data['data'].strftime('%d%m%Y')
             horaInicio = search_form.cleaned_data['horaInicio'].strftime('%H%M')
             horaFim = search_form.cleaned_data['horaFim'].strftime('%H%M')
-            return redirect('/resultado/f/' + data + '/' + horaInicio + '/' + horaFim + '/')
+            tipo = search_form.cleaned_data['tipo']
+            return redirect('/resultado/'+ tipo +'/' + data + '/' + horaInicio + '/' + horaFim + '/')
     else:
-        search_form = SearchFilterForm()
+        search_f = SearchFilterForm(tipo='f')
+        search_e = SearchFilterForm(tipo='e')
     #titulo = "Agendador UFSC"
     #corpo = "Bem vindo ao Agendador de espaços físicos e equipamentos da UFSC"
 
@@ -66,7 +68,7 @@ def index(request, unidade=unidade_default):
         dict(
             unidade=unidade, unidades=unidades,
             espacosfisicos=espacosFisicos, equipamentos=equipamentos,
-            years=lst, user=request.user, search_form=search_form
+            years=lst, user=request.user, search_f=search_f, search_e=search_e
             )
         )
 
@@ -233,19 +235,23 @@ def addreserva(request, espacoatual, ano=None, mes= None, dia=None):
 
 def intermediaria(request, tipo, id_equip, data_numero, horaInicio=None, horaFim=None):
     request.session['id_equip'] = id_equip
-    print data_numero
     data_string = str(data_numero)
     data = data_string[0]+data_string[1]+'/'+data_string[2]+data_string[3]+'/'+data_string[4]+data_string[5]+data_string[6]+data_string[7]
     request.session['data'] = data
+    if horaInicio and horaFim:
+        horaInicio = horaInicio[:2]+':'+horaInicio[2:]
+        horaFim = horaFim[:2]+':'+horaFim[2:]
+    request.session['horaInicio'] = horaInicio
+    request.session['horaFim'] = horaFim
     if tipo == 'e':
         return redirect('/admin/agenda/reservaequipamento/add/')
     elif tipo == 'f':
-        return redirect('/admin/agenda/reservaespacofisico/add/')
+        return HttpResponseRedirect('/admin/agenda/reservaespacofisico/add/')
 
-def resultado(request, tipo, data, horaInicio, horaFim):
-    data = datetime.datetime.strptime(data, '%d%m%y')
-    horaInicio = datetime.datetime.strptime(horaInicio, '%H%M').time()
-    horaFim = datetime.datetime.strptime(horaFim, '%H%M').time()
+def resultado(request, tipo, sData, sHoraInicio, sHoraFim):
+    data = datetime.datetime.strptime(sData, '%d%m%Y')
+    horaInicio = datetime.datetime.strptime(sHoraInicio, '%H%M').time()
+    horaFim = datetime.datetime.strptime(sHoraFim, '%H%M').time()
     if tipo == 'f':
         query = EspacoFisico.objects.all()
     for i in query:
@@ -258,4 +264,4 @@ def resultado(request, tipo, data, horaInicio, horaFim):
                 (horaInicio < r.horaFim < horaFim)
                 ):
                 query = query.exclude(id=i.id)
-    return render(request, "agenda/search_result.html", dict(query=query))
+    return render(request, "agenda/search_result.html", dict(query=query, data=sData, horaInicio=sHoraInicio, horaFim=sHoraFim, tipo=tipo))

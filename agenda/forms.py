@@ -21,18 +21,24 @@ class ReservaAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)
         super(ReservaAdminForm, self).__init__(*args, **kwargs)
+        self.fields['horaInicio'] = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
+        self.fields['horaFim'] = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
         try:
             self.fields['data'].initial = self.request.session['data']
         except:
             pass
         self.request.session['data'] = ''
+        try:
+            self.fields['horaInicio'].initial = self.request.session['horaInicio']
+            self.fields['horaFim'].initial = self.request.session['horaFim']
+        except:
+            pass
+        self.request.session['horaInicio'] = ''
+        self.request.session['horaFim'] = ''
         if not self.request.user.is_superuser:
             self.fields['usuario'].initial = self.request.user
             self.fields['usuario'].widget = forms.HiddenInput()
             self.fields['usuario'].label = ''
-        self.fields['horaInicio'] = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
-        self.fields['horaFim'] = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
-        print self.fields['data'].widget
 
 class ReservaEquipamentoAdminForm(ReservaAdminForm):
     class Meta:
@@ -81,12 +87,21 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
          fail_silently=False)
 
 class SearchFilterForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        try:
+            self.tipo_init = kwargs.pop('tipo')
+            super(SearchFilterForm,self).__init__(*args,**kwargs)
+            self.fields['tipo'].initial = self.tipo_init
+        except:
+            super(SearchFilterForm,self).__init__(*args,**kwargs)
+
     data = forms.DateField(input_formats=['%d/%m/%Y'], widget=SelectDateWidget())
     data.label = ''
     horaInicio = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
     horaInicio.label = ''
     horaFim = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
     horaFim.label = ''
+    tipo = forms.CharField(widget = forms.HiddenInput())
 
     def clean(self):
         cleaned_data = super(SearchFilterForm, self).clean()

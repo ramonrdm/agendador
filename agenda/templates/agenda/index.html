@@ -4,7 +4,7 @@
 {% block title %} Agendador - {{unidade.sigla}}{% endblock %}
 {% block head %}
     {{ block.super }}
-    {{ search_form.media }}
+    {{ search_f.media }}
 {% endblock %}
 {% block css %}
     {{ block.super }}
@@ -152,11 +152,15 @@
     <form method='post'>
         {% csrf_token %}
         <div class="modal-content">
-          <h4>Filtrar espaço físico</h4>
-          {% for field in search_form.visible_fields %}
-            {{ field }}
-            {{ field.errors }}
-          {% endfor %}
+            <h4>Filtrar espaço físico</h4>
+            {% for field in search_f.visible_fields %}
+                {{ field }}
+                {{ field.errors }}
+            {% endfor %}
+            {% for field in search_f.hidden_fields %}
+                {{ field }}
+            {% endfor %}
+
         </div>
         <div class="modal-footer">
             <button class="light-blue darken-4 btn waves-effect waves-light" type="submit" name="action">Filtrar

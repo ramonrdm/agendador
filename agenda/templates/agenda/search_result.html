@@ -30,7 +30,7 @@
 						<tbody>
 							{% for locavel in query %}
 							<tr>
-								<td>{{ locavel.nome }}</td>
+								<td><a href="{% url 'intermediaria' tipo locavel.id data horaInicio horaFim %}">{{ locavel.nome }}</a></td>
 								<td>{{ locavel.responsavel.all|join:", " }}</td>
 							</tr>
 							{% endfor %}

@@ -38,6 +38,7 @@
 
 .material-icons {
 	height: 1rem;
+	display: inline-flex;
 }
 
 .errorlist li {
