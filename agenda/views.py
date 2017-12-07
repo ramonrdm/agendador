@@ -254,14 +254,22 @@ def resultado(request, tipo, sData, sHoraInicio, sHoraFim):
     horaFim = datetime.datetime.strptime(sHoraFim, '%H%M').time()
     if tipo == 'f':
         query = EspacoFisico.objects.all()
-    for i in query:
-        for r in i.reservaespacofisico_set.filter(data=data):
-            if  (
-                (horaFim  > r.horaInicio and horaFim < r.horaFim) or 
-                (horaInicio > r.horaInicio and horaInicio < r.horaFim ) or 
-                (horaInicio == r.horaInicio and horaFim == r.horaFim) or
-                (r.horaInicio > horaInicio and r.horaInicio < horaFim) or
-                (horaInicio < r.horaFim < horaFim)
-                ):
-                query = query.exclude(id=i.id)
+        reserves = ReservaEspacoFisico.objects.none()
+        for espaco in query:
+            reserves = reserves | espaco.reservaespacofisico_set.filter(data=data)
+    if tipo == 'e':
+        query = Equipamento.objects.all()
+        reserves = ReservaEquipamento.objects.none()
+        for equipamento in query:
+            reserves = reserves | equipamento.reservaequipamento_set.filter(data=data)
+
+    for r in reserves:
+        if  (
+            (horaFim  > r.horaInicio and horaFim < r.horaFim) or 
+            (horaInicio > r.horaInicio and horaInicio < r.horaFim ) or 
+            (horaInicio == r.horaInicio and horaFim == r.horaFim) or
+            (r.horaInicio > horaInicio and r.horaInicio < horaFim) or
+            (horaInicio < r.horaFim < horaFim)
+            ):
+            query = query.exclude(id=r.locavel.id)
     return render(request, "agenda/search_result.html", dict(query=query, data=sData, horaInicio=sHoraInicio, horaFim=sHoraFim, tipo=tipo))
