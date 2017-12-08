@@ -14,6 +14,7 @@ from agenda.forms import ReservaEspacoFisicoAdminForm
 from django import forms
 from django.contrib.admin.sites import AdminSite
 from datetime import date
+import admin
 from forms import *
 
 from material.frontend.views import ModelViewSet
@@ -253,12 +254,14 @@ def resultado(request, tipo, sData, sHoraInicio, sHoraFim):
     horaInicio = datetime.datetime.strptime(sHoraInicio, '%H%M').time()
     horaFim = datetime.datetime.strptime(sHoraFim, '%H%M').time()
     if tipo == 'f':
-        query = EspacoFisico.objects.all()
+        ma = admin.EspacoFisicoAdmin(EspacoFisico, AdminSite())
+        query = ma.get_queryset(request)
         reserves = ReservaEspacoFisico.objects.none()
         for espaco in query:
             reserves = reserves | espaco.reservaespacofisico_set.filter(data=data)
     if tipo == 'e':
-        query = Equipamento.objects.all()
+        ma = admin.EquipamentoAdmin(Equipamento, AdminSite())
+        query = ma.get_queryset(request)
         reserves = ReservaEquipamento.objects.none()
         for equipamento in query:
             reserves = reserves | equipamento.reservaequipamento_set.filter(data=data)

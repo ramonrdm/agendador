@@ -28,6 +28,15 @@
 	width: auto;
 }
 
+.card-image {
+	height: 100px;
+}
+
+.card-image i {
+	display: block;
+	margin: auto;
+}
+
 .form {
 	background-color: white;
 }
