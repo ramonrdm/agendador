@@ -249,6 +249,7 @@ def intermediaria(request, tipo, id_equip, data_numero, horaInicio=None, horaFim
     elif tipo == 'f':
         return HttpResponseRedirect('/admin/agenda/reservaespacofisico/add/')
 
+@login_required
 def resultado(request, tipo, sData, sHoraInicio, sHoraFim):
     data = datetime.datetime.strptime(sData, '%d%m%Y')
     horaInicio = datetime.datetime.strptime(sHoraInicio, '%H%M').time()
