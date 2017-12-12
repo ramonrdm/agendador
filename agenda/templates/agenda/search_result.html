@@ -29,8 +29,8 @@
 						</thead>
 						<tbody>
 							{% for locavel in query %}
-							<tr>
-								<td><a href="{% url 'intermediaria' tipo locavel.id data horaInicio horaFim %}">{{ locavel.nome }}</a></td>
+							<tr class='locavel'>
+								<td><a href="#" class='{{ locavel.id }}'>{{ locavel.nome }}</a></td>
 								<td>{{ locavel.responsavel.all|join:", " }}</td>
 							</tr>
 							{% endfor %}
@@ -41,4 +41,36 @@
 		</div>
 	</div>
 </div>
+<script type="text/javascript">
+$(document).ready(function() {
+	$('.locavel a').on('click', function(event) {
+        event.preventDefault();
+        var id = $(this).attr('class');
+        sendRequest(id);
+    });
+});
+
+function sendRequest(id) {
+    $.ajax({
+        type: 'GET',
+        url: '/reservar/',
+        data: {
+            data: '{{ data }}',
+            id: id,
+            horaInicio: '{{ horaInicio }}',
+            horaFim: '{{ horaFim }}'
+        },
+        dataType: 'json',
+        success: function(data) {
+            if (data.success) {
+                if ('{{ tipo }}' === 'f') {
+                    location.href = '/admin/agenda/reservaespacofisico/add/';
+                } else if ('{{ tipo }}' === 'e') {
+                    location.href = '/admin/agenda/reservaequipamento/add/';
+                }
+            }
+        }
+    });
+}
+</script>
 {% endblock %}

@@ -234,9 +234,18 @@ def addreserva(request, espacoatual, ano=None, mes= None, dia=None):
 
     return render(request, "addreserva.html", {'form': form, "usuario": usuario, 'dados': dados })
 
-def intermediaria(request, tipo, id_equip, data_numero, horaInicio=None, horaFim=None):
+def intermediaria(request):
+    id_equip = request.GET['id']
+    data_numero = request.GET['data']
+    try:
+        horaInicio = request.GET['horaInicio']
+        horaFim = request.GET['horaFim']
+    except:
+        horaInicio = None
+        horaFim = None
     request.session['id_equip'] = id_equip
     data_string = str(data_numero)
+    print data_numero
     data = data_string[0]+data_string[1]+'/'+data_string[2]+data_string[3]+'/'+data_string[4]+data_string[5]+data_string[6]+data_string[7]
     request.session['data'] = data
     if horaInicio and horaFim:
@@ -244,16 +253,14 @@ def intermediaria(request, tipo, id_equip, data_numero, horaInicio=None, horaFim
         horaFim = horaFim[:2]+':'+horaFim[2:]
     request.session['horaInicio'] = horaInicio
     request.session['horaFim'] = horaFim
-    if tipo == 'e':
-        return redirect('/admin/agenda/reservaequipamento/add/')
-    elif tipo == 'f':
-        return HttpResponseRedirect('/admin/agenda/reservaespacofisico/add/')
+    data = {'success': True}
+    return JsonResponse(data)
 
 @login_required
 def resultado(request, tipo, sData, sHoraInicio, sHoraFim):
-    data = datetime.datetime.strptime(sData, '%d%m%Y')
-    horaInicio = datetime.datetime.strptime(sHoraInicio, '%H%M').time()
-    horaFim = datetime.datetime.strptime(sHoraFim, '%H%M').time()
+    data = datetime.strptime(sData, '%d%m%Y')
+    horaInicio = datetime.strptime(sHoraInicio, '%H%M').time()
+    horaFim = datetime.strptime(sHoraFim, '%H%M').time()
     if tipo == 'f':
         ma = admin.EspacoFisicoAdmin(EspacoFisico, AdminSite())
         query = ma.get_queryset(request)

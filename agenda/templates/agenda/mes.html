@@ -56,7 +56,7 @@ jQuery(document).ready(function() {
                 if(value.className.indexOf("fc-other-month") === -1) {
                     var a = $(value).children().text();
                     var x = ("0"+a).slice(-2);
-                    $(value).append("<a href='/reservar/{{ tipo }}/{{espaco.id}}/"+x+"{{month|stringformat:"02d"}}{{year}}'  %}'><i class=material-icons>add_circle</i></a>");
+                    $(value).append("<a href='#'><i class=material-icons>add_circle</i></a>");
                     $(value).css('text-align', 'center');
 
                 }
@@ -68,6 +68,17 @@ jQuery(document).ready(function() {
     setMonth();
     var m = jQuery(".fc-left").text();
     jQuery(".fc-header-toolbar").html("<div class='row'><a class='btn right col s3' href='{%url 'mes' tipo espaco.id year month 'next' %}'><i class='material-icons medium arrow_right'>arrow_forward</i><span class='text'>próximo</span></a><a class='btn left col s3' href='{%url 'mes' tipo espaco.id year month 'prev' %}'><i class='material-icons medium arrow_left'>arrow_back</i><span class='text'>anterior</span></a><div class='col s6'><h2>" + m + "</h2><a href='{% url 'locavel' tipo espaco.id %}' class='flow-text'>Detalhes do locável</a></div></div>");
+
+    // Add listener to buttons
+    $('.fc-day-top i').on('click', function(event) {
+        event.preventDefault();
+        var data = $(this).parent().parent().children('.fc-day-number').text();
+        if (data.length == 1) data = '0'+data;
+        var month = '{{ month }}';
+        if (month.length == 1) month = '0'+month;
+        data += month+'{{ year }}';
+        sendRequest(data);
+    });
 });
 
 function setMonth() {
@@ -78,6 +89,28 @@ function setMonth() {
         var date = $.fullCalendar.moment("{{year}}-0{{month}}-01");
             $("#calendar").fullCalendar('gotoDate', date);
         }
+}
+
+// Give required data to session and redirect
+function sendRequest(data) {
+    $.ajax({
+        type: 'GET',
+        url: '/reservar/',
+        data: {
+            data: data,
+            id: {{ espaco.id }}
+        },
+        dataType: 'json',
+        success: function(data) {
+            if (data.success) {
+                if ('{{ tipo }}' === 'f') {
+                    location.href = '/admin/agenda/reservaespacofisico/add/';
+                } else if ('{{ tipo }}' === 'e') {
+                    location.href = '/admin/agenda/reservaequipamento/add/';
+                }
+            }
+        }
+    });
 }
 </script>
 
