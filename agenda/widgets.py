@@ -3,6 +3,7 @@ from django.forms.extras.widgets import SelectDateWidget
 from django.forms.widgets import Widget, Select, MultiWidget
 from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
+from django.contrib.admin import widgets
 from datetime import datetime
 
 class SelectTimeWidget(Widget):
@@ -44,3 +45,7 @@ class SelectDateWidget(Widget):
         label='<label for="id_'+name+'">'+name.title()+'</label>'
         output = label + inp
         return output
+
+class DynamicAtividadeWidget(widgets.RelatedFieldWidgetWrapper):
+    class Media():
+        js = ('agenda/js/dynamic_atividade.js',)

@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from agenda.models import Reserva, EspacoFisico, ReservaEspacoFisico, ReservaEquipamento, Equipamento
+from agenda.models import Reserva, EspacoFisico, ReservaEspacoFisico, ReservaEquipamento, Equipamento, Atividade
 from django import forms
 from django.contrib.admin import widgets
 import datetime
 from django.core.mail import send_mail
-from django.forms import ModelForm, Form, HiddenInput
+from django.forms import ModelForm, Form, HiddenInput, models
 from django.contrib.admin.sites import AdminSite
 from django.core.exceptions import ValidationError
 from django.contrib.admin import widgets
-from widgets import SelectTimeWidget, SelectDateWidget
+from django.forms.widgets import Select
+from widgets import *
 from django.contrib.auth.models import User
+from django.db.models.fields.related import ManyToOneRel
 import admin
 
 class ReservaAdminForm(forms.ModelForm):
@@ -43,7 +45,7 @@ class ReservaAdminForm(forms.ModelForm):
 class ReservaEquipamentoAdminForm(ReservaAdminForm):
     class Meta:
         model = ReservaEquipamento
-        fields = '__all__'
+        fields = ('estado', 'data', 'horaInicio', 'horaFim', 'locavel', 'atividade', 'usuario', 'ramal', 'finalidade')
     def __init__(self, *args, **kwargs):
         super(ReservaEquipamentoAdminForm, self).__init__(*args, **kwargs)
         try:
@@ -53,16 +55,19 @@ class ReservaEquipamentoAdminForm(ReservaAdminForm):
         if self.id_equip:
             self.fields['locavel'].initial = self.id_equip
             self.fields['locavel'].queryset = Equipamento.objects.filter(id=self.id_equip)
+            self.fields['atividade'].queryset = Equipamento.objects.get(id=self.id_equip).atividadesPermitidas
         else:
             ma = admin.EquipamentoAdmin(Equipamento, AdminSite())
             queryset = ma.get_queryset(self.request)
             self.fields['locavel'].queryset = queryset
+        rel = Reserva._meta.get_field('atividade').rel
+        self.fields['atividade'].widget = DynamicAtividadeWidget(Select(choices=models.ModelChoiceIterator(self.fields['atividade'])), rel, admin.admin.site, can_change_related=True)
         self.request.session['id_equip'] = None
 
 class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
     class Meta:
         model = ReservaEspacoFisico
-        fields = '__all__'
+        fields = ('estado', 'data', 'horaInicio', 'horaFim', 'locavel', 'atividade', 'usuario', 'ramal', 'finalidade')
     def __init__(self, *args, **kwargs):
         super(ReservaEspacoFisicoAdminForm, self).__init__(*args, **kwargs)
         try:
@@ -72,11 +77,15 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
         if self.id_equip:
             self.fields['locavel'].initial = self.id_equip
             self.fields['locavel'].queryset = EspacoFisico.objects.filter(id=self.id_equip)
+            self.fields['atividade'].queryset = EspacoFisico.objects.get(id=self.id_equip).atividadesPermitidas
         else:
             ma = admin.EspacoFisicoAdmin(EspacoFisico, AdminSite())
             queryset = ma.get_queryset(self.request)
             self.fields['locavel'].queryset = queryset
+        rel = Reserva._meta.get_field('atividade').rel
+        self.fields['atividade'].widget = DynamicAtividadeWidget(Select(choices=models.ModelChoiceIterator(self.fields['atividade'])), rel, admin.admin.site, can_change_related=True)
         self.request.session['id_equip'] = None
+        print self.fields['locavel'].initial
         
     def enviarEmail(self, mail):
         mensagem_email="Reserva de espaço físico "+str(self.cleaned_data['horaInicio'])+'/'+str(self.cleaned_data['horaFim'])+' '+str(self.cleaned_data['data'])+' - '+str(self.cleaned_data['espacoFisico'])+", realizada com sucesso"

@@ -277,3 +277,26 @@ def resultado(request, tipo, sData, sHoraInicio, sHoraFim):
             ):
             query = query.exclude(id=r.locavel.id)
     return render(request, "agenda/search_result.html", dict(query=query, data=sData, horaInicio=sHoraInicio, horaFim=sHoraFim, tipo=tipo))
+
+@login_required
+def get_atividade_set(request):
+    if request.method == 'POST':
+        tipo = request.POST['title']
+        locavel = request.POST['locavel']
+        if 'espaco fisico' in tipo:
+            locavel = EspacoFisico.objects.get(nome=locavel)
+            ma = admin.EspacoFisicoAdmin(EspacoFisico, AdminSite())
+        elif 'equipamento' in tipo:
+            locavel = Equipamento.objects.get(nome=locavel)
+            ma = admin.EquipamentoAdmin(Equipamento, AdminSite())
+        query = ma.get_queryset(request)
+        if locavel in query:
+            atividades = locavel.atividadesPermitidas.all()
+            n = list()
+            i = list()
+            for atividade in atividades:
+                n.append(atividade.nome)
+                i.append(atividade.id)
+            data = {'atividades': n, 'ids': i}
+            return JsonResponse(data)
+    return HttpResponseNotFound()

@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^reservar/(?P<tipo>e|f|s)/(?P<id_equip>\d+)/(?P<data_numero>\d+)/(?P<horaInicio>\d+)/(?P<horaFim>\d+)$', views.intermediaria, name="intermediaria"),
     url(r'^locavel/(e|f|s)/(\d+)/$', views.locavel, name='locavel'),
     url(r'^resultado/(e|f|s)/(\w+)/(\w+)/(\w+)/', views.resultado, name='resultado'),
+    url(r'^get_atividade_set/$', views.get_atividade_set, name='get_atividade_set'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
