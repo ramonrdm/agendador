@@ -44,7 +44,17 @@ jQuery(document).ready(function() {
                         {% for entry in entries %}
                             {
                                 title: "{{ entry.horaInicio|date:"H:i" }}- {{entry.usuario}} - {{ entry.horaFim|date:"H:i" }}",
-                                start: "{{entry.data|date:"Y-m-d"}}"
+                                start: "{{ entry.data|date:"Y-m-d" }}",
+                                description: `
+                                    <p><b>Usuário:</b> {{ entry.usuario }}</p>
+                                    <p><b>Grupos:</b> {{ entry.usuario.groups.all|join:", " }}</p>
+                                    <p><b>Data:</b> {{ entry.data }}</p>
+                                    <p><b>Inicio:</b> {{ entry.horaInicio }}</p>
+                                    <p><b>Fim:</b> {{ entry.horaFim }}</p>
+                                    <p><b>Atividade:</b> {{ entry.atividade }}</p>
+                                    <p><b>Ramal: </b> {{ entry.ramal }}</p>
+                                    <p><b>Finalidade: </b> {{ entry.finalidade }}</p>
+                                `
                             },
                         {% endfor %}
                 {% endif %}
@@ -61,8 +71,12 @@ jQuery(document).ready(function() {
 
                 }
            });
+        },
+        eventClick: function(event, jsEvent, view) {
+            $('#description').html(event.description);
+            $('#modalTitle').html(event.title);
+            $('#fullCalModal').modal('open');
         }
-
 
     });     
     setMonth();
@@ -78,6 +92,10 @@ jQuery(document).ready(function() {
         if (month.length == 1) month = '0'+month;
         data += month+'{{ year }}';
         sendRequest(data);
+    });
+    $('#fullCalModal').modal();
+    $('#close-modal').on('click', function() {
+        $('#fullCalModal').modal('close');
     });
 });
 
@@ -114,5 +132,15 @@ function sendRequest(data) {
 }
 </script>
 
-
+<!-- Modals structure -->
+<div id="fullCalModal" class="modal fade">
+        <div class="modal-content">
+            <h5 id='modalTitle'></h5>
+            <p id='description'></p>
+        </div>
+        <div class="modal-footer">
+            <button id='close-modal' class="light-blue darken-4 btn waves-effect waves-light"><i class='material-icons'>close</i>
+            </button>
+        </div>
+</div>
 {% endblock %}
