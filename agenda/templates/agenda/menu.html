@@ -1,6 +1,4 @@
 <ul class="active">
     <li><a href="{% url 'index' %}">Site Principal</a></li>
     <li><a href="{% url 'sobre' %}">Sobre</a></li>
-    
-    {% if perms.agenda.can_add_lead %}<li><a href="{% url 'agenda:index' %}">link se admin</a></li>{% endif %}
 </ul>
