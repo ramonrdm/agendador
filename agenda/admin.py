@@ -21,6 +21,7 @@ class UnidadeAdmin(admin.ModelAdmin):
             for child in children:
                 units = self.search_children(units, child)
         else:
+            unit = Unidade.objects.filter(id=unit.id)
             units = units | unit
             return units
         return units
