@@ -73,7 +73,6 @@ def index(request, unidade=unidade_default):
             )
         )
 
-
 def sobre(request):
 	return render(request, "agenda/sobre.html")
 
@@ -163,9 +162,6 @@ def mes(request, tipo=None, espaco=None, year=None, month=None, change=None):
                 tipo=tipo
                 ))
 
-def mese(request, espaco, year, month, change=None):
-    return mes(request, espaco, year, month, change, tipo="e")
-
 def dia(request, espaco, year, month, day):
     """Entries for the day."""
     nyear, nmonth, nday = time.localtime()[:3]
@@ -189,50 +185,6 @@ def equipamentos(request):
     ano = time.localtime()[0]
     mes = time.localtime()[1]
     return render_to_response("espacos.html", {'ano': ano, 'mes': mes, 'espacos': espacos1})
-
-@login_required
-def addreserva(request, espacoatual, ano=None, mes= None, dia=None):
-    usuario = request.user.username
-    dados = request.session.get('attributes')
-    if request.method == "POST":
-        request.POST = request.POST.copy()
-        request.POST['estado'] = 1
-        request.POST['usuario'] = request.user.id
-        form = ReservaEspacoFisicoAdminForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.fields['usuario'] = forms.CharField(initial=request.user.id)
-            
-            if ((not request.user.groups.filter(name="LABINFO").exists()) and (request.POST['espacoFisico']=='3')):
-                return render_to_response("salvo.html",{'mensagem':"Erro: Você não realizaou o curso para utilizar o labinfo "})
-            
-            if form.choque():
-                return render_to_response("salvo.html",{'mensagem':"Erro: Já existe reserva neste horário"})
-            
-            """Permite somente idufsc do grupo CCS:"""
-            if(not request.user.groups.filter(name="CCS").exists()):
-                return render_to_response("salvo.html",{'mensagem':"Erro: Você não é membro do grupo CCS! Fale com o Mario!"})
-
-            form.save()
-            form.enviarEmail(request.user.email)
-            return render_to_response("salvo.html",{'mensagem': "Reserva realizada com sucesso!"})
-    else:
-        form = ReservaEspacoFisicoAdminForm()
-        form.fields['usuario'].widget = forms.HiddenInput()
-        form.fields['estado'].widget = forms.HiddenInput()
-        form.fields['dataReserva'].widget = forms.HiddenInput()
-        espacoatuala = EspacoFisico.objects.filter(id=espacoatual)
-        #print "aquiii"
-        #print espacoatuala
-        form.fields['espacoFisico'].queryset = espacoatuala
-        form.fields['espacoFisico'].initial = espacoatuala[0].id
-        form.fields['evento'].queryset = espacoatuala[0].eventosPermitidos
-        if ano and mes and dia:
-            form.fields['data'].initial = date(int(ano), int(mes), int(dia))
-        choices = (("8:00","8:00"),("9:00","9:00"))
-        form.fields['horaInicio'].choices = choices
-        #form.fields['horaInicio'] = forms.ChoiceField(choices)
-
-    return render(request, "addreserva.html", {'form': form, "usuario": usuario, 'dados': dados })
 
 def intermediaria(request):
     id_equip = request.GET['id']
