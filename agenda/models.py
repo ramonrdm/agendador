@@ -71,12 +71,9 @@ class Reserva(models.Model):
 
     def clean(self):
         errors = {}
-        try:
-            self.verificaChoque(errors)
-            self.verificaBloqueado(errors)
-            self.verificaCoerencia(errors)
-        except:
-            pass
+        self.verificaChoque(errors)
+        self.verificaBloqueado(errors)
+        self.verificaCoerencia(errors)
         if bool(errors):
             print errors
             raise ValidationError(errors)
@@ -87,6 +84,10 @@ class Reserva(models.Model):
             errors['data'] = 'Data e/ou hora incoerente'
 
     def verificaBloqueado(self, errors):
+        class MockRequest:
+            pass
+        request = MockRequest()
+        request.user = self.usuario
         # Check if superuser
         responsable = self.usuario.is_superuser
         # Check if responsable for locable
@@ -96,8 +97,8 @@ class Reserva(models.Model):
                 responsable = True
         # Check if unit responsable
         unit_responsables = self.locavel.unidade.responsavel.all()
-        ma = admin.UnidadeAdmin(Unidade, admin.sites.AdminSite())
-        queryset = ma.get_queryset(self.request)
+        ma = adm.UnidadeAdmin(Unidade, admin.sites.AdminSite())
+        queryset = ma.get_queryset(request)
         if self.locavel.unidade in queryset:
             responsable = True
 
@@ -139,3 +140,4 @@ class ReservaEquipamento(Reserva):
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
 
+import admin as adm
