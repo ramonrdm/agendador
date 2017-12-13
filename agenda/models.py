@@ -96,9 +96,11 @@ class Reserva(models.Model):
                 responsable = True
         # Check if unit responsable
         unit_responsables = self.locavel.unidade.responsavel.all()
-        for unit_responsable in unit_responsables:
-            if unit_responsable.id == self.usuario.id:
-                responsable = True
+        ma = admin.UnidadeAdmin(Unidade, admin.sites.AdminSite())
+        queryset = ma.get_queryset(self.request)
+        if self.locavel.unidade in queryset:
+            responsable = True
+
         if self.locavel.bloqueado and not responsable:
             error = " Locavel " + self.locavel.nome + ' bloqueado.'
             errors['locavel'] = error
