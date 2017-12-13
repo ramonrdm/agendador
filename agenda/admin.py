@@ -6,8 +6,6 @@ from django.contrib.admin.sites import AdminSite
 import forms
 
 admin.site.register(Atividade)
-#admin.site.register(EspacoFisico)
-#admin.site.register(Equipamento)
 
 @admin.register(Unidade)
 class UnidadeAdmin(admin.ModelAdmin):
@@ -110,35 +108,6 @@ class ReservaEquipamentoAdmin(admin.ModelAdmin):
 
         reserves = reserves.distinct()
         return reserves
-
-
-    # def get_form(self, request, obj=None, **kwargs):
-    #   form = super(ReservaEquipamentoAdmin, self).get_form(request, obj, **kwargs)
-    #   if 'id_equip' in request.session:
-    #       form.base_fields['usuario'].initial = request.user.id
-    #       form.base_fields['data'].initial = request.session['data']
-    #       form.base_fields['locavel'].initial = request.session['id_equip']
-
-    #   if not request.user.is_superuser:
-    #       form.base_fields['usuario'].widget = HiddenInput()
-    #       form.base_fields['usuario'].label = ""
-
-    #   return form
-
-
-    # def formfield_for_foreignkey(self, db_field, request, **kwargs):
-    #   if db_field.name == "usuario":
-    #       if request.user.is_superuser:
-    #           kwargs["queryset"] = User.objects.all()
-    #       else:
-    #           kwargs["queryset"] = User.objects.filter(id=request.user.id)
-    #   if db_field.name == "locavel":
-    #       if request.user.is_superuser:
-    #           kwargs["queryset"] = Equipamento.objects.all()
-    #       else:
-    #           kwargs["queryset"] = Equipamento.objects.filter(id=request.session['id_equip'])
-    #   return super(ReservaEquipamentoAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
 
 admin.site.register(ReservaEquipamento, ReservaEquipamentoAdmin)
 
