@@ -28,7 +28,7 @@ urlpatterns = [
     url(r'^(?P<unidade>[\w\.%+-]+)$', views.index, name='Reservas-UFSC'),
     url(r'^reservar/$', views.intermediaria, name="intermediaria"),
     url(r'^locavel/(e|f|s)/(\d+)/$', views.locavel, name='locavel'),
-    url(r'^resultado/(e|f|s)/(\w+)/(\w+)/(\w+)/', views.resultado, name='resultado'),
+    url(r'^filtro_locavel_disponivel/(e|f|s)/(\w+)/(\w+)/(\w+)/', views.filtroLocavelDisponivel, name='resultado'),
     url(r'^get_atividade_set/$', views.get_atividade_set, name='get_atividade_set'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

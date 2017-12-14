@@ -17,13 +17,13 @@ class SelectTimeWidget(Widget):
     def render(self, name, value, attrs=None):
         if value:
             try:
-                inp='<input class="ufsc_time" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text" value="'+value.strftime('%H:%M')+'">'
+                inp='<input class="ufsc_time validate" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text" value="'+value.strftime('%H:%M')+'">'
             except:
-                inp='<input class="ufsc_time" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text" value="'+datetime.strptime(value, '%H:%M').strftime('%H:%M')+'">'
+                inp='<input class="ufsc_time validate" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text" value="'+datetime.strptime(value, '%H:%M').strftime('%H:%M')+'">'
         else:
-            inp='<input class="ufsc_time" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text">'
+            inp='<input class="ufsc_time validate" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text">'
     	label='<label for="id_'+name+'">'+name.title()+'</label>'
-    	output = label + inp
+    	output = '<div class="input-field">' + inp + label + '</div>'
         return output
 
 class SelectDateWidget(Widget):
@@ -37,13 +37,13 @@ class SelectDateWidget(Widget):
     def render(self, name, value, attrs=None):
         if value:
             try:
-                inp='<input class="date_picker" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text" value="'+value.strftime('%d/%m/%Y')+'">'
+                inp='<input class="date_picker validate" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text" value="'+value.strftime('%d/%m/%Y')+'">'
             except:
-                inp='<input class="date_picker" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text" value="'+datetime.strptime(value, '%d/%m/%Y').strftime('%d/%m/%Y')+'">'
+                inp='<input class="date_picker validate" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text" value="'+datetime.strptime(value, '%d/%m/%Y').strftime('%d/%m/%Y')+'">'
         else:
-            inp='<input class="date_picker" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text">'
+            inp='<input class="date_picker validate" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text">'
         label='<label for="id_'+name+'">'+name.title()+'</label>'
-        output = label + inp
+        output = '<div class="input-field">' + inp + label + '</div>'
         return output
 
 class DynamicAtividadeWidget(widgets.RelatedFieldWidgetWrapper):

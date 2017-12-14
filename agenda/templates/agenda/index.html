@@ -19,15 +19,22 @@
             $('.modal').modal();
         });
     </script>
-    {% for field in search_form.visible_fields %}
+    <script>
+    {% for field in search_f.visible_fields %}
         {% if field.errors %}
-        <script>
             $(document).ready(function(){
-                $('.modal').modal('open');
+                $('.modal_filter_f').modal('open');
             });
-        </script>
         {% endif %}
     {% endfor %}
+    {% for field in search_e.visible_fields %}
+        {% if field.errors %}
+            $(document).ready(function(){
+                $('.modal_filter_e').modal('open');
+            });
+        {% endif %}
+    {% endfor %}
+    </script>
 {% endblock %}
 {% block page_title %}
     <strong>{{unidade.nome}}</strong>
