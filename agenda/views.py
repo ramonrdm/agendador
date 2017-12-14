@@ -30,7 +30,13 @@ def index(request, unidade=unidade_default):
             horaInicio = search_form.cleaned_data['horaInicio'].strftime('%H%M')
             horaFim = search_form.cleaned_data['horaFim'].strftime('%H%M')
             tipo = search_form.cleaned_data['tipo']
-            return redirect('/resultado/'+ tipo +'/' + data + '/' + horaInicio + '/' + horaFim + '/')
+            return redirect('/filtro_locavel_disponivel/'+ tipo +'/' + data + '/' + horaInicio + '/' + horaFim + '/')
+        elif search_form.data['tipo'] == 'f':
+            search_f = search_form
+            search_e = SearchFilterForm(tipo='e')
+        elif search_form.data['tipo'] == 'e':
+            search_f = SearchFilterForm(tipo='f')
+            search_e = search_form
     else:
         search_f = SearchFilterForm(tipo='f')
         search_e = SearchFilterForm(tipo='e')
@@ -61,7 +67,6 @@ def index(request, unidade=unidade_default):
             if (n + 1) >= current_month or y != year:
                 month_list.append(dict(n=n+1, name=month_names[n]))
         lst.append((y, month_list))
-
 
     return render(
         request,
@@ -209,7 +214,7 @@ def intermediaria(request):
     return JsonResponse(data)
 
 @login_required
-def resultado(request, tipo, sData, sHoraInicio, sHoraFim):
+def filtroLocavelDisponivel(request, tipo, sData, sHoraInicio, sHoraFim):
     data = datetime.strptime(sData, '%d%m%Y')
     horaInicio = datetime.strptime(sHoraInicio, '%H%M').time()
     horaFim = datetime.strptime(sHoraFim, '%H%M').time()

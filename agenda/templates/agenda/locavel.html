@@ -25,39 +25,47 @@
 {% endblock %}
 
 {% block content %}
-<div id='locavel'>
-    {% if locavel.fotoLink %}
-    <div class='container image'>
-        <img src="{{ locavel.fotoLink }}">
-    </div>
-    {% endif %}
-    <div class='flow-text' id='info'>
-        <div class='unidade'><strong>Unidade: </strong>{{ locavel.unidade }}.</div>
-        <div class='responsaveis'><strong>Responsáveis: </strong>{{ responsaveis|join:", " }}.</div>
-        <div class='localizacao'><strong>Localização: </strong>{{ locavel.localizacao }}.</div>
-        <div class='descricao'><strong>Descrição: </strong>{{ locavel.descricao }}.</div>
-        <div class='grupo'><strong>Grupo: </strong>
-            {% if grupo %}
-                {{ grupo }}.
-            {% else %}
-                Não pertence a um grupo específico.
-            {% endif %}
+<div class='row'>
+    <div class='col s12'>
+        <div class='card'>
+            <div class='card-content'>
+                <div id='locavel'>
+                    {% if locavel.fotoLink %}
+                    <div class='container image'>
+                        <img src="{{ locavel.fotoLink }}">
+                    </div>
+                    {% endif %}
+                    <div class='flow-text' id='info'>
+                        <div class='unidade'><strong>Unidade: </strong>{{ locavel.unidade }}.</div>
+                        <div class='responsaveis'><strong>Responsáveis: </strong>{{ responsaveis|join:", " }}.</div>
+                        <div class='localizacao'><strong>Localização: </strong>{{ locavel.localizacao }}.</div>
+                        <div class='descricao'><strong>Descrição: </strong>{{ locavel.descricao }}.</div>
+                        <div class='grupo'><strong>Grupo: </strong>
+                            {% if grupo %}
+                                {{ grupo }}.
+                            {% else %}
+                                Não pertence a um grupo específico.
+                            {% endif %}
+                        </div>
+                        <div class='bloqueado'><strong>Bloqueado: </strong>
+                            {% if locavel.bloqueado %}
+                                Sim.
+                            {% else %}
+                                Não.
+                            {% endif %}
+                        </div>
+                        {% for key, info in specific.items %}
+                        <div class='{{ key }}'><strong>{{ key|capfirst }}: </strong>{{ info }}.</div>
+                        {% endfor %}
+                    </div>
+                    {% if ret %}
+                    <div class='return'>
+                        <a href="{{ ret }}" class='flow-text'>Retornar</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-        <div class='bloqueado'><strong>Bloqueado: </strong>
-            {% if locavel.bloqueado %}
-                Sim.
-            {% else %}
-                Não.
-            {% endif %}
-        </div>
-        {% for key, info in specific.items %}
-        <div class='{{ key }}'><strong>{{ key|capfirst }}: </strong>{{ info }}.</div>
-        {% endfor %}
     </div>
-    {% if ret %}
-    <div class='return'>
-        <a href="{{ ret }}" class='flow-text'>Retornar</a>
-    </div>
-    {% endif %}
 </div>
 {% endblock %}
