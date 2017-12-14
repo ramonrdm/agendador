@@ -321,7 +321,6 @@ class CASBackend(object):
             user = User.objects.create_user(username, attributes["email"], '')
             user.first_name = attributes["personName"]
             user.last_name = attributes["idPessoa"]
-            user.is_staff = True
             user.save()
             created = True
 
