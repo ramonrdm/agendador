@@ -4,6 +4,7 @@ from django.forms.widgets import Widget, Select, MultiWidget
 from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
 from django.contrib.admin import widgets
+from django.contrib.auth.models import User
 from datetime import datetime
 
 class SelectTimeWidget(Widget):

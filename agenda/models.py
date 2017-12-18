@@ -71,9 +71,12 @@ class Reserva(models.Model):
 
     def clean(self):
         errors = {}
-        self.verificaChoque(errors)
-        self.verificaBloqueado(errors)
-        self.verificaCoerencia(errors)
+        try:
+            self.verificaChoque(errors)
+            self.verificaBloqueado(errors)
+            self.verificaCoerencia(errors)
+        except:
+            pass
         if bool(errors):
             print errors
             raise ValidationError(errors)
