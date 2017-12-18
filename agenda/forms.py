@@ -41,6 +41,10 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['usuario'].initial = self.request.user
             self.fields['usuario'].widget = forms.HiddenInput()
             self.fields['usuario'].label = ''
+            self.fields['estado'].initial = 'E'
+            self.fields['estado'].widget = forms.HiddenInput()
+            self.fields['estado'].label = ''
+
 
 class ReservaEquipamentoAdminForm(ReservaAdminForm):
     class Meta:
