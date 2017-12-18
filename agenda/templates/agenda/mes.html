@@ -5,7 +5,14 @@
     {{ block.super }}
     <link rel='stylesheet' href="{% static 'agenda/css/mes.css' %}" type='text/css' />
     <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/topbar.css' %}" />
+    <link rel='stylesheet' href="{% static 'agenda/fullcalendar/fullcalendar.css' %}" />
 
+{% endblock %}
+{% block js %}
+    <script src="{% static 'material/js/jquery.js' %}"></script>
+    <script src="{% static 'material/js/materialize.js' %}"></script>
+    <script src="{% static 'agenda/fullcalendar/lib/moment.min.js' %}"></script>
+    <script src="{% static 'agenda/fullcalendar/fullcalendar.js' %}"></script>
 {% endblock %}
 {% block title %}{{ espaco.nome }} - {{ mname }}/{{ year }}{% endblock %}
 
@@ -90,6 +97,7 @@ jQuery(document).ready(function() {
         data += month+'{{ year }}';
         sendRequest(data);
     });
+    $(".button-collapse").sideNav();
     $('#fullCalModal').modal();
     $('#close-modal').on('click', function() {
         $('#fullCalModal').modal('close');
