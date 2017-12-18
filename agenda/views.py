@@ -218,28 +218,26 @@ def filtroLocavelDisponivel(request, tipo, sData, sHoraInicio, sHoraFim):
     data = datetime.strptime(sData, '%d%m%Y')
     horaInicio = datetime.strptime(sHoraInicio, '%H%M').time()
     horaFim = datetime.strptime(sHoraFim, '%H%M').time()
+    atividade_dummy = Atividade.objects.create(nome='dummy', descricao='dummy')
     if tipo == 'f':
         ma = admin.EspacoFisicoAdmin(EspacoFisico, AdminSite())
         query = ma.get_queryset(request)
-        reserves = ReservaEspacoFisico.objects.none()
-        for espaco in query:
-            reserves = reserves | espaco.reservaespacofisico_set.filter(data=data)
-    if tipo == 'e':
+        tipo_reserva = ReservaEspacoFisico
+
+    elif tipo == 'e':
         ma = admin.EquipamentoAdmin(Equipamento, AdminSite())
         query = ma.get_queryset(request)
-        reserves = ReservaEquipamento.objects.none()
-        for equipamento in query:
-            reserves = reserves | equipamento.reservaequipamento_set.filter(data=data)
+        tipo_reserva = ReservaEquipamento
+        
+    for locavel in query:
+        reserva_dummy = tipo_reserva.objects.create(data=data, horaInicio=horaInicio, horaFim=horaFim, atividade=atividade_dummy, usuario=request.user, ramal=1, finalidade='1', locavel=locavel)
+        error = dict()
+        reserva_dummy.verificaChoque(error)
+        if bool(error):
+            query = query.exclude(id=locavel.id)
+        reserva_dummy.delete()
 
-    for r in reserves:
-        if  (
-            (horaFim  > r.horaInicio and horaFim < r.horaFim) or 
-            (horaInicio > r.horaInicio and horaInicio < r.horaFim ) or 
-            (horaInicio == r.horaInicio and horaFim == r.horaFim) or
-            (r.horaInicio > horaInicio and r.horaInicio < horaFim) or
-            (horaInicio < r.horaFim < horaFim)
-            ):
-            query = query.exclude(id=r.locavel.id)
+    atividade_dummy.delete()
     return render(request, "agenda/search_result.html", dict(query=query, data=sData, horaInicio=sHoraInicio, horaFim=sHoraFim, tipo=tipo))
 
 @login_required
