@@ -38,7 +38,7 @@ class Locavel(models.Model):
     unidade = models.ForeignKey(Unidade)
     grupo = models.ForeignKey(Group, blank=True, null=True)
     bloqueado = models.BooleanField(default=False)
-    visivel = models.BooleanField(default=True)
+    invisivel = models.BooleanField(default=False)
     localizacao = models.TextField()
     fotoLink = models.URLField(blank=True)
     atividadesPermitidas = models.ManyToManyField(Atividade)

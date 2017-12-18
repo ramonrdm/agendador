@@ -190,7 +190,7 @@ class EquipamentoAdmin(admin.ModelAdmin):
     def add_equipment(self, user, unit, equipment, equipments, responsable):
         group = equipment.grupo
         if not group and unit not in user.unidade_set.all() and not responsable:
-            equipments = equipments | Equipamento.objects.filter(id=equipment.id).exclude(visivel=False)
+            equipments = equipments | Equipamento.objects.filter(id=equipment.id).exclude(invisivel=True)
         elif unit in user.unidade_set.all() or responsable:
             equipments = equipments | Equipamento.objects.filter(id=equipment.id)
         return equipments
@@ -266,7 +266,7 @@ class EspacoFisicoAdmin(admin.ModelAdmin):
     def add_space(self, user, unit, space, spaces, responsable):
         group = space.grupo
         if not group and unit not in user.unidade_set.all() and not responsable:
-            spaces = spaces | EspacoFisico.objects.filter(id=space.id).exclude(visivel=False)
+            spaces = spaces | EspacoFisico.objects.filter(id=space.id).exclude(invisivel=True)
         elif unit in user.unidade_set.all() or responsable:
             spaces = spaces | EspacoFisico.objects.filter(id=space.id)
         return spaces

@@ -224,9 +224,9 @@ class UserFilterTests(TestCase):
         child_right_right_left.responsavel.add(superuser)
 
         # Create equipments and places with different characteristics in "leaf" units
-        invisible_place = EspacoFisico.objects.create(nome='inivisible_place', descricao='q', unidade=child_left_left, visivel=False, localizacao='q', capacidade=1)
+        invisible_place = EspacoFisico.objects.create(nome='inivisible_place', descricao='q', unidade=child_left_left, invisivel=True, localizacao='q', capacidade=1)
         invisible_place.save()
-        invisible_equipment = Equipamento.objects.create(nome='invisible_equipment', descricao='q', unidade=child_left_left, visivel=False, localizacao='q', patrimonio=3)
+        invisible_equipment = Equipamento.objects.create(nome='invisible_equipment', descricao='q', unidade=child_left_left, invisivel=True, localizacao='q', patrimonio=3)
         invisible_equipment.save()
         group_place = EspacoFisico.objects.create(nome='group_place', descricao='q', unidade=child_left_left, localizacao='q', capacidade=2)
         group_place.save()

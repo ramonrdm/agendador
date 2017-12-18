@@ -54,8 +54,8 @@ def index(request, unidade=unidade_default):
     
     unidades = Unidade.objects.filter(unidadePai=unidade)
 
-    espacosFisicos = EspacoFisico.objects.filter(unidade=unidade).filter(visivel=True)
-    equipamentos = Equipamento.objects.filter(unidade=unidade).filter(visivel=True)
+    espacosFisicos = EspacoFisico.objects.filter(unidade=unidade).filter(invisivel=False)
+    equipamentos = Equipamento.objects.filter(unidade=unidade).filter(invisivel=False)
 
     year = time.localtime()[0]
     current_year, current_month = time.localtime()[:2]
@@ -114,7 +114,7 @@ def locavel(request, tipo=None, locavel=None):
         for atividade in atividadesPermitidas:
             atividades.append(atividade.nome)
         specific['atividades permitidas'] = (", ").join(atividades)
-    if not locavel.visivel:
+    if locavel.invisivel:
         return HttpResponseNotFound()
     responsaveis = locavel.responsavel.all()
     grupo = locavel.grupo
