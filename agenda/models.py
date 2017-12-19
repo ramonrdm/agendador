@@ -78,11 +78,9 @@ class Reserva(models.Model):
         except:
             pass
         if bool(errors):
-            print errors
             raise ValidationError(errors)
 
     def verificaCoerencia(self, errors):
-        print date.today()
         if self.horaInicio > self.horaFim or date.today() > self.data:
             errors['data'] = 'Data e/ou hora incoerente'
 

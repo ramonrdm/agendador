@@ -44,6 +44,11 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['estado'].initial = 'E'
             self.fields['estado'].widget = forms.HiddenInput()
             self.fields['estado'].label = ''
+        else:
+            attrs = {}
+            if 'usuario' in self.errors:
+                attrs['error'] = True
+            self.fields['usuario'].widget = AutocompleteWidget(attrs=attrs, query=User.objects.all(), model=User)
 
 
 class ReservaEquipamentoAdminForm(ReservaAdminForm):
@@ -89,7 +94,6 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
         rel = Reserva._meta.get_field('atividade').rel
         self.fields['atividade'].widget = DynamicAtividadeWidget(Select(choices=models.ModelChoiceIterator(self.fields['atividade'])), rel, admin.admin.site, can_change_related=True)
         self.request.session['id_equip'] = None
-        print self.fields['locavel'].initial
         
     def enviarEmail(self, mail):
         mensagem_email="Reserva de espaço físico "+str(self.cleaned_data['horaInicio'])+'/'+str(self.cleaned_data['horaFim'])+' '+str(self.cleaned_data['data'])+' - '+str(self.cleaned_data['espacoFisico'])+", realizada com sucesso"

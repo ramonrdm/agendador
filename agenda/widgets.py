@@ -4,7 +4,6 @@ from django.forms.widgets import Widget, Select, MultiWidget
 from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
 from django.contrib.admin import widgets
-from django.contrib.auth.models import User
 from datetime import datetime
 
 class SelectTimeWidget(Widget):
@@ -50,3 +49,26 @@ class SelectDateWidget(Widget):
 class DynamicAtividadeWidget(widgets.RelatedFieldWidgetWrapper):
     class Media():
         js = ('agenda/js/dynamic_atividade.js',)
+
+class AutocompleteWidget(Widget):
+    def __init__(self, query, model, attrs=None):
+        self.attrs = attrs or {}
+        self.query = query
+        self.model = model
+
+    class Media():
+        css = {
+            'all': ('agenda/css/autocomplete.css',),
+        }
+        js = ('material/js/materialize.js', 'agenda/js/autocomplete.js',)
+
+    def render(self, name, value, attrs=None):
+        try:
+            error = self.attrs['error']
+        except:
+            error = False
+        try:
+            initial = self.model.objects.get(id=value)
+        except:
+            initial = None
+        return render_to_string('agenda/autocomplete.html', dict(name=name, query=self.query, error=error, initial=initial))

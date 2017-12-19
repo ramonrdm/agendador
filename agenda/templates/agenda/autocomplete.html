@@ -1,0 +1,43 @@
+<script>
+$(document).ready(function() {
+    $('input.autocomplete').autocomplete({
+        data: {
+            {% for item in query %}
+                {{ item }}: null,
+            {% endfor %}
+        },
+        minLength: 0,
+    });
+
+    {% if error %}
+        $('#autocomplete-{{ name }}').css('border-bottom', '1px solid #F44336');
+        $('#autocomplete-{{ name }}').css('box-shadow', '0 2px 0 0 #F44336');
+    {% endif %}
+});
+</script>
+<div class='autocomplete-wrapper row'>
+    <div class="input-field col s12" id='autocomplete-{{ name }}-container'>
+        {% if initial %}
+            <input type="text" id="autocomplete-{{ name }}" class="autocomplete" value='{{ initial }}' autocomplete="off">
+        {% else %}
+            <input type="text" id="autocomplete-{{ name }}" class="autocomplete" autocomplete="off">
+        {% endif %}
+        <label for="autocomplete-{{ name }}">{{ name|title }}</label>
+    </div>
+    <div hidden class='options'>
+        <select id='id_{{ name }}' name='{{ name }}'>
+            <!-- Material does some strange things. the next line is made to avoid them -->
+            <option value='---------'></option>
+            {% for item in query %}
+                {% if item == initial %}
+                    <option value='{{ item.id }}' selected="selected">{{ item }}</option>
+                {% else %}
+                    <option value='{{ item.id }}'>{{ item }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+</div>
+{% if error %}
+<small class='autocomplete-error'>Faça uma escolha válida.</small>
+{% endif %}
