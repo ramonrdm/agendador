@@ -47,12 +47,57 @@ class UnidadeAdmin(admin.ModelAdmin):
             return ['responsavel']
         return []
 
-
-class ReservaEquipamentoAdmin(admin.ModelAdmin):
-
-    form = forms.ReservaEquipamentoAdminForm
+class ReservaAdmin(admin.ModelAdmin):
     list_display = ('usuario', 'locavel', 'data', 'ramal', 'finalidade')
     search_fields = ['finalidade', 'usuario__username']
+
+    def get_queryset(self, request, reserveModel, reservableModel):
+        if request.user.is_superuser:
+            return reserveModel.objects.all()
+
+        reserves = reserveModel.objects.none()
+        #Check if unit responsible
+        unit_responsible = Unidade.objects.filter(responsavel=request.user)
+        if unit_responsible:
+            reservable = reservableModel.objects.filter(unidade=unit_responsible)
+            reserves = reserves | reserveModel.objects.filter(locavel=reservable)
+            #Check for children unit
+            for unit in unit_responsible:
+                reserves = self.search_children(reserves, unit, reserveModel, reservableModel)
+#               item = Equipamento.objects.filter(unidade=child)
+#               for item_child in item:
+#                   reserves = reserves | item_child.reservalocavel_set.all()
+        #Check if reservable responsible
+        reservable_responsible = reservableModel.objects.filter(responsavel=request.user)
+        if reservable_responsible:
+            reserves = reserves | reserveModel.objects.filter(locavel=reservable_responsible)
+
+        #Add own reserves
+        reserves = reserves | reserveModel.objects.filter(usuario=request.user)
+
+        reserves = reserves.distinct()
+        return reserves
+
+    def search_children(self, reserves, unit, reserveModel, reservableModel):
+        children = Unidade.objects.filter(unidadePai=unit)
+        for child in children:
+            if child.nome == unit.nome:
+                children = children.exclude(nome=unit.nome)
+        if children:
+            for child in children:
+                reserves = self.search_children(reserves, child, reserveModel, reservableModel)
+        else:
+            reservables = reservableModel.objects.filter(unidade = unit)
+            for reservable in reservables:
+                reserves = reserves | reserveModel.objects.filter(locavel=reservable)
+            return reserves
+        reservables = reservableModel.objects.filter(unidade=unit)
+        for reservable in reservables:
+            reserves = reserves | reserveModel.objects.filter(locavel=reservable)
+        return reserves
+
+class ReservaEquipamentoAdmin(ReservaAdmin):
+    form = forms.ReservaEquipamentoAdminForm
     icon = '<i class="material-icons">power</i>'
 
     def get_form(self, request, obj=None, **kwargs):
@@ -64,58 +109,13 @@ class ReservaEquipamentoAdmin(admin.ModelAdmin):
 
         return AdminFormWithRequest
 
-    def search_children(self, reserves, unit):
-        children = Unidade.objects.filter(unidadePai=unit)
-        for child in children:
-            if child.nome == unit.nome:
-                children = children.exclude(nome=unit.nome)
-        if children:
-            for child in children:
-                reserves = self.search_children(reserves, child)
-        else:
-            equipments = Equipamento.objects.filter(unidade = unit)
-            for equipment in equipments:
-                reserves = reserves | ReservaEquipamento.objects.filter(locavel=equipment)
-            return reserves
-        equipments = Equipamento.objects.filter(unidade=unit)
-        for equipment in equipments:
-            reserves = reserves | ReservaEquipamento.objects.filter(locavel=equipment)
-        return reserves
-
     def get_queryset(self, request):
-        qs = super(ReservaEquipamentoAdmin, self).get_queryset(request)
-        if request.user.is_superuser:
-            return qs
-
-        reserves = ReservaEquipamento.objects.none()
-        #Check if unit responsible
-        unit_responsible = Unidade.objects.filter(responsavel=request.user)
-        if unit_responsible:
-            reservable = Equipamento.objects.filter(unidade=unit_responsible)
-            reserves = reserves | ReservaEquipamento.objects.filter(locavel=reservable)
-            #Check for children unit
-            for unit in unit_responsible:
-                reserves = self.search_children(reserves, unit)
-#               item = Equipamento.objects.filter(unidade=child)
-#               for item_child in item:
-#                   reserves = reserves | item_child.reservalocavel_set.all()
-        #Check if room responsible
-        item_responsible = Equipamento.objects.filter(responsavel=request.user)
-        if item_responsible:
-            reserves = reserves | ReservaEquipamento.objects.filter(locavel=item_responsible)
-
-        #Add own reserves
-        reserves = reserves | ReservaEquipamento.objects.filter(usuario=request.user)
-
-        reserves = reserves.distinct()
-        return reserves
+        return super(ReservaEquipamentoAdmin, self).get_queryset(request, ReservaEquipamento, Equipamento)
 
 admin.site.register(ReservaEquipamento, ReservaEquipamentoAdmin)
 
-class ReservaEspacoFisicoAdmin(admin.ModelAdmin):
+class ReservaEspacoFisicoAdmin(ReservaAdmin):
     form = forms.ReservaEspacoFisicoAdminForm
-    list_display = ('usuario', 'locavel', 'data', 'ramal', 'finalidade')
-    search_fields = ['finalidade', 'usuario__username']
     icon = '<i class="material-icons">room</i>'
 
     def get_form(self, request, obj=None, **kwargs):
@@ -127,57 +127,8 @@ class ReservaEspacoFisicoAdmin(admin.ModelAdmin):
 
         return AdminFormWithRequest
 
-    def search_children(self, reserves, unit):
-        children = Unidade.objects.filter(unidadePai=unit)
-        for child in children:
-            if child.nome == unit.nome:
-                children = children.exclude(nome=unit.nome)
-        if children:
-            for child in children:
-                reserves = self.search_children(reserves, child)
-        else:
-            places = EspacoFisico.objects.filter(unidade = unit)
-            for place in places:
-                reserves = reserves | ReservaEspacoFisico.objects.filter(locavel=place)
-            return reserves
-        places = EspacoFisico.objects.filter(unidade = unit)
-        for place in places:
-            reserves = reserves | ReservaEspacoFisico.objects.filter(locavel=place)
-        return reserves
-
-
     def get_queryset(self, request):
-        qs = super(ReservaEspacoFisicoAdmin, self).get_queryset(request)
-        # Super user case
-        if request.user.is_superuser:
-            return qs
-
-        reserves = ReservaEspacoFisico.objects.none()
-        # Check if unit responsible
-        unit_responsible = Unidade.objects.filter(responsavel=request.user)
-        if unit_responsible:
-            reservable = EspacoFisico.objects.filter(unidade=unit_responsible)
-            reserves = reserves | ReservaEspacoFisico.objects.filter(locavel=reservable)
-            # Check for children unit
-            for unit in unit_responsible:       
-                reserves = self.search_children(reserves, unit)
-                
-#           children = Unidade.objects.filter(unidadePai=unit_responsible)
-#           for child in children:
-#               room = EspacoFisico.objects.filter(unidade=child)
-#               for room_child in room:
-#                   reserves = reserves | room_child.reservaespacofisico_set.all()
-
-        # Check if room responsible
-        room_responsible = EspacoFisico.objects.filter(responsavel=request.user)
-        if room_responsible:
-            reserves = reserves | ReservaEspacoFisico.objects.filter(locavel=room_responsible)
-
-        #Add own reserves
-        reserves = reserves | ReservaEspacoFisico.objects.filter(usuario=request.user)
-
-        reserves = reserves.distinct()
-        return reserves
+        return super(ReservaEspacoFisicoAdmin, self).get_queryset(request, ReservaEspacoFisico, EspacoFisico)
 
 admin.site.register(ReservaEspacoFisico, ReservaEspacoFisicoAdmin)
 
