@@ -132,45 +132,44 @@ class ReservaEspacoFisicoAdmin(ReservaAdmin):
 
 admin.site.register(ReservaEspacoFisico, ReservaEspacoFisicoAdmin)
 
-class EquipamentoAdmin(admin.ModelAdmin):
+class LocavelAdmin(admin.ModelAdmin):
     list_display = ('nome','unidade','get_responsavel')
     def get_responsavel(self, obj):
         return ", ".join(responsavel.username for responsavel in obj.responsavel.all())
     get_responsavel.short_description = 'responsavel'
 
-    def add_equipment(self, user, unit, equipment, equipments, responsable):
-        group = equipment.grupo
+    def add_reservable(self, user, unit, reservable, reservables, responsable, reservableModel):
+        group = reservable.grupo
         if not group and unit not in user.unidade_set.all() and not responsable:
-            equipments = equipments | Equipamento.objects.filter(id=equipment.id).exclude(invisivel=True)
+            reservables = reservables | reservableModel.objects.filter(id=reservable.id).exclude(invisivel=True)
         elif unit in user.unidade_set.all() or responsable:
-            equipments = equipments | Equipamento.objects.filter(id=equipment.id)
-        return equipments
-
-    def search_children(self, equipments, unit, user, responsable):
+            reservables = reservables | reservableModel.objects.filter(id=reservable.id)
+        return reservables
+    
+    def search_children(self, reservables, unit, user, responsable, reservableModel):
         children = Unidade.objects.filter(unidadePai=unit)
         for child in children:
             if child.nome == unit.nome:
                 children = children.exclude(nome=unit.nome)
         if children:
             for child in children:
-                equipments = self.search_children(equipments, child, user, responsable)
+                reservables = self.search_children(reservables, child, user, responsable, reservableModel)
         else:
-            child_equipments = Equipamento.objects.filter(unidade=unit)
+            child_reservables = reservableModel.objects.filter(unidade=unit)
             ## Test if equipment isn't bound to a specific group
-            for equipment in child_equipments:
-                equipments = self.add_equipment(user, unit, equipment, equipments, responsable)
-            return equipments
+            for reservable in child_reservables:
+                reservables = self.add_reservable(user, unit, reservable, reservables, responsable, reservableModel)
+            return reservables
         # You may also have a son AND equipments, this equipment may also belong to a group
-        unit_equipments = Equipamento.objects.filter(unidade=unit)
-        for equipment in unit_equipments:
-            equipments = self.add_equipment(user, unit, equipment, equipments, responsable)
-        return equipments
+        unit_reservables = reservableModel.objects.filter(unidade=unit)
+        for reservable in unit_reservables:
+            reservables = self.add_reservable(user, unit, reservable, reservables, responsable, reservableModel)
+        return reservables
 
-    def get_queryset(self, request):
-        qs = super(EquipamentoAdmin, self).get_queryset(request)
+    def get_queryset(self, request, reservableModel, group_reservables):
         if request.user.is_superuser:
-            return qs
-        equipments = Equipamento.objects.none()
+            return reservableModel.objects.all()
+        reservables = reservableModel.objects.none()
         # Check if unit responsible
         # Also check user unit via group, for form list purposes
         groups = request.user.groups.all()
@@ -180,101 +179,49 @@ class EquipamentoAdmin(admin.ModelAdmin):
                 group_units = group_units | group.unidade_set.all()
         if group_units:
             for unit in group_units:
-                equipments = self.search_children(equipments, unit, request.user, False)
+                reservables = self.search_children(reservables, unit, request.user, False, reservableModel)
 
         unit_responsible = Unidade.objects.filter(responsavel=request.user)
         if unit_responsible:
             for unit in unit_responsible:
-                equipments = self.search_children(equipments, unit, request.user, True)
+                reservables = self.search_children(reservables, unit, request.user, True, reservableModel)
 
         # Get all equipments user's responsible
-        equipments = equipments | Equipamento.objects.filter(responsavel=request.user)
+        reservables = reservables | reservableModel.objects.filter(responsavel=request.user)
         # Unit via group already tested, now test group exclusive spaces
-        groups = request.user.groups.all()
-        for group in groups:
-            equipments = equipments | group.equipamento_set.all()
-        equipments = equipments.distinct()
-        return equipments
+        # This can't be done in this parent method since there's a need to know which set from group to pick,
+        # that's why it's an argument
+        reservables = reservables | group_reservables
+        reservables = reservables.distinct()
+        return reservables
+
+class EquipamentoAdmin(LocavelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
-        qs = super(EquipamentoAdmin, self).get_queryset(request)
-        qsResp = qs.filter(responsavel=request.user)
         if request.user.is_superuser:
             return []
         else:
             return ['get_responsavel', 'unidade']
 
+    def get_queryset(self, request):
+        groups = request.user.groups.all()
+        group_reservables = Equipamento.objects.none()
+        for group in groups:
+            group_reservables = group_reservables | group.equipamento_set.all()
+        return super(EquipamentoAdmin, self).get_queryset(request, Equipamento, group_reservables)
 
 admin.site.register(Equipamento, EquipamentoAdmin)
 
-class EspacoFisicoAdmin(admin.ModelAdmin):
-    list_display = ('nome','unidade','get_responsavel')
-
-    def get_responsavel(self, obj):
-        return ", ".join([responsavel.username for responsavel in obj.responsavel.all()])
-    get_responsavel.short_description = 'responsavel'
-
-    def add_space(self, user, unit, space, spaces, responsable):
-        group = space.grupo
-        if not group and unit not in user.unidade_set.all() and not responsable:
-            spaces = spaces | EspacoFisico.objects.filter(id=space.id).exclude(invisivel=True)
-        elif unit in user.unidade_set.all() or responsable:
-            spaces = spaces | EspacoFisico.objects.filter(id=space.id)
-        return spaces
-
-    def search_children(self, spaces, unit, user, responsable):
-        children = Unidade.objects.filter(unidadePai=unit)
-        for child in children:
-            if child.nome == unit.nome:
-                children = children.exclude(nome=unit.nome)
-        if children:
-            for child in children:
-                spaces = self.search_children(spaces, child, user, responsable)
-        else:
-            child_spaces = EspacoFisico.objects.filter(unidade=unit)
-            ## Test if place isn't bound to a specific group
-            for space in child_spaces:
-                spaces = self.add_space(user, unit, space, spaces, responsable)
-            return spaces
-        # You may also have a child AND spacaces, this space may also belong to a group
-        unit_spaces = EspacoFisico.objects.filter(unidade=unit)
-        for space in unit_spaces:
-            spaces = self.add_space(user, unit, space, spaces, responsable)
-        return spaces
+class EspacoFisicoAdmin(LocavelAdmin):
 
     def get_queryset(self, request):
-        qs = super(EspacoFisicoAdmin, self).get_queryset(request)
-        if request.user.is_superuser:
-            return qs
-        spaces = EspacoFisico.objects.none()
-        # Also check user unit via group, for form list purposes
         groups = request.user.groups.all()
-        group_units = Unidade.objects.none()
+        group_reservables = EspacoFisico.objects.none()
         for group in groups:
-            if group.unidade_set:
-                group_units = group_units | group.unidade_set.all()
-        if group_units:
-            for unit in group_units:
-                spaces = self.search_children(spaces, unit, request.user, False)
-
-        # Check if unit responsible. 
-        unit_responsible = Unidade.objects.filter(responsavel=request.user)
-        if unit_responsible:
-            for unit in unit_responsible:
-                spaces = self.search_children(spaces, unit, request.user, True)
-        # Get all spaces user's responsible
-        spaces = spaces | EspacoFisico.objects.filter(responsavel=request.user)
-
-        # Unit via group already tested, now test group exclusive spaces
-        groups = request.user.groups.all()
-        for group in groups:
-            spaces = spaces | group.espacofisico_set.all()
-        spaces = spaces.distinct()
-        return spaces
+            group_reservables = group_reservables | group.espacofisico_set.all()
+        return super(EspacoFisicoAdmin, self).get_queryset(request, EspacoFisico, group_reservables)
 
     def get_readonly_fields(self, request, obj=None):
-        qs = super(EspacoFisicoAdmin, self).get_queryset(request)
-        qsResp = qs.filter(responsavel=request.user)
         if request.user.is_superuser:
             return []
         if obj in qsResp:
