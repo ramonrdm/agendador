@@ -9,9 +9,9 @@ $(document).ready(function() {
         minLength: 0,
     });
 
-    {% if error %}
+    {% if attrs.error %}
         $('#autocomplete-{{ name }}').css('border-bottom', '1px solid #F44336');
-        $('#autocomplete-{{ name }}').css('box-shadow', '0 2px 0 0 #F44336');
+        $('#autocomplete-{{ name }}').css('box-shadow', '0 1px 0 0 #F44336');
     {% endif %}
 });
 </script>
@@ -27,7 +27,7 @@ $(document).ready(function() {
     <div hidden class='options'>
         <select id='id_{{ name }}' name='{{ name }}'>
             <!-- Material does some strange things. the next line is made to avoid them -->
-            <option value='---------'></option>
+            <option value='0'></option>
             {% for item in query %}
                 {% if item == initial %}
                     <option value='{{ item.id }}' selected="selected">{{ item }}</option>
@@ -38,6 +38,6 @@ $(document).ready(function() {
         </select>
     </div>
 </div>
-{% if error %}
-<small class='autocomplete-error'>Faça uma escolha válida.</small>
+{% if attrs.error %}
+<small class='autocomplete-error'>{{ attrs.error }}</small>
 {% endif %}

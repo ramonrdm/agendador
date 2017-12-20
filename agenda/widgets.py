@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import re
 from django.forms.extras.widgets import SelectDateWidget
 from django.forms.widgets import Widget, Select, MultiWidget
@@ -12,19 +13,19 @@ class SelectTimeWidget(Widget):
         self.attrs = attrs or {}
 
     class Media():
-		js = ('material/js/jquery.datetimepicker.full.js', 'agenda/js/time_options.js',)
+        css = {
+            'all': ('agenda/css/select_time.css',),
+        }
+        js = ('material/js/jquery.datetimepicker.full.js', 'agenda/js/time_options.js',)
 
     def render(self, name, value, attrs=None):
+        initial = None
         if value:
             try:
-                inp='<input class="ufsc_time validate" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text" value="'+value.strftime('%H:%M')+'">'
+                initial = value.strftime('%H:%M')
             except:
-                inp='<input class="ufsc_time validate" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text" value="'+datetime.strptime(value, '%H:%M').strftime('%H:%M')+'">'
-        else:
-            inp='<input class="ufsc_time validate" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text">'
-    	label='<label for="id_'+name+'">'+name.title()+'</label>'
-    	output = '<div class="input-field">' + inp + label + '</div>'
-        return output
+                initial = datetime.strptime(value, '%H:%M').strftime('%H:%M')
+        return render_to_string('agenda/select_time.html', dict(name=name, attrs=self.attrs, initial=initial))
 
 class SelectDateWidget(Widget):
 
@@ -64,11 +65,7 @@ class AutocompleteWidget(Widget):
 
     def render(self, name, value, attrs=None):
         try:
-            error = self.attrs['error']
-        except:
-            error = False
-        try:
             initial = self.model.objects.get(id=value)
         except:
             initial = None
-        return render_to_string('agenda/autocomplete.html', dict(name=name, query=self.query, error=error, initial=initial))
+        return render_to_string('agenda/autocomplete.html', dict(name=name, query=self.query, attrs=self.attrs, initial=initial))

@@ -23,8 +23,18 @@ class ReservaAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)
         super(ReservaAdminForm, self).__init__(*args, **kwargs)
-        self.fields['horaInicio'] = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
-        self.fields['horaFim'] = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
+
+        # Check if there's been errors in custom widget, since we're using an automated template for form's HTML that doesn't display them 
+        # errors must be displayed through the custom Widget in order to appear
+        attrs = {}
+        if 'horaInicio' in self.errors:
+            attrs['error'] = self.errors['horaInicio']
+        self.fields['horaInicio'] = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget(attrs=attrs))
+
+        attrs = {}
+        if 'horaFim' in self.errors:
+            attrs['error'] = self.errors['horaFim']
+        self.fields['horaFim'] = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget(attrs=attrs))
         try:
             self.fields['data'].initial = self.request.session['data']
         except:
@@ -47,7 +57,7 @@ class ReservaAdminForm(forms.ModelForm):
         else:
             attrs = {}
             if 'usuario' in self.errors:
-                attrs['error'] = True
+                attrs['error'] = self.errors['usuario']
             self.fields['usuario'].widget = AutocompleteWidget(attrs=attrs, query=User.objects.all(), model=User)
 
 

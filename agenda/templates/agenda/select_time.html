@@ -1,0 +1,21 @@
+{% if attrs.error %}
+<script>
+$(document).ready(function() {
+    $('#id_{{ name }}').css('border-bottom', '1px solid #F44336');
+    $('#id_{{ name }}').css('box-shadow', '0 1px 0 0 #F44336');
+});
+</script>
+{% endif %}
+<div class='select-time-widget-wrapper'>
+	<div class="input-field">
+		{% if initial %}
+		<input class="ufsc_time validate" data-lang="pt-br" id="id_{{ name }}" name="{{ name }}" type="text" value="{{ initial }}">
+		{% else %}
+		<input class="ufsc_time validate" data-lang="pt-br" id="id_{{ name }}" name="{{ name }}" type="text">
+		{% endif %}
+		<label for="id_{{ name }}">{{ name|title }}</label>
+	{% if attrs.error %}
+		<small class='select-time-error'>{{ attrs.error }}</small>
+	{% endif %}
+	</div>
+</div>

@@ -81,8 +81,11 @@ class Reserva(models.Model):
             raise ValidationError(errors)
 
     def verificaCoerencia(self, errors):
-        if self.horaInicio > self.horaFim or date.today() > self.data:
-            errors['data'] = 'Data e/ou hora incoerente'
+        if date.today() > self.data:
+            errors['data'] = 'Não é possível reservar em datas passadas.'
+        if self.horaInicio > self.horaFim:
+            errors['horaInicio'] = 'Horário incoerente.'
+            errors['horaFim'] = 'Horário incoerente.'
 
     def verificaBloqueado(self, errors):
         class MockRequest:
