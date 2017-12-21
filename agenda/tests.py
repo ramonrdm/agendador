@@ -9,7 +9,6 @@ from .admin import *
 class MockRequest:
     pass
 request = MockRequest()
-
 class AdminViewPermissionsTests(TestCase):
 
     def create_preset(self):
@@ -254,23 +253,32 @@ class UserFilterTests(TestCase):
         root_user.save()
         child_left_user = User.objects.create(username='child_left_user', password='a')
         child_left_user.save()
-        child_right_right_user = User.objects.create(username='child_right_right_user', password='a')
-        child_right_right_user.save()
+        root_group_user = User.objects.create(username='root_group_user', password='a')
+        root_group_user.save()
 
         # Creat unit groups and add people, units and place/equiptment to it
-        unit_root = Group.objects.create(name='unit_root')
-        unit_root.unidade_set.add(root)
-        unit_root.user_set.add(root_user)
-        unit_child_left = Group.objects.create(name='unit_child_left')
-        unit_child_left.unidade_set.add(child_left)
-        unit_child_left.user_set.add(child_left_user)
-        unit_child_right_right = Group.objects.create(name='unit_child_right_right')
-        unit_child_right_right.unidade_set.add(child_right_right)
-        unit_child_right_right.user_set.add(child_right_right_user)
+        group_x = Group.objects.create(name='group_x')
+        group_x.unidade_set.add(root)
+        group_x.user_set.add(root_user)
+        root.grupos.add(group_x)
+        group_x.user_set.add(root_group_user)
+
+        group_y = Group.objects.create(name='group_y')
+        group_y.unidade_set.add(child_left)
+        group_y.user_set.add(child_left_user)
+        child_left.grupos.add(group_y)
+    
+        child_right_right.grupos.add(group_x)
+        child_right_right.grupos.add(group_y)
+        group_x.unidade_set.add(child_right_right)
+        group_y.unidade_set.add(child_right_right)
+
         permission = Group.objects.create(name='permission')
         permission.espacofisico_set.add(group_place)
+        group_place.grupos.add(permission)
         permission.equipamento_set.add(group_equipment)
-        permission.user_set.add(child_right_right_user)
+        group_equipment.grupos.add(permission)
+        permission.user_set.add(root_group_user)
 
         return {
             'places': [invisible_place, group_place, place0, place1, place2, blocked_place],
@@ -302,11 +310,11 @@ class UserFilterTests(TestCase):
 
         # Superuser must see everything since he's responsable
         self.makeChecks(items, 'superuser', [])
-        # Root user must see everything but invisible and group
-        self.makeChecks(items, 'root_user', [0, 0])
-        # Child_left user must see only item 0
-        self.makeChecks(items, 'child_left_user', [0, 0, 1, 1, 1])
-        # Child_right_right must see item 2, blocked and group
-        self.makeChecks(items, 'child_right_right_user', [0, 1, 1])
+        # Root user (whithout group) must see item 2, 3 and blocked
+        self.makeChecks(items, 'root_user', [0, 0, 0])
+        # Child_left user must see item 1, 3 and blocked
+        self.makeChecks(items, 'child_left_user', [0, 0, 1])
+        # root_group_user must see item 2, 3, blocked and group
+        self.makeChecks(items, 'root_group_user', [0, 1])
 
         print '-GROUP FILTERS PASS'

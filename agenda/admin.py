@@ -24,6 +24,8 @@ class UnidadeAdmin(admin.ModelAdmin):
             unit = Unidade.objects.filter(id=unit.id)
             units = units | unit
             return units
+        unit = Unidade.objects.filter(id=unit.id)
+        units = units | unit
         return units
 
     def get_queryset(self, request):
@@ -139,7 +141,8 @@ class LocavelAdmin(admin.ModelAdmin):
     get_responsavel.short_description = 'responsavel'
 
     def add_reservable(self, user, unit, reservable, reservables, responsable, reservableModel):
-        group = reservable.grupo
+        # Check if reservable belongs to a specific group, if so it's ignored
+        group = reservable.grupos.all()
         if not group and unit not in user.unidade_set.all() and not responsable:
             reservables = reservables | reservableModel.objects.filter(id=reservable.id).exclude(invisivel=True)
         elif unit in user.unidade_set.all() or responsable:
@@ -153,7 +156,8 @@ class LocavelAdmin(admin.ModelAdmin):
                 children = children.exclude(nome=unit.nome)
         if children:
             for child in children:
-                reservables = self.search_children(reservables, child, user, responsable, reservableModel)
+                if not child.grupos.all() or responsable:
+                    reservables = self.search_children(reservables, child, user, responsable, reservableModel)
         else:
             child_reservables = reservableModel.objects.filter(unidade=unit)
             ## Test if equipment isn't bound to a specific group
@@ -186,7 +190,7 @@ class LocavelAdmin(admin.ModelAdmin):
             for unit in unit_responsible:
                 reservables = self.search_children(reservables, unit, request.user, True, reservableModel)
 
-        # Get all equipments user's responsible
+        # Get all locables user's responsible
         reservables = reservables | reservableModel.objects.filter(responsavel=request.user)
         # Unit via group already tested, now test group exclusive spaces
         # This can't be done in this parent method since there's a need to know which set from group to pick,
