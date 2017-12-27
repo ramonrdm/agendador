@@ -9,9 +9,9 @@ from django.views import generic
 admin.autodiscover()
 
 urlpatterns = [
-    url(r'^accounts/login/$', views2.login, name="cas_ng_login"),
-    url(r'^accounts/logout/$', views2.logout, name="cas_ng_logout"),
-    url(r'^admin/login/$', views2.login, name="cas_ng_login"),
+    #url(r'^accounts/login/$', views2.login, name="cas_ng_login"),
+    #url(r'^accounts/logout/$', views2.logout, name="cas_ng_logout"),
+    #url(r'^admin/login/$', views2.login, name="cas_ng_login"),
     url(r'^admin/', include(admin.site.urls)),
     url(r'', include(frontend_urls)),
     url(r'^$', views.index, name="index"),

@@ -117,9 +117,11 @@ def locavel(request, tipo=None, locavel=None):
     if locavel.invisivel:
         return HttpResponseNotFound()
     responsaveis = locavel.responsavel.all()
-    grupo = locavel.grupo
+    grupos = locavel.grupos.all()
     ret = request.META.get('HTTP_REFERER')
-    return render(request, 'agenda/locavel.html', dict(tipo=tipo, locavel=locavel, responsaveis=responsaveis, grupo=grupo, specific=specific, ret=ret))
+    return render(request, 'agenda/locavel.html', 
+                dict(tipo=tipo, locavel=locavel, responsaveis=responsaveis, 
+                    grupos=grupos, specific=specific, ret=ret))
 
 def mes(request, tipo=None, espaco=None, year=None, month=None, change=None):
     """Listing of days in `month`."""

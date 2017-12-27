@@ -41,8 +41,10 @@
                         <div class='localizacao'><strong>Localização: </strong>{{ locavel.localizacao }}.</div>
                         <div class='descricao'><strong>Descrição: </strong>{{ locavel.descricao }}.</div>
                         <div class='grupo'><strong>Grupo: </strong>
-                            {% if grupo %}
-                                {{ grupo }}.
+                            {% if grupos %}
+                                {% for grupo in grupos %}
+                                    {{ grupo }} - 
+                                {% endfor %}
                             {% else %}
                                 Não pertence a um grupo específico.
                             {% endif %}
