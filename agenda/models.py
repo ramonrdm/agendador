@@ -14,6 +14,10 @@ class Unidade(models.Model):
     descricao = models.TextField()
     logoLink = models.URLField(blank=True)
 
+    def clean(self):
+        if ' ' in self.sigla:
+            raise ValidationError({'sigla': "Uso de espaço não permitido. Troque por ' - '."})
+
     def __unicode__(self):
         return self.sigla
     def __str__(self):
