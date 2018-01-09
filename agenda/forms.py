@@ -22,10 +22,13 @@ class ReservaAdminForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)
+        admin_type = kwargs.pop('admin_type', None)
+        reservable_type = kwargs.pop('reservable_type', None)
         super(ReservaAdminForm, self).__init__(*args, **kwargs)
 
         # Check if there's been errors in custom widget, since we're using an automated template for form's HTML that doesn't display them 
         # errors must be displayed through the custom Widget in order to appear
+        # This part of the code is to initialize Widgets, be them of a blank form or one with pre-selected date and or finish and start time
         attrs = {}
         if 'horaInicio' in self.errors:
             attrs['error'] = self.errors['horaInicio']
@@ -57,7 +60,7 @@ class ReservaAdminForm(forms.ModelForm):
                 attrs['error'] = self.errors['usuario']
             self.fields['usuario'].widget = AutocompleteWidget(attrs=attrs, query=User.objects.all(), model=User)
 
-        # If we're creating a new form it's okay to hide the status. If we're additing an existing one, it mus show status if user is reponsable
+        # If we're creating a new form it's okay to hide the status. If we're additing an existing one, it must show status if user is reponsable
         hide = False
         if 'instance' in kwargs:
             if kwargs['instance']:
@@ -76,6 +79,44 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['estado'].widget = forms.HiddenInput()
             self.fields['estado'].label = ''
 
+        # If there was a error of validation there's the need to recover the reservable on the form, that is lost otherwise
+        if self.errors:
+            try:
+                self.request.session['id_reservable'] = self.request.session['id_reservable_backup']
+            except:
+                pass
+
+        # Check if there is a pre-selected reservable
+        try:
+            self.id_reservable = self.request.session['id_reservable']
+        except:
+            self.id_reservable = None
+
+        # If we're changing an existing reserve the reserve's reservable already selected must be the option, otherwise the options are the reservables the user has permission
+        if 'instance' in kwargs:
+            if kwargs['instance']:
+                reservable = kwargs['instance'].locavel
+                queryset = reservable_type.objects.filter(id=reservable.id)
+            else:
+                ma = admin_type(reservable_type, AdminSite())
+                queryset = ma.get_queryset(self.request)
+        else:
+            ma = admin_type(reservable_type, AdminSite())
+            queryset = ma.get_queryset(self.request)
+        if self.id_reservable:
+            self.fields['locavel'].initial = self.id_reservable
+            self.fields['locavel'].queryset = reservable_type.objects.filter(id=self.id_reservable)
+            self.fields['atividade'].queryset = reservable_type.objects.get(id=self.id_reservable).atividadesPermitidas
+        else:
+            self.fields['locavel'].queryset = queryset
+        # Initialize the widget that dynamically change activities according to the selected reservable
+        rel = Reserva._meta.get_field('atividade').rel
+        self.fields['atividade'].widget = DynamicAtividadeWidget(Select(choices=models.ModelChoiceIterator(self.fields['atividade'])), rel, admin.admin.site, can_change_related=True)
+        
+        # id_reservable is saved so it can be recovered in case of validation error
+        self.request.session['id_reservable_backup'] = self.id_reservable
+        self.request.session['id_reservable'] = None
+
     def sendMail(self, status, instance):
         user = instance.usuario
         status = instance.estado
@@ -86,33 +127,33 @@ class ReservaAdminForm(forms.ModelForm):
         responsables = reservable.responsavel.all()
         # First we send an email to the user who asked for the reserve
         if status == 'A':
-            email_title = 'Reserva de %s confirmada.' % reservable
+            email_title = 'Reserva de %s confirmada.' % reservable.nome.encode("utf-8")
             email_text = '''
                 Olá, %s,
-                Sua reserva de %r dia %s, das %s às %s, foi confirmada.
+                Sua reserva de %s para o dia %s, das %s às %s, foi confirmada.
 
                 -------
                 E-mail automático, por favor não responda.
-            ''' % (user, reservable.nome, date.strftime('%d/%m/%Y'), start.strftime('%H:%M'), end.strftime('%H:%M'))
+            ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), start.strftime('%H:%M'), end.strftime('%H:%M'))
         elif status == 'E':
-            email_title = 'Reserva de %s aguardando aprovação.' % reservable
+            email_title = 'Reserva de %s aguardando aprovação.' % reservable.nome.encode("utf-8")
             email_text = '''
                 Olá, %s,
-                Sua reserva de %r dia %s, das %s às %s, está aguardando aprovação. Você receberá uma notificação quando o estado da sua reserva for atualizado.
+                Sua reserva de %s para o dia %s, das %s às %s, está aguardando aprovação. Você receberá uma notificação quando o estado da sua reserva for atualizado.
 
                 -------
                 E-mail automático, por favor não responda.
-            ''' % (user, reservable, date.strftime('%d/%m/%Y'), start.strftime('%H:%M'), end.strftime('%H:%M'))
+            ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), start.strftime('%H:%M'), end.strftime('%H:%M'))
         elif status == 'D':
-            email_title = 'Reserva de %s negada.' % reservable
+            email_title = 'Reserva de %s negada.' % reservable.nome.encode("utf-8")
             email_text = '''
                 Olá, %s,
-                Sua reserva de %r dia %s, das %s às %s, foi negada.
+                Sua reserva de %s para o dia %s, das %s às %s, foi negada.
 
                 -------
                 E-mail automático, por favor não responda.
-            ''' % (user, reservable, date.strftime('%d/%m/%Y'), start.strftime('%H:%M'), end.strftime('%H:%M'))
-        # send_mail(email_title, email_text, 'noreply@reservasufsc.com', [user.email])
+            ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), start.strftime('%H:%M'), end.strftime('%H:%M'))
+        send_mail(email_title, email_text, 'reservas.ccs@sistemas.ufsc.br', [user.email])
 
         # If the user doesn't have permission we need to send a e-mail to the reservable responsable
         if status == 'E':
@@ -123,20 +164,21 @@ class ReservaAdminForm(forms.ModelForm):
                 reserve_type = 'reservaequipamento'
 
             for responsable in responsables:
-                email_title = 'Pedido de reserva de %s' % reservable
+                email_title = 'Pedido de reserva de %s' % reservable.nome.encode("utf-8")
                 email_text = '''
                     Olá, %s,
-                    %s fez um pedido de reserva em %r, dia %s, das %s às %s. Use o link abaixo para analisar o pedido.
-                    http://reservas.cce.ufsc.br/admin/agenda/%s/%d/change/
+                    %s fez um pedido de reserva em %s, para o dia %s, das %s às %s. Use o link abaixo para analisar o pedido.
+                    http://127.0.0.1:8000/admin/agenda/%s/%d/change/
 
                     -------
                     E-mail automático, por favor não responda.
-                ''' % (responsable, user, reservable, date.strftime('%d/%m/%Y'), start.strftime('%H:%M'), end.strftime('%H:%M'), reserve_type, instanceid)
-                #send_mail(email_title, email_text, 'noreply@reservasufsc.com', [responsable.email])
+                ''' % (responsable, user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), start.strftime('%H:%M'), end.strftime('%H:%M'), reserve_type, instance.id)
+                send_mail(email_title, email_text, 'reservas.ccs@sistemas.ufsc.br', [responsable.email])
 
     def save(self, *args, **kwargs):
         user_query = kwargs.pop('query', None)
         reservable = self.cleaned_data['locavel']
+        status = self.cleaned_data['estado']
         instance = super(ReservaAdminForm, self).save(commit=False)
 
         # Check if the user has permission in this reservable
@@ -153,32 +195,9 @@ class ReservaEquipamentoAdminForm(ReservaAdminForm):
         model = ReservaEquipamento
         fields = ('estado', 'data', 'horaInicio', 'horaFim', 'locavel', 'atividade', 'usuario', 'ramal', 'finalidade')
     def __init__(self, *args, **kwargs):
+        kwargs['admin_type'] = admin.EquipamentoAdmin
+        kwargs['reservable_type'] = Equipamento
         super(ReservaEquipamentoAdminForm, self).__init__(*args, **kwargs)
-        # In case there's an error the old pre-selected reservable must be recovered
-        if self.errors:
-            try:
-                self.request.session['id_equip'] = self.request.session['id_equip_backup']
-            except:
-                pass
-
-        try:
-            self.id_equip = self.request.session['id_equip']
-        except:
-            self.id_equip = None
-        ma = admin.EquipamentoAdmin(Equipamento, AdminSite())
-        queryset = ma.get_queryset(self.request)
-        if self.id_equip:
-            self.fields['locavel'].initial = self.id_equip
-            self.fields['locavel'].queryset = Equipamento.objects.filter(id=self.id_equip)
-            self.fields['atividade'].queryset = Equipamento.objects.get(id=self.id_equip).atividadesPermitidas
-        else:
-            self.fields['locavel'].queryset = queryset
-        rel = Reserva._meta.get_field('atividade').rel
-        self.fields['atividade'].widget = DynamicAtividadeWidget(Select(choices=models.ModelChoiceIterator(self.fields['atividade'])), rel, admin.admin.site, can_change_related=True)
-        
-        # id_equip is saved so it can be recovered in case of errors
-        self.request.session['id_equip_backup'] = self.id_equip
-        self.request.session['id_equip'] = None
 
     def save(self, *args, **kwargs):
         temp_request = self.request
@@ -194,32 +213,9 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
         model = ReservaEspacoFisico
         fields = ('estado', 'data', 'horaInicio', 'horaFim', 'locavel', 'atividade', 'usuario', 'ramal', 'finalidade')
     def __init__(self, *args, **kwargs):
+        kwargs['admin_type'] = admin.EspacoFisicoAdmin
+        kwargs['reservable_type'] = EspacoFisico
         super(ReservaEspacoFisicoAdminForm, self).__init__(*args, **kwargs)
-        # In case there's an error the old pre-selected reservable must be recovered
-        if self.errors:
-            try:
-                self.request.session['id_equip'] = self.request.session['id_equip_backup']
-            except:
-                pass
-
-        try:
-            self.id_equip = self.request.session['id_equip']
-        except:
-            self.id_equip = None
-        ma = admin.EspacoFisicoAdmin(EspacoFisico, AdminSite())
-        queryset = ma.get_queryset(self.request)
-        if self.id_equip:
-            self.fields['locavel'].initial = self.id_equip
-            self.fields['locavel'].queryset = EspacoFisico.objects.filter(id=self.id_equip)
-            self.fields['atividade'].queryset = EspacoFisico.objects.get(id=self.id_equip).atividadesPermitidas
-        else:
-            self.fields['locavel'].queryset = queryset
-        rel = Reserva._meta.get_field('atividade').rel
-        self.fields['atividade'].widget = DynamicAtividadeWidget(Select(choices=models.ModelChoiceIterator(self.fields['atividade'])), rel, admin.admin.site, can_change_related=True)
-
-        # id_equip is saved so it can be recovered in case of errors
-        self.request.session['id_equip_backup'] = self.id_equip
-        self.request.session['id_equip'] = None
 
     def save(self, *args, **kwargs):
         temp_request = self.request

@@ -195,7 +195,7 @@ def equipamentos(request):
     return render_to_response("espacos.html", {'ano': ano, 'mes': mes, 'espacos': espacos1})
 
 def intermediaria(request):
-    id_equip = request.GET['id']
+    id_reservable = request.GET['id']
     data_numero = request.GET['data']
     try:
         horaInicio = request.GET['horaInicio']
@@ -203,7 +203,7 @@ def intermediaria(request):
     except:
         horaInicio = None
         horaFim = None
-    request.session['id_equip'] = id_equip
+    request.session['id_reservable'] = id_reservable
     data_string = str(data_numero)
     print data_numero
     data = data_string[0]+data_string[1]+'/'+data_string[2]+data_string[3]+'/'+data_string[4]+data_string[5]+data_string[6]+data_string[7]
