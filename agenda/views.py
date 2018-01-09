@@ -23,6 +23,14 @@ month_names = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julh
 unidade_default = 'ufsc'
 
 def index(request, unidade=unidade_default):
+    try:
+        unidade = Unidade.objects.get(sigla=unidade)
+    except Unidade.DoesNotExist:
+        try:
+            unidade = Unidade.objects.get(sigla="UFSC")
+        except Unidade.DoesNotExist:
+            return render_to_response("agenda/index.html")
+
     if request.method == 'POST':
         search_form = SearchFilterForm(request.POST)
         if search_form.is_valid():
@@ -30,7 +38,7 @@ def index(request, unidade=unidade_default):
             horaInicio = search_form.cleaned_data['horaInicio'].strftime('%H%M')
             horaFim = search_form.cleaned_data['horaFim'].strftime('%H%M')
             tipo = search_form.cleaned_data['tipo']
-            return redirect('/filtro_locavel_disponivel/'+ tipo +'/' + data + '/' + horaInicio + '/' + horaFim + '/')
+            return redirect('/filtro_locavel_disponivel/' + str(unidade.id) + '/' + tipo +'/' + data + '/' + horaInicio + '/' + horaFim + '/')
         elif search_form.data['tipo'] == 'f':
             search_f = search_form
             search_e = SearchFilterForm(tipo='e')
@@ -43,13 +51,6 @@ def index(request, unidade=unidade_default):
     #titulo = "Agendador UFSC"
     #corpo = "Bem vindo ao Agendador de espaços físicos e equipamentos da UFSC"
 
-    try:
-        unidade = Unidade.objects.get(sigla=unidade)
-    except Unidade.DoesNotExist:
-        try:
-            unidade = Unidade.objects.get(sigla="UFSC")
-        except Unidade.DoesNotExist:
-            return render_to_response("agenda/index.html")
             
     
     unidades = Unidade.objects.filter(unidadePai=unidade)
@@ -215,30 +216,30 @@ def intermediaria(request):
     data = {'success': True}
     return JsonResponse(data)
 
-@login_required
-def filtroLocavelDisponivel(request, tipo, sData, sHoraInicio, sHoraFim):
+def filtroLocavelDisponivel(request, unit, tipo, sData, sHoraInicio, sHoraFim):
     data = datetime.strptime(sData, '%d%m%Y')
     horaInicio = datetime.strptime(sHoraInicio, '%H%M').time()
     horaFim = datetime.strptime(sHoraFim, '%H%M').time()
     atividade_dummy = Atividade.objects.create(nome='dummy', descricao='dummy')
+    unit = Unidade.objects.get(id=unit)
     if tipo == 'f':
-        ma = admin.EspacoFisicoAdmin(EspacoFisico, AdminSite())
-        query = ma.get_queryset(request)
+        query = unit.espacofisico_set.all()
         tipo_reserva = ReservaEspacoFisico
 
     elif tipo == 'e':
-        ma = admin.EquipamentoAdmin(Equipamento, AdminSite())
-        query = ma.get_queryset(request)
+        query = unit.equipamento_set.all()
         tipo_reserva = ReservaEquipamento
         
+    dummy_user = User.objects.create(username='dummy_user')
     for locavel in query:
-        reserva_dummy = tipo_reserva.objects.create(data=data, horaInicio=horaInicio, horaFim=horaFim, atividade=atividade_dummy, usuario=request.user, ramal=1, finalidade='1', locavel=locavel)
+        reserva_dummy = tipo_reserva.objects.create(data=data, horaInicio=horaInicio, horaFim=horaFim, atividade=atividade_dummy, usuario=dummy_user, ramal=1, finalidade='1', locavel=locavel)
         error = dict()
         reserva_dummy.verificaChoque(error)
-        if bool(error):
+        if bool(error) or (locavel.invisivel and not(request.user.is_superuser or request.user in locavel.responsavel.all())):
             query = query.exclude(id=locavel.id)
         reserva_dummy.delete()
 
+    dummy_user.delete()
     atividade_dummy.delete()
     return render(request, "agenda/search_result.html", dict(query=query, data=sData, horaInicio=sHoraInicio, horaFim=sHoraFim, tipo=tipo))
 
