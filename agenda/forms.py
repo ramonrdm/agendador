@@ -22,45 +22,20 @@ class ReservaAdminForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)
-        admin_type = kwargs.pop('admin_type', None)
-        reservable_type = kwargs.pop('reservable_type', None)
+        self.admin_type = kwargs.pop('admin_type', None)
+        self.reservable_type = kwargs.pop('reservable_type', None)
         super(ReservaAdminForm, self).__init__(*args, **kwargs)
 
-        # Check if there's been errors in custom widget, since we're using an automated template for form's HTML that doesn't display them 
-        # errors must be displayed through the custom Widget in order to appear
-        # This part of the code is to initialize Widgets, be them of a blank form or one with pre-selected date and or finish and start time
-        attrs = {}
-        if 'horaInicio' in self.errors:
-            attrs['error'] = self.errors['horaInicio']
-        self.fields['horaInicio'] = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget(attrs=attrs))
+        self.initializeStatusField(kwargs)
+        self.initializeDateField()
+        self.initializeHourFields()
+        self.initializeReservableField(kwargs)
+        self.initializeActivitieField()
+        self.initializeUserField()
 
-        attrs = {}
-        if 'horaFim' in self.errors:
-            attrs['error'] = self.errors['horaFim']
-        self.fields['horaFim'] = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget(attrs=attrs))
-        try:
-            self.fields['data'].initial = self.request.session['data']
-        except:
-            pass
-        self.request.session['data'] = ''
-        try:
-            self.fields['horaInicio'].initial = self.request.session['horaInicio']
-            self.fields['horaFim'].initial = self.request.session['horaFim']
-        except:
-            pass
-        self.request.session['horaInicio'] = ''
-        self.request.session['horaFim'] = ''
-        if not self.request.user.is_superuser:
-            self.fields['usuario'].initial = self.request.user
-            self.fields['usuario'].widget = forms.HiddenInput()
-            self.fields['usuario'].label = ''
-        else:
-            attrs = {}
-            if 'usuario' in self.errors:
-                attrs['error'] = self.errors['usuario']
-            self.fields['usuario'].widget = AutocompleteWidget(attrs=attrs, query=User.objects.all(), model=User)
-
-        # If we're creating a new form it's okay to hide the status. If we're additing an existing one, it must show status if user is reponsable
+    def initializeStatusField(self, kwargs):
+        # If we're creating a new form it's okay to hide the status.
+        # If we're additing an existing one, it must show status if user is reponsable
         hide = False
         if 'instance' in kwargs:
             if kwargs['instance']:
@@ -72,14 +47,39 @@ class ReservaAdminForm(forms.ModelForm):
                     reservable_set = self.request.user.equipamento_set.all()
                 if reservable not in reservable_set:
                     hide = True
+            else:
+                hide = True
         else:
             hide = True
         if hide and not self.request.user.is_superuser:
             self.fields['estado'].initial = 'E'
-            self.fields['estado'].widget = forms.HiddenInput()
             self.fields['estado'].label = ''
+            self.fields['estado'].widget = forms.HiddenInput()
 
-        # If there was a error of validation there's the need to recover the reservable on the form, that is lost otherwise
+    def initializeUserField(self):
+        # Hide if it's not superuser, otherwise check for errors and initialize
+        if not self.request.user.is_superuser:
+            self.fields['usuario'].initial = self.request.user
+            self.fields['usuario'].widget = forms.HiddenInput()
+            self.fields['usuario'].label = ''
+        else:
+            attrs = {}
+            if 'usuario' in self.errors:
+                attrs['error'] = self.errors['usuario']
+            self.fields['usuario'].widget = AutocompleteWidget(attrs=attrs, query=User.objects.all(), model=User)
+
+    def initializeActivitieField(self):
+        # If there's a initial reservable get activities that belong to it
+        if self.fields['locavel'].initial:
+            reservable = self.reservable_type.objects.get(id=self.fields['locavel'].initial)
+            self.fields['atividade'].queryset = reservable.atividadesPermitidas
+
+        # Initialize the widget that dynamically change activities according to the selected reservable
+        rel = Reserva._meta.get_field('atividade').rel
+        self.fields['atividade'].widget = DynamicAtividadeWidget(Select(choices=models.ModelChoiceIterator(self.fields['atividade'])), rel, admin.admin.site, can_change_related=True)
+
+    def initializeReservableField(self, kwargs):
+        # If there was a error of validation there's the need to recover the reservable as pre-selected
         if self.errors:
             try:
                 self.request.session['id_reservable'] = self.request.session['id_reservable_backup']
@@ -92,30 +92,58 @@ class ReservaAdminForm(forms.ModelForm):
         except:
             self.id_reservable = None
 
-        # If we're changing an existing reserve the reserve's reservable already selected must be the option, otherwise the options are the reservables the user has permission
+        # If user is changing an existing reserve the reserve's reservable already selected is the only option
+        # If user is creating a reserve, the queryset of possible reservables is determinet
         if 'instance' in kwargs:
             if kwargs['instance']:
                 reservable = kwargs['instance'].locavel
-                queryset = reservable_type.objects.filter(id=reservable.id)
+                queryset = self.reservable_type.objects.filter(id=reservable.id)
             else:
-                ma = admin_type(reservable_type, AdminSite())
+                ma = self.admin_type(self.reservable_type, AdminSite())
                 queryset = ma.get_queryset(self.request)
         else:
-            ma = admin_type(reservable_type, AdminSite())
+            ma = self.admin_type(self.reservable_type, AdminSite())
             queryset = ma.get_queryset(self.request)
+
+        # If there's a pre=selected reservable he is the option
+        # Else the options are the user's queryset
         if self.id_reservable:
             self.fields['locavel'].initial = self.id_reservable
-            self.fields['locavel'].queryset = reservable_type.objects.filter(id=self.id_reservable)
-            self.fields['atividade'].queryset = reservable_type.objects.get(id=self.id_reservable).atividadesPermitidas
+            self.fields['locavel'].queryset = self.reservable_type.objects.filter(id=self.id_reservable)
         else:
             self.fields['locavel'].queryset = queryset
-        # Initialize the widget that dynamically change activities according to the selected reservable
-        rel = Reserva._meta.get_field('atividade').rel
-        self.fields['atividade'].widget = DynamicAtividadeWidget(Select(choices=models.ModelChoiceIterator(self.fields['atividade'])), rel, admin.admin.site, can_change_related=True)
-        
-        # id_reservable is saved so it can be recovered in case of validation error
+
+            # id_reservable is saved so it can be recovered in case of validation error
         self.request.session['id_reservable_backup'] = self.id_reservable
         self.request.session['id_reservable'] = None
+
+    def initializeHourFields(self):
+        # Check fields for error and intialize Widgets
+        attrs = {}
+        if 'horaInicio' in self.errors:
+            attrs['error'] = self.errors['horaInicio']
+        self.fields['horaInicio'] = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget(attrs=attrs))
+        attrs = {}
+        if 'horaFim' in self.errors:
+            attrs['error'] = self.errors['horaFim']
+        self.fields['horaFim'] = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget(attrs=attrs))
+
+        # See if there's a initial value
+        try:
+            self.fields['horaInicio'].initial = self.request.session['horaInicio']
+            self.fields['horaFim'].initial = self.request.session['horaFim']
+        except:
+            pass
+        self.request.session['horaInicio'] = ''
+        self.request.session['horaFim'] = ''
+
+    def initializeDateField(self):
+        # See if there's a initial value
+        try:
+            self.fields['data'].initial = self.request.session['data']
+        except:
+            pass
+        self.request.session['data'] = ''
 
     def sendMail(self, status, instance):
         user = instance.usuario
@@ -153,11 +181,11 @@ class ReservaAdminForm(forms.ModelForm):
                 -------
                 E-mail automático, por favor não responda.
             ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), start.strftime('%H:%M'), end.strftime('%H:%M'))
-        send_mail(email_title, email_text, 'reservas.ccs@sistemas.ufsc.br', [user.email])
+        #send_mail(email_title, email_text, 'reservas.ccs@sistemas.ufsc.br', [user.email])
 
         # If the user doesn't have permission we need to send a e-mail to the reservable responsable
         if status == 'E':
-            # Need to check reservable instance to genereate the link 
+            # Need to check reservable instance to genereate the link
             if isinstance(reservable, EspacoFisico):
                 reserve_type = 'reservaespacofisico'
             elif isinstance(reservable, Equipamento):
@@ -173,7 +201,7 @@ class ReservaAdminForm(forms.ModelForm):
                     -------
                     E-mail automático, por favor não responda.
                 ''' % (responsable, user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), start.strftime('%H:%M'), end.strftime('%H:%M'), reserve_type, instance.id)
-                send_mail(email_title, email_text, 'reservas.ccs@sistemas.ufsc.br', [responsable.email])
+                #send_mail(email_title, email_text, 'reservas.ccs@sistemas.ufsc.br', [responsable.email])
 
     def save(self, *args, **kwargs):
         user_query = kwargs.pop('query', None)
@@ -223,7 +251,7 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
         ma = admin.EspacoFisicoAdmin(EspacoFisico, AdminSite())
         user_query = ma.get_queryset(self.request)
         kwargs['query'] = user_query
-        return super(ReservaEspacoFisicoAdminForm, self).save(*args, **kwargs) 
+        return super(ReservaEspacoFisicoAdminForm, self).save(*args, **kwargs)
 
 class SearchFilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
