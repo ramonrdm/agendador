@@ -8,7 +8,7 @@ from django.contrib.admin import widgets
 from datetime import datetime
 
 class SelectTimeWidget(Widget):
-    
+
     def __init__(self, attrs=None):
         self.attrs = attrs or {}
 
@@ -25,7 +25,7 @@ class SelectTimeWidget(Widget):
                 initial = value.strftime('%H:%M')
             except:
                 initial = datetime.strptime(value, '%H:%M').strftime('%H:%M')
-        return render_to_string('agenda/select_time.html', dict(name=name, attrs=self.attrs, initial=initial))
+        return render_to_string('agenda/widgets/select_time.html', dict(name=name, attrs=self.attrs, initial=initial))
 
 class SelectDateWidget(Widget):
 
@@ -68,4 +68,23 @@ class AutocompleteWidget(Widget):
             initial = self.model.objects.get(id=value)
         except:
             initial = None
-        return render_to_string('agenda/autocomplete.html', dict(name=name, query=self.query, attrs=self.attrs, initial=initial))
+        return render_to_string('agenda/widgets/autocomplete.html', dict(name=name, query=self.query, attrs=self.attrs, initial=initial))
+
+class ReadOnlyWidget(Widget):
+    def __init__(self, search_model=None, attrs=None):
+        self.attrs = attrs or {}
+        self.search_model = search_model
+
+    class Media():
+        css = {
+            'all': ('agenda/css/read_only.css',),
+        }
+
+    def render(self, name, value=None, attrs=None):
+        model_field = False
+        item_id = 0
+        if self.search_model:
+            item_id = value
+            value = self.search_model.objects.get(id=value)
+            model_field = True
+        return render_to_string('agenda/widgets/read_only.html', dict(name=name, attrs=self.attrs, initial=value, model_field=model_field, item_id = item_id))

@@ -26,14 +26,49 @@ class ReservaAdminForm(forms.ModelForm):
         self.reservable_type = kwargs.pop('reservable_type', None)
         super(ReservaAdminForm, self).__init__(*args, **kwargs)
 
-        self.initializeStatusField(kwargs)
-        self.initializeDateField()
-        self.initializeHourFields()
-        self.initializeReservableField(kwargs)
-        self.initializeActivitieField()
-        self.initializeUserField()
+        # If the user is trying to edit a reserve for a reservable not being responsable for it, he can only read
+        # If the user is creating a new reserve or trying to edit a form he has permission, he can change the fields accordingly
+        readOnly = False
+        if 'instance' in kwargs:
+            if kwargs['instance']:
+                reservable = kwargs['instance'].locavel
+                if self.request.user not in reservable.responsavel.all():
+                    readOnly = True
 
-    def initializeStatusField(self, kwargs):
+        if readOnly and not self.request.user.is_superuser:
+            self.init_read_only(kwargs)
+        else:
+            self.init_status_field(kwargs)
+            self.init_date_field()
+            self.init_hour_fields()
+            self.init_reservable_field(kwargs)
+            self.init_activity_field()
+            self.init_user_field()
+
+    def init_read_only(self, kwargs):
+        # For all fields, put the readonly widget and makes sure the data can't be tempered
+        self.fields['data'].widget = ReadOnlyWidget()
+        self.fields['data'].disabled = True
+        self.fields['horaInicio'].widget = ReadOnlyWidget()
+        self.fields['horaInicio'].disabled = True
+        self.fields['horaFim'].widget = ReadOnlyWidget()
+        self.fields['horaFim'].disabled = True
+        self.fields['locavel'].widget = ReadOnlyWidget(type(kwargs['instance'].locavel))
+        self.fields['locavel'].disabled = True
+        self.fields['atividade'].widget = ReadOnlyWidget(type(kwargs['instance'].atividade))
+        self.fields['ramal'].widget = ReadOnlyWidget()
+        self.fields['ramal'].disabled = True
+        self.fields['finalidade'].widget = ReadOnlyWidget()
+        self.fields['finalidade'].disabled = True
+
+        # The hidden fields are hidded
+        self.fields['estado'].label = ''
+        self.fields['estado'].widget = forms.HiddenInput()
+        self.fields['usuario'].widget = forms.HiddenInput()
+        self.fields['usuario'].label = ''
+
+
+    def init_status_field(self, kwargs):
         # If we're creating a new form it's okay to hide the status.
         # If we're additing an existing one, it must show status if user is reponsable
         hide = False
@@ -56,7 +91,7 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['estado'].label = ''
             self.fields['estado'].widget = forms.HiddenInput()
 
-    def initializeUserField(self):
+    def init_user_field(self):
         # Hide if it's not superuser, otherwise check for errors and initialize
         if not self.request.user.is_superuser:
             self.fields['usuario'].initial = self.request.user
@@ -68,7 +103,7 @@ class ReservaAdminForm(forms.ModelForm):
                 attrs['error'] = self.errors['usuario']
             self.fields['usuario'].widget = AutocompleteWidget(attrs=attrs, query=User.objects.all(), model=User)
 
-    def initializeActivitieField(self):
+    def init_activity_field(self):
         # If there's a initial reservable get activities that belong to it
         if self.fields['locavel'].initial:
             reservable = self.reservable_type.objects.get(id=self.fields['locavel'].initial)
@@ -78,7 +113,7 @@ class ReservaAdminForm(forms.ModelForm):
         rel = Reserva._meta.get_field('atividade').rel
         self.fields['atividade'].widget = DynamicAtividadeWidget(Select(choices=models.ModelChoiceIterator(self.fields['atividade'])), rel, admin.admin.site, can_change_related=True)
 
-    def initializeReservableField(self, kwargs):
+    def init_reservable_field(self, kwargs):
         # If there was a error of validation there's the need to recover the reservable as pre-selected
         if self.errors:
             try:
@@ -117,7 +152,7 @@ class ReservaAdminForm(forms.ModelForm):
         self.request.session['id_reservable_backup'] = self.id_reservable
         self.request.session['id_reservable'] = None
 
-    def initializeHourFields(self):
+    def init_hour_fields(self):
         # Check fields for error and intialize Widgets
         attrs = {}
         if 'horaInicio' in self.errors:
@@ -137,7 +172,7 @@ class ReservaAdminForm(forms.ModelForm):
         self.request.session['horaInicio'] = ''
         self.request.session['horaFim'] = ''
 
-    def initializeDateField(self):
+    def init_date_field(self):
         # See if there's a initial value
         try:
             self.fields['data'].initial = self.request.session['data']
