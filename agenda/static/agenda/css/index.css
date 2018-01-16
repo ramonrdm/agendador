@@ -1,5 +1,5 @@
 #index {
-	overflow-x: hidden;	
+	overflow-x: hidden;
 }
 
 #unidade {
@@ -53,4 +53,8 @@
 	margin-top: -20px;
 	color: #F44336;
 	font-size: 75%;
+}
+
+.month {
+	text-align: center;
 }

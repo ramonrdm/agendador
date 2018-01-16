@@ -67,7 +67,7 @@
                     </a>
                 </div>
                 <div class="card-action">
-                    <a class="black-text" href="{% url 'Reservas-UFSC' subUnidade.sigla %}">{{subUnidade.sigla}}</a>            
+                    <a class="black-text" href="{% url 'Reservas-UFSC' subUnidade.sigla %}">{{subUnidade.sigla}}</a>
                 </div>
             </div>
         {% endfor %}
@@ -100,7 +100,7 @@
                     {% for year, months in years %}
                     <div id="year{{ forloop.counter }}Espaco" class="row">
                         {% for month in months %}
-                            <div class="collection col l2 m4 s6">
+                            <div class="collection col l2 m4 s6 month">
                                 <a class="collection-header"><b>{{ month.name }}</b></a>
                                 {% for espaco in espacosfisicos %}
                                     <a  class="collection-item" href="{% url 'mes' 'f' espaco.id year month.n %}">{{ espaco.nome }}</a>
@@ -142,7 +142,7 @@
                     {% for year, months in years %}
                     <div id="year{{ forloop.counter }}Equipamento" class="row">
                         {% for month in months %}
-                            <div class="collection col l2 m4 s6">
+                            <div class="collection col l2 m4 s6 month">
                                 <a class="collection-header"><b>{{ month.name }}</b></a>
                                 {% for equipamento in equipamentos %}
                                     <a  class="collection-item" href="{% url 'mes' 'e' equipamento.id year month.n %}">{{ equipamento.nome }}</a>
