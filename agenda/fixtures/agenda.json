@@ -1,0 +1,678 @@
+[
+{
+  "model": "agenda.unidade",
+  "pk": 1,
+  "fields": {
+    "sigla": "UFSC",
+    "nome": "ufsc",
+    "unidadePai": null,
+    "descricao": "universidade",
+    "logoLink": "http://identidade.ufsc.br/wp-content/themes/brasilGovInterno/img/brasao_site_ufsc.svg?ver=1493729238",
+    "grupos": [],
+    "responsavel": [
+      1
+    ]
+  }
+},
+{
+  "model": "agenda.unidade",
+  "pk": 2,
+  "fields": {
+    "sigla": "CCE",
+    "nome": "Centro de Comunica\u00e7\u00e3o e Express\u00e3o",
+    "unidadePai": 1,
+    "descricao": "1234",
+    "logoLink": "http://www.cce.ufsc.br/files/2011/03/marca_colorida-2.jpg",
+    "grupos": [],
+    "responsavel": [
+      1,
+      3
+    ]
+  }
+},
+{
+  "model": "agenda.unidade",
+  "pk": 3,
+  "fields": {
+    "sigla": "CFM",
+    "nome": "Centro de ci\u00eancias f\u00edsicas e matem\u00e1ticas",
+    "unidadePai": 1,
+    "descricao": "Centro de ci\u00eancias f\u00edsicas e matem\u00e1ticas",
+    "logoLink": "http://cfm.ufsc.br/files/2012/12/cropped-cropped-CFM11.jpg",
+    "grupos": [],
+    "responsavel": [
+      1
+    ]
+  }
+},
+{
+  "model": "agenda.unidade",
+  "pk": 4,
+  "fields": {
+    "sigla": "CCS",
+    "nome": "Centro de ci\u00eancias da sa\u00fade",
+    "unidadePai": 1,
+    "descricao": "Centro de ci\u00eancias da sa\u00fade",
+    "logoLink": "https://odoesc.files.wordpress.com/2010/10/logo-ccs-ufsc.png",
+    "grupos": [],
+    "responsavel": [
+      1,
+      3
+    ]
+  }
+},
+{
+  "model": "agenda.unidade",
+  "pk": 5,
+  "fields": {
+    "sigla": "VideoconferenciaCCE",
+    "nome": "Video conferencia do CCE",
+    "unidadePai": 2,
+    "descricao": "Laborat\u00f3rio que conta com x cadeiras, videoconferencia e duas telas de TV",
+    "logoLink": "http://www.videoconferencia.cce.ufsc.br/images/stories/site/logo-cafofo-search2.png",
+    "grupos": [],
+    "responsavel": [
+      1
+    ]
+  }
+},
+{
+  "model": "agenda.unidade",
+  "pk": 6,
+  "fields": {
+    "sigla": "NALS",
+    "nome": "N\u00facleo de aquisi\u00e7\u00e3o de l\u00edngua de sinais",
+    "unidadePai": 2,
+    "descricao": "N\u00facleo de aquisi\u00e7\u00e3o de l\u00edngua de sinais, localizado no bloco B CCE sala 417",
+    "logoLink": "http://nals.cce.ufsc.br/wp-content/themes/libras2011/images/logoNALS.png",
+    "grupos": [],
+    "responsavel": [
+      1
+    ]
+  }
+},
+{
+  "model": "agenda.unidade",
+  "pk": 7,
+  "fields": {
+    "sigla": "rdm_ramon",
+    "nome": "asdf",
+    "unidadePai": 4,
+    "descricao": "asdf",
+    "logoLink": "",
+    "grupos": [],
+    "responsavel": [
+      1
+    ]
+  }
+},
+{
+  "model": "agenda.unidade",
+  "pk": 8,
+  "fields": {
+    "sigla": "rdm-rdm",
+    "nome": "asdf",
+    "unidadePai": 3,
+    "descricao": "asdf",
+    "logoLink": "",
+    "grupos": [],
+    "responsavel": [
+      1
+    ]
+  }
+},
+{
+  "model": "agenda.unidade",
+  "pk": 9,
+  "fields": {
+    "sigla": "teste",
+    "nome": "teste",
+    "unidadePai": 1,
+    "descricao": "teste",
+    "logoLink": "",
+    "grupos": [],
+    "responsavel": [
+      1,
+      4
+    ]
+  }
+},
+{
+  "model": "agenda.unidade",
+  "pk": 10,
+  "fields": {
+    "sigla": "uni-dade-asd",
+    "nome": "asdf",
+    "unidadePai": 3,
+    "descricao": "asdf",
+    "logoLink": "",
+    "grupos": [],
+    "responsavel": [
+      4
+    ]
+  }
+},
+{
+  "model": "agenda.unidade",
+  "pk": 11,
+  "fields": {
+    "sigla": "testegrupos",
+    "nome": "asdf",
+    "unidadePai": 1,
+    "descricao": "asdf",
+    "logoLink": "",
+    "grupos": [
+      1,
+      3
+    ],
+    "responsavel": [
+      1
+    ]
+  }
+},
+{
+  "model": "agenda.atividade",
+  "pk": 1,
+  "fields": {
+    "nome": "Aula",
+    "descricao": "Uma aula normal"
+  }
+},
+{
+  "model": "agenda.atividade",
+  "pk": 2,
+  "fields": {
+    "nome": "Palestra",
+    "descricao": "Palestra"
+  }
+},
+{
+  "model": "agenda.atividade",
+  "pk": 3,
+  "fields": {
+    "nome": "Aula Pr\u00e1tica",
+    "descricao": "Aula pr\u00e1tica que requer espa\u00e7o diferenciado ou laborat\u00f3rio"
+  }
+},
+{
+  "model": "agenda.atividade",
+  "pk": 4,
+  "fields": {
+    "nome": "Defesa de monografia",
+    "descricao": "Defesa de monografia"
+  }
+},
+{
+  "model": "agenda.atividade",
+  "pk": 5,
+  "fields": {
+    "nome": "Defesa Tese",
+    "descricao": "Defesa Tese"
+  }
+},
+{
+  "model": "agenda.atividade",
+  "pk": 6,
+  "fields": {
+    "nome": "Defesa disserta\u00e7\u00e3o",
+    "descricao": "Defesa disserta\u00e7\u00e3o"
+  }
+},
+{
+  "model": "agenda.atividade",
+  "pk": 7,
+  "fields": {
+    "nome": "Reuni\u00e3o",
+    "descricao": "Reuni\u00e3o"
+  }
+},
+{
+  "model": "agenda.atividade",
+  "pk": 14,
+  "fields": {
+    "nome": "dummy",
+    "descricao": "dummy"
+  }
+},
+{
+  "model": "agenda.atividade",
+  "pk": 16,
+  "fields": {
+    "nome": "dummy",
+    "descricao": "dummy"
+  }
+},
+{
+  "model": "agenda.espacofisico",
+  "pk": 1,
+  "fields": {
+    "nome": "Audit\u00f3rio CCS",
+    "descricao": "Audit\u00f3rio gradua\u00e7\u00e3o CCS",
+    "unidade": 4,
+    "bloqueado": false,
+    "invisivel": false,
+    "localizacao": "bloco B",
+    "fotoLink": "",
+    "capacidade": 150,
+    "responsavel": [
+      3
+    ],
+    "grupos": [],
+    "atividadesPermitidas": [
+      2,
+      4,
+      5,
+      6
+    ]
+  }
+},
+{
+  "model": "agenda.espacofisico",
+  "pk": 2,
+  "fields": {
+    "nome": "Estudio01",
+    "descricao": "Est\u00fadio de filmagens da video conferencia 01",
+    "unidade": 5,
+    "bloqueado": false,
+    "invisivel": false,
+    "localizacao": "CCE bloco B 007",
+    "fotoLink": "",
+    "capacidade": 15,
+    "responsavel": [
+      1
+    ],
+    "grupos": [],
+    "atividadesPermitidas": [
+      1,
+      2,
+      4,
+      5,
+      6
+    ]
+  }
+},
+{
+  "model": "agenda.espacofisico",
+  "pk": 3,
+  "fields": {
+    "nome": "Estudio02",
+    "descricao": "Estudio02",
+    "unidade": 5,
+    "bloqueado": false,
+    "invisivel": false,
+    "localizacao": "CCE B 007",
+    "fotoLink": "http://www.videoconferencia.cce.ufsc.br/images/stories/site/logo-cafofo-search2.png",
+    "capacidade": 15,
+    "responsavel": [
+      1
+    ],
+    "grupos": [],
+    "atividadesPermitidas": [
+      1,
+      2
+    ]
+  }
+},
+{
+  "model": "agenda.espacofisico",
+  "pk": 4,
+  "fields": {
+    "nome": "salaReuni\u00e3o",
+    "descricao": "Sala de reuni\u00f5es NALS",
+    "unidade": 6,
+    "bloqueado": false,
+    "invisivel": false,
+    "localizacao": "nals cce",
+    "fotoLink": "http://nals.cce.ufsc.br/wp-content/themes/libras2011/images/logoNALS.png",
+    "capacidade": 12,
+    "responsavel": [
+      1
+    ],
+    "grupos": [],
+    "atividadesPermitidas": [
+      7
+    ]
+  }
+},
+{
+  "model": "agenda.equipamento",
+  "pk": 1,
+  "fields": {
+    "nome": "Notebook ACer",
+    "descricao": "Um notebook Acer com processador core i5, 4 GB de Ram, tela de 14\".",
+    "unidade": 6,
+    "bloqueado": false,
+    "invisivel": false,
+    "localizacao": "NALS",
+    "fotoLink": "https://i5.walmartimages.ca/images/Enlarge/681/1_1/999999-888863126811_1.jpg",
+    "patrimonio": 1234,
+    "responsavel": [
+      1
+    ],
+    "grupos": [],
+    "atividadesPermitidas": []
+  }
+},
+{
+  "model": "agenda.equipamento",
+  "pk": 2,
+  "fields": {
+    "nome": "C\u00e2mera de v\u00eddeo JVC",
+    "descricao": "Camera de filmagem JVC, 12 mega pixel, 120 GB de disco interno",
+    "unidade": 5,
+    "bloqueado": false,
+    "invisivel": false,
+    "localizacao": "Video conferencia CCE",
+    "fotoLink": "https://http2.mlstatic.com/filmadora-jvc-everio-gz-mg680bub-hdd-120gb-e-micro-sd-D_NQ_NP_950011-MLB20448463979_102015-F.jpg",
+    "patrimonio": 99999,
+    "responsavel": [
+      1
+    ],
+    "grupos": [],
+    "atividadesPermitidas": []
+  }
+},
+{
+  "model": "agenda.equipamento",
+  "pk": 3,
+  "fields": {
+    "nome": "Totem madeira",
+    "descricao": "Totem indicativo de madeira",
+    "unidade": 2,
+    "bloqueado": false,
+    "invisivel": false,
+    "localizacao": "Dire\u00e7\u00e3o CCE",
+    "fotoLink": "http://www.oficinadesinalizacao.com.br/site/wp-content/gallery/sinalizacao-secundaria/totem-indicativo.jpg",
+    "patrimonio": 0,
+    "responsavel": [
+      1
+    ],
+    "grupos": [],
+    "atividadesPermitidas": [
+      1,
+      3,
+      7
+    ]
+  }
+},
+{
+  "model": "agenda.equipamento",
+  "pk": 4,
+  "fields": {
+    "nome": "rdm-ramon",
+    "descricao": "asdf",
+    "unidade": 4,
+    "bloqueado": false,
+    "invisivel": false,
+    "localizacao": "adsf",
+    "fotoLink": "",
+    "patrimonio": 122,
+    "responsavel": [
+      1
+    ],
+    "grupos": [],
+    "atividadesPermitidas": []
+  }
+},
+{
+  "model": "agenda.equipamento",
+  "pk": 5,
+  "fields": {
+    "nome": "invisivel",
+    "descricao": "asdfdsf",
+    "unidade": 2,
+    "bloqueado": true,
+    "invisivel": false,
+    "localizacao": "teste",
+    "fotoLink": "",
+    "patrimonio": 3214,
+    "responsavel": [
+      3
+    ],
+    "grupos": [],
+    "atividadesPermitidas": [
+      1
+    ]
+  }
+},
+{
+  "model": "agenda.reservaespacofisico",
+  "pk": 1,
+  "fields": {
+    "estado": "E",
+    "data": "2017-12-14",
+    "horaInicio": "07:30:00",
+    "horaFim": "08:20:00",
+    "dataReserva": "2017-12-13T15:51:59.974",
+    "atividade": 4,
+    "usuario": 3,
+    "ramal": 1234,
+    "finalidade": "1234",
+    "locavel": 1
+  }
+},
+{
+  "model": "agenda.reservaespacofisico",
+  "pk": 2,
+  "fields": {
+    "estado": "E",
+    "data": "2017-12-14",
+    "horaInicio": "07:30:00",
+    "horaFim": "11:00:00",
+    "dataReserva": "2017-12-13T17:41:27.947",
+    "atividade": 1,
+    "usuario": 4,
+    "ramal": 1234,
+    "finalidade": "1234",
+    "locavel": 3
+  }
+},
+{
+  "model": "agenda.reservaespacofisico",
+  "pk": 3,
+  "fields": {
+    "estado": "E",
+    "data": "2017-12-14",
+    "horaInicio": "07:30:00",
+    "horaFim": "07:30:00",
+    "dataReserva": "2017-12-13T19:34:28.957",
+    "atividade": 1,
+    "usuario": 4,
+    "ramal": 1234,
+    "finalidade": "1324",
+    "locavel": 2
+  }
+},
+{
+  "model": "agenda.reservaespacofisico",
+  "pk": 4,
+  "fields": {
+    "estado": "E",
+    "data": "2017-12-23",
+    "horaInicio": "07:30:00",
+    "horaFim": "08:20:00",
+    "dataReserva": "2017-12-22T14:52:41.181",
+    "atividade": 2,
+    "usuario": 4,
+    "ramal": 1324,
+    "finalidade": "1324",
+    "locavel": 1
+  }
+},
+{
+  "model": "agenda.reservaespacofisico",
+  "pk": 5,
+  "fields": {
+    "estado": "E",
+    "data": "2017-12-23",
+    "horaInicio": "15:10:00",
+    "horaFim": "15:10:00",
+    "dataReserva": "2017-12-22T15:10:23.810",
+    "atividade": 1,
+    "usuario": 4,
+    "ramal": 1234,
+    "finalidade": "124",
+    "locavel": 2
+  }
+},
+{
+  "model": "agenda.reservaespacofisico",
+  "pk": 8,
+  "fields": {
+    "estado": "A",
+    "data": "2018-01-15",
+    "horaInicio": "07:30:00",
+    "horaFim": "09:10:00",
+    "dataReserva": "2018-01-15T17:10:22.642",
+    "atividade": 1,
+    "usuario": 1,
+    "ramal": 1234,
+    "finalidade": "134",
+    "locavel": 2
+  }
+},
+{
+  "model": "agenda.reservaequipamento",
+  "pk": 1,
+  "fields": {
+    "estado": "E",
+    "data": "2017-11-25",
+    "horaInicio": "22:44:00",
+    "horaFim": "23:44:00",
+    "dataReserva": "2017-11-24T21:45:13.012",
+    "atividade": 1,
+    "usuario": 1,
+    "ramal": 134,
+    "finalidade": "1234",
+    "locavel": 1
+  }
+},
+{
+  "model": "agenda.reservaequipamento",
+  "pk": 2,
+  "fields": {
+    "estado": "E",
+    "data": "2017-12-01",
+    "horaInicio": "07:30:00",
+    "horaFim": "11:50:00",
+    "dataReserva": "2017-11-28T17:43:35.696",
+    "atividade": 1,
+    "usuario": 1,
+    "ramal": 1234,
+    "finalidade": "teste",
+    "locavel": 1
+  }
+},
+{
+  "model": "agenda.reservaequipamento",
+  "pk": 3,
+  "fields": {
+    "estado": "E",
+    "data": "2017-11-29",
+    "horaInicio": "07:30:00",
+    "horaFim": "08:20:00",
+    "dataReserva": "2017-11-28T21:15:13.331",
+    "atividade": 1,
+    "usuario": 4,
+    "ramal": 1324,
+    "finalidade": "Uma apresenta\u00e7\u00e3o de poster",
+    "locavel": 3
+  }
+},
+{
+  "model": "agenda.reservaequipamento",
+  "pk": 4,
+  "fields": {
+    "estado": "E",
+    "data": "2017-11-30",
+    "horaInicio": "07:30:00",
+    "horaFim": "08:20:00",
+    "dataReserva": "2017-11-28T21:43:39.515",
+    "atividade": 1,
+    "usuario": 4,
+    "ramal": 1234,
+    "finalidade": "1324",
+    "locavel": 3
+  }
+},
+{
+  "model": "agenda.reservaequipamento",
+  "pk": 5,
+  "fields": {
+    "estado": "E",
+    "data": "2017-12-14",
+    "horaInicio": "07:30:00",
+    "horaFim": "11:50:00",
+    "dataReserva": "2017-12-13T15:58:29.099",
+    "atividade": 3,
+    "usuario": 1,
+    "ramal": 321,
+    "finalidade": "321321",
+    "locavel": 3
+  }
+},
+{
+  "model": "agenda.reservaequipamento",
+  "pk": 6,
+  "fields": {
+    "estado": "E",
+    "data": "2017-12-14",
+    "horaInicio": "07:30:00",
+    "horaFim": "10:10:00",
+    "dataReserva": "2017-12-13T17:02:24.913",
+    "atividade": 1,
+    "usuario": 1,
+    "ramal": 1324,
+    "finalidade": "1324",
+    "locavel": 5
+  }
+},
+{
+  "model": "agenda.reservaequipamento",
+  "pk": 7,
+  "fields": {
+    "estado": "E",
+    "data": "2017-12-14",
+    "horaInicio": "13:30:00",
+    "horaFim": "14:20:00",
+    "dataReserva": "2017-12-13T17:05:14.257",
+    "atividade": 1,
+    "usuario": 4,
+    "ramal": 1234,
+    "finalidade": "1324",
+    "locavel": 5
+  }
+},
+{
+  "model": "agenda.reservaequipamento",
+  "pk": 9,
+  "fields": {
+    "estado": "E",
+    "data": "2017-12-14",
+    "horaInicio": "14:20:00",
+    "horaFim": "17:10:00",
+    "dataReserva": "2017-12-13T19:38:13.233",
+    "atividade": 1,
+    "usuario": 4,
+    "ramal": 1234,
+    "finalidade": "321",
+    "locavel": 3
+  }
+},
+{
+  "model": "agenda.reservaequipamento",
+  "pk": 15,
+  "fields": {
+    "estado": "E",
+    "data": "2017-12-28",
+    "horaInicio": "07:30:00",
+    "horaFim": "08:20:00",
+    "dataReserva": "2017-12-27T17:13:24.420",
+    "atividade": 1,
+    "usuario": 4,
+    "ramal": 1234,
+    "finalidade": "1324",
+    "locavel": 3
+  }
+}
+]
