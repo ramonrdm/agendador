@@ -8,3 +8,33 @@
     <script src="{% static 'agenda/fullcalendar/fullcalendar.js' %}"></script>
 
 {% endblock %}
+
+<!-- bloco sidenav_items sobrescrito do arquivo /material/frontend/templates/material/frontend/base.html -->
+{% block sidenav_items %}
+    {% for module in modules %}
+        <!-- o link agenda tava aplicando o efeito de collapsible para os outros itens do menu -->
+        {% if request.path == "/agenda/" %}
+            <li {% if current_module == module %} class="active" {%endif%}>
+                <ul class="collapsible collapsible-accordion">
+                    <li>
+                        <a href="{{ module.index_url }}" class="collapsible-header active">{{ module.verbose_name }}{{ module.icon|safe }}</a>
+                            <div class="collapsible-body" style="display:block">
+                                    {% include module.menu %}
+                            </div>
+                    </li>
+                </ul>
+            </li>
+        {% else %}
+            <li {% if current_module == module %} class="active" {%endif%}>
+                <ul class="">
+                    <li>
+                        <a href="{{ module.index_url }}" class="collapsible-header active">{{ module.verbose_name }}{{ module.icon|safe }}</a>
+                            <div class="collapsible-body" style="display:block">
+                                    {% include module.menu %}
+                            </div>
+                    </li>
+                </ul>
+            </li>
+        {% endif %}
+    {% endfor %}
+{% endblock sidenav_items %}
