@@ -20,26 +20,28 @@ Agendador de espaço físico
 Reponsavel Ramon Dutra Miranda
 
 Executando o projeto localmente:
-+ Instale a virtualenv, execute
-    $ pip install virtualenv
-+ Crie uma localenv..
++ Instale a virtualenv, execute:
 ```
-    $ mkdir my_project_env ..
-    $ cd my_project_env ..
-    $ virtualenv -p /usr/bin/python2.7 my_project ..
-    $ source my_project/bin/activate $ ..
-    $ cd my_project ..
+    $ pip install virtualenv
+```
++ Crie uma localenv
+```
+    $ mkdir my_project_env
+    $ cd my_project_env
+    $ virtualenv -p /usr/bin/python2.7 my_project
+    $ source my_project/bin/activate
+    $ cd my_project
 ```
 + se não conseguir criar a virtualenv: http://docs.python-guide.org/en/latest/dev/virtualenvs/
-+ Criada a virtualenv, execute: ..
++ Criada a virtualenv, execute:
 ```
     $ pip install django==1.10.xx
 ```
-+ Faça o download do projeto executando: ..
++ Faça o download do projeto executando:
 ```
     $ git clone -b develop https://github.com/ramonrdm/agendador
 ```
-+ Execute: ..
++ Execute:
 ```
     $ cd agendador
 ```
@@ -48,8 +50,8 @@ Executando o projeto localmente:
     $ python manage.py makemigrations
     $ python manage.py migrate
 ```
-+ Por fim, execute: ..
++ Por fim, execute:
 ```
-    $ python manage.py loaddata auth.json ..
+    $ python manage.py loaddata auth.json
     $ python manage.py loaddata agenda.json
 ```
