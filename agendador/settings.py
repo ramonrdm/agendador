@@ -130,7 +130,7 @@ EMAIL_HOST_USER="reservas.ccs@sistemas.ufsc.br"
 EMAIL_HOST_PASSWORD=""
 EMAIL_USE_SSL=True
 
-#Sessao agendador 
+#Sessao agendador
 SESSION_COOKIE_AGE = 43200 # 12 horas * 60 minutos * 60 segundos
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SAVE_EVERY_REQUEST = True
