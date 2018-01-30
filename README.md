@@ -35,7 +35,7 @@ Executando o projeto localmente:
 + se não conseguir criar a virtualenv: http://docs.python-guide.org/en/latest/dev/virtualenvs/
 + Criada a virtualenv, execute:
 ```
-    $ pip install django==1.10.xx
+    $ pip install django==1.10.01
 ```
 + Faça o download do projeto executando:
 ```
