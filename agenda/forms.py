@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from agenda.models import Reserva, EspacoFisico, ReservaEspacoFisico, ReservaEquipamento, Equipamento, Atividade
+from django.conf import settings
 from django import forms
 from django.contrib.admin import widgets
 import datetime
@@ -180,7 +181,7 @@ class ReservaAdminForm(forms.ModelForm):
             pass
         self.request.session['data'] = ''
 
-    def sendMail(self, status, instance):
+    def send_mail(self, status, instance):
         user = instance.usuario
         status = instance.estado
         reservable = instance.locavel
@@ -216,7 +217,7 @@ class ReservaAdminForm(forms.ModelForm):
                 -------
                 E-mail automático, por favor não responda.
             ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), start.strftime('%H:%M'), end.strftime('%H:%M'))
-        #send_mail(email_title, email_text, 'reservas.ccs@sistemas.ufsc.br', [user.email])
+        send_mail(email_title, email_text, settings.EMAIL_HOST_USER, [user.email])
 
         # If the user doesn't have permission we need to send a e-mail to the reservable responsable
         if status == 'E':
@@ -226,17 +227,20 @@ class ReservaAdminForm(forms.ModelForm):
             elif isinstance(reservable, Equipamento):
                 reserve_type = 'reservaequipamento'
 
+            base_url = self.request.build_absolute_uri('/')
+            url = "%sadmin/agenda/%s/%d/change/" % (base_url, reserve_type, instance.id)
+
             for responsable in responsables:
                 email_title = 'Pedido de reserva de %s' % reservable.nome.encode("utf-8")
                 email_text = '''
                     Olá, %s,
                     %s fez um pedido de reserva em %s, para o dia %s, das %s às %s. Use o link abaixo para analisar o pedido.
-                    http://127.0.0.1:8000/admin/agenda/%s/%d/change/
+                    %s
 
                     -------
                     E-mail automático, por favor não responda.
-                ''' % (responsable, user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), start.strftime('%H:%M'), end.strftime('%H:%M'), reserve_type, instance.id)
-                #send_mail(email_title, email_text, 'reservas.ccs@sistemas.ufsc.br', [responsable.email])
+                ''' % (responsable, user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), start.strftime('%H:%M'), end.strftime('%H:%M'), url)
+                send_mail(email_title, email_text, settings.EMAIL_HOST_USER, [responsable.email])
 
     def save(self, *args, **kwargs):
         user_query = kwargs.pop('query', None)
@@ -250,7 +254,7 @@ class ReservaAdminForm(forms.ModelForm):
             status = 'A'
         instance.estado = status
         instance.save()
-        self.sendMail(status, instance)
+        self.send_mail(status, instance)
         return instance
 
 class ReservaEquipamentoAdminForm(ReservaAdminForm):
