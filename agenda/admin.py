@@ -59,7 +59,7 @@ class UnidadeAdmin(admin.ModelAdmin):
         return []
 
 class ReservaAdmin(admin.ModelAdmin):
-    list_display = ('usuario', 'locavel', 'data', 'ramal', 'finalidade')
+    list_display = ('usuario', 'locavel', 'data', 'ramal', 'finalidade', 'estado')
     search_fields = ['finalidade', 'usuario__username']
 
     def get_queryset(self, request, reserveModel, reservableModel):

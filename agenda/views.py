@@ -145,9 +145,9 @@ def mes(request, tipo=None, espaco=None, year=None, month=None, change=None):
         entries = current = False
         if day:
             if tipo=="e":
-                entries = ReservaEquipamento.objects.filter(data__year=year, data__month=month, data__day=day, locavel=espaco)
+                entries = ReservaEquipamento.objects.filter(data__year=year, data__month=month, data__day=day, locavel=espaco, estado="A")
             else:
-                entries = ReservaEspacoFisico.objects.filter(data__year=year, data__month=month, data__day=day, locavel=espaco)
+                entries = ReservaEspacoFisico.objects.filter(data__year=year, data__month=month, data__day=day, locavel=espaco, estado="A")
 
         if day == nday and year == nyear and month == nmonth:
             current = True
