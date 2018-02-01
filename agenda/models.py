@@ -115,7 +115,7 @@ class Reserva(models.Model):
             errors['locavel'] = error
 
     def verificaChoque(self, errors):
-        reservas = type(self).objects.filter(locavel=self.locavel, data=self.data).exclude(id=self.id)
+        reservas = type(self).objects.filter(locavel=self.locavel, data=self.data, estado="A").exclude(id=self.id)
         for r in reservas:
             if  (
                 (self.horaFim  > r.horaInicio and self.horaFim < r.horaFim) or 
