@@ -201,12 +201,6 @@ class LocavelAdmin(admin.ModelAdmin):
 
 class EquipamentoAdmin(LocavelAdmin):
 
-    def get_readonly_fields(self, request, obj=None):
-        if request.user.is_superuser:
-            return []
-        else:
-            return ['get_responsavel', 'unidade']
-
     def get_queryset(self, request):
         groups = request.user.groups.all()
         group_reservables = Equipamento.objects.none()
@@ -224,12 +218,5 @@ class EspacoFisicoAdmin(LocavelAdmin):
         for group in groups:
             group_reservables = group_reservables | group.espacofisico_set.all()
         return super(EspacoFisicoAdmin, self).get_queryset(request, EspacoFisico, group_reservables)
-
-    def get_readonly_fields(self, request, obj=None):
-        if request.user.is_superuser:
-            return []
-        if obj in qsResp:
-            return ['get_responsavel', 'unidade']
-        return []
 
 admin.site.register(EspacoFisico, EspacoFisicoAdmin)
