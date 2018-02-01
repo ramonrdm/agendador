@@ -81,7 +81,8 @@ class ReservaAdmin(admin.ModelAdmin):
         #Check if reservable responsible
         reservable_responsible = reservableModel.objects.filter(responsavel=request.user)
         if reservable_responsible:
-            reserves = reserves | reserveModel.objects.filter(locavel=reservable_responsible)
+            for reservable in reservable_responsible:
+                reserves = reserves | reserveModel.objects.filter(locavel=reservable)
 
         #Add own reserves
         reserves = reserves | reserveModel.objects.filter(usuario=request.user)

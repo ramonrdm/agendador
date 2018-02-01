@@ -76,7 +76,8 @@ class Reserva(models.Model):
     def clean(self):
         errors = {}
         try:
-            self.verificaChoque(errors)
+            if self.estado!='D':
+                self.verificaChoque(errors)
             self.verificaBloqueado(errors)
             self.verificaCoerencia(errors)
         except:

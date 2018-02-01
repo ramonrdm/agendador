@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from agenda.models import *
+from django.contrib import messages
 from django.conf import settings
 from django import forms
 from django.contrib.admin import widgets
@@ -220,7 +221,7 @@ class ReservaAdminForm(forms.ModelForm):
         try:
             send_mail(email_title, email_text, settings.EMAIL_HOST_USER, [user.email])
         except:
-            pass
+            messages.error(self.request, 'E-mail não enviado para solicitante.')
 
         # If the user doesn't have permission we need to send a e-mail to the reservable responsable
         if status == 'E':
@@ -246,7 +247,7 @@ class ReservaAdminForm(forms.ModelForm):
                 try:
                     send_mail(email_title, email_text, settings.EMAIL_HOST_USER, [responsable.email])
                 except:
-                    pass
+                    messages.error(self.request, 'E-mail não enviado para responsável')
 
     def save(self, *args, **kwargs):
         user_query = kwargs.pop('query', None)
