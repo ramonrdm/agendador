@@ -1,6 +1,18 @@
 {% extends "agenda/base_module.html" %}
 {% load i18n material_frontend %}
+{% load static %}
 {% block title %}Agendador - Sobre{% endblock %}
+{% block js %}
+    <script src="{% static 'material/js/jquery.js' %}"></script>
+    <script src="{% static 'material/js/materialize.js' %}"></script>
+    <script>
+        $(document).ready(function(){
+            $(".button-collapse").sideNav();
+            $('.modal').modal();
+        });
+    </script>
+{% endblock %}
+
 
 {% block content %}
 <div class="row">
