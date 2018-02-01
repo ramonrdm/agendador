@@ -10,7 +10,16 @@ admin.site.register(Atividade)
 @admin.register(Unidade)
 class UnidadeAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">account_balance</i>'
+    form = forms.UnidadeAdminForm
 
+    def get_form(self, request, obj=None, **kwargs):
+        AdminForm =  super(UnidadeAdmin, self).get_form(request, obj, **kwargs)
+        class AdminFormWithRequest(AdminForm):
+            def __new__(cls, *args, **kwargs):
+                kwargs['request'] = request
+                return AdminForm(*args, **kwargs)
+
+        return AdminFormWithRequest
 
     def search_children(self, units, unit):
         children = Unidade.objects.filter(unidadePai=unit)
@@ -201,12 +210,6 @@ class LocavelAdmin(admin.ModelAdmin):
 
 class EquipamentoAdmin(LocavelAdmin):
 
-    def get_readonly_fields(self, request, obj=None):
-        if request.user.is_superuser:
-            return []
-        else:
-            return ['get_responsavel', 'unidade']
-
     def get_queryset(self, request):
         groups = request.user.groups.all()
         group_reservables = Equipamento.objects.none()
@@ -224,12 +227,5 @@ class EspacoFisicoAdmin(LocavelAdmin):
         for group in groups:
             group_reservables = group_reservables | group.espacofisico_set.all()
         return super(EspacoFisicoAdmin, self).get_queryset(request, EspacoFisico, group_reservables)
-
-    def get_readonly_fields(self, request, obj=None):
-        if request.user.is_superuser:
-            return []
-        if obj in qsResp:
-            return ['get_responsavel', 'unidade']
-        return []
 
 admin.site.register(EspacoFisico, EspacoFisicoAdmin)

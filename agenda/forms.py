@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from agenda.models import Reserva, EspacoFisico, ReservaEspacoFisico, ReservaEquipamento, Equipamento, Atividade
+from agenda.models import *
 from django.conf import settings
 from django import forms
 from django.contrib.admin import widgets
@@ -274,7 +274,6 @@ class ReservaEquipamentoAdminForm(ReservaAdminForm):
         kwargs['query'] = user_query
         return super(ReservaEquipamentoAdminForm, self).save(*args, **kwargs)
 
-
 class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
     class Meta:
         model = ReservaEspacoFisico
@@ -291,6 +290,18 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
         user_query = ma.get_queryset(self.request)
         kwargs['query'] = user_query
         return super(ReservaEspacoFisicoAdminForm, self).save(*args, **kwargs)
+
+class UnidadeAdminForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request')
+        super(UnidadeAdminForm, self).__init__(*args, **kwargs)
+        # get queryset from admin
+        ma = admin.UnidadeAdmin(Unidade, AdminSite())
+        queryset = ma.get_queryset(self.request)
+        # set possible options on the field
+        self.fields['unidadePai'].queryset = queryset
+
 
 class SearchFilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -311,3 +322,4 @@ class SearchFilterForm(forms.Form):
 
     def clean(self):
         cleaned_data = super(SearchFilterForm, self).clean()
+
