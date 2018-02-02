@@ -13,7 +13,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.admin import widgets
 from django.forms.widgets import Select
 from widgets import *
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group, Permission
 from django.db.models.fields.related import ManyToOneRel
 import admin
 
@@ -309,6 +309,35 @@ class UnidadeAdminForm(forms.ModelForm):
         # set possible options on the field
         self.fields['unidadePai'].queryset = queryset
 
+        # get the old responsables for future comparissons
+        try:
+            self.initial_responsables = kwargs['instance'].responsavel
+        # if it's a new form there's no old responsables
+        except:
+            self.initial_responsables = User.objects.none()
+
+    def save(self, *args, **kwargs):
+        new_responsables = self.cleaned_data['responsavel']
+        instance = super(UnidadeAdminForm, self).save(commit=False)
+        instance.save()
+
+        group = Group.objects.get_or_create(name='responsables')[0]
+        # Add new responsables to group
+        for user in new_responsables:
+            user.is_staff = True
+            user.save()
+            group.user_set.add(user)
+
+        for old_responsable in self.initial_responsables.all():
+            # Check if user removed from responsable.
+            if old_responsable not in new_responsables.all():
+                # check if it has other permissions, aside for the one being remove. if not remove from group
+                user_units = old_responsable.unidade_set.exclude(id=instance.id)
+                if not user_units:
+                    group.user_set.remove(old_responsable)
+                    old_responsable.is_staff = False
+                    old_responsable.save()
+        return instance
 
 class SearchFilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -329,4 +358,3 @@ class SearchFilterForm(forms.Form):
 
     def clean(self):
         cleaned_data = super(SearchFilterForm, self).clean()
-
