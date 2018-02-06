@@ -149,4 +149,12 @@ class ReservaEquipamento(Reserva):
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
 
+class ReservaPeriodica(models.Model):
+    estados = (('A','Aprovado'),('D','Desaprovado'),('E','Esperando'))
+    estado = models.CharField(max_length=1, choices=estados, default='E')
+    dataInicio = models.DateField()
+    dataFim = models.DateField()
+    reserve_type = models.TextField(blank=True)
+    reserve_ids = models.TextField(blank=True)
+
 import admin as adm

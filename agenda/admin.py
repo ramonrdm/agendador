@@ -230,3 +230,7 @@ class EspacoFisicoAdmin(LocavelAdmin):
         return super(EspacoFisicoAdmin, self).get_queryset(request, EspacoFisico, group_reservables)
 
 admin.site.register(EspacoFisico, EspacoFisicoAdmin)
+
+class ReservaPeriodicaAdmin(admin.ModelAdmin):
+    pass
+admin.site.register(ReservaPeriodica, ReservaPeriodicaAdmin)
