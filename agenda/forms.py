@@ -339,6 +339,13 @@ class UnidadeAdminForm(forms.ModelForm):
                     old_responsable.save()
         return instance
 
+    def clean(self):
+        cleaned_data = super(UnidadeAdminForm, self).clean()
+        father_unit = cleaned_data['unidadePai']
+        if father_unit==None and not self.request.user.is_superuser:
+            raise ValidationError({'unidadePai': "Escolha uma unidade pai."})
+        return cleaned_data
+
 class SearchFilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         try:
