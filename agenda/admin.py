@@ -210,6 +210,7 @@ class LocavelAdmin(admin.ModelAdmin):
         return reservables
 
 class EquipamentoAdmin(LocavelAdmin):
+    form = forms.EquipamentoAdminForm
 
     def get_queryset(self, request):
         groups = request.user.groups.all()

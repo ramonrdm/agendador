@@ -358,3 +358,27 @@ class SearchFilterForm(forms.Form):
 
     def clean(self):
         cleaned_data = super(SearchFilterForm, self).clean()
+
+class LocavelAdminForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(LocavelAdminForm, self).__init__(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        instance = super(LocavelAdminForm, self).save(commit=False)
+        instance.save()
+
+        return instance
+
+
+class EquipamentoAdminForm(LocavelAdminForm):
+
+    def __init__(self, *args, **kwargs):
+        super(EquipamentoAdminForm, self).__init__(*args, **kwargs)
+        print('he')
+
+    def save(self, *args, **kwargs):
+        instance = super(LocavelAdminForm, self).save(commit=False)
+        instance.save()
+
+        return instance
