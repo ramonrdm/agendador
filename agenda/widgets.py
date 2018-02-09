@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import re
 from django.forms.extras.widgets import SelectDateWidget
-from django.forms.widgets import Widget, Select, MultiWidget
+from django.forms.widgets import Widget, Select, MultiWidget, CheckboxInput
 from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
 from django.contrib.admin import widgets
+from django import forms
 from datetime import datetime
 
 class SelectTimeWidget(Widget):
@@ -71,9 +72,11 @@ class AutocompleteWidget(Widget):
         return render_to_string('agenda/widgets/autocomplete.html', dict(name=name, query=self.query, attrs=self.attrs, initial=initial))
 
 class ReadOnlyWidget(Widget):
-    def __init__(self, search_model=None, attrs=None):
+    def __init__(self, search_model=None, check_box=False, check_box_value=None, attrs=None):
         self.attrs = attrs or {}
         self.search_model = search_model
+        self.check_box = check_box
+        self.check_box_value = check_box_value
 
     class Media():
         css = {
@@ -83,8 +86,17 @@ class ReadOnlyWidget(Widget):
     def render(self, name, value=None, attrs=None):
         model_field = False
         item_id = 0
+        try:
+            value = datetime.strftime(value, '%d/%m/%Y')
+        except:
+            pass
         if self.search_model:
             item_id = value
             value = self.search_model.objects.get(id=value)
             model_field = True
-        return render_to_string('agenda/widgets/read_only.html', dict(name=name, attrs=self.attrs, initial=value, model_field=model_field, item_id = item_id))
+        return render_to_string('agenda/widgets/read_only.html', dict(name=name, attrs=self.attrs, initial=value, model_field=model_field, item_id = item_id, check_box=self.check_box, check_box_value=self.check_box_value))
+
+class RecurrentReserveWidget(CheckboxInput):
+
+    class Media():
+        js = ('agenda/js/recurrent_reserve.js',)

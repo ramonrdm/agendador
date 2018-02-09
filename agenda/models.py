@@ -58,12 +58,34 @@ class EspacoFisico(Locavel):
 class Equipamento(Locavel):
     patrimonio = models.PositiveIntegerField()
 
+
+class ReservaRecorrente(models.Model):
+    dataInicio = models.DateField(blank=True, null=True)
+    dataFim = models.DateField(blank=True, null=True)
+
+    def update_fields(self, new_date):
+        for reserve in self.get_reserves():
+            if self.dataInicio > new_date:
+                self.dataInicio = new_date
+            elif self.dataFim < new_date:
+                self.dataFim = new_date
+
+        self.save()
+
+    def get_reserves(self):
+        try:
+            query = self.reservaespacofisico_set.all()
+        except:
+            query = self.reservaequipament_set.all()
+        return query
+
 class Reserva(models.Model):
     class Meta:
         abstract = True
     
     estados = (('A','Aprovado'),('D','Desaprovado'),('E','Esperando'))
     estado = models.CharField(max_length=1, choices=estados, default='E')
+    recorrencia = models.ForeignKey(ReservaRecorrente, blank=True, null=True, default=None)
     data = models.DateField()
     horaInicio = models.TimeField()
     horaFim = models.TimeField()
@@ -115,8 +137,15 @@ class Reserva(models.Model):
             error = " Locavel " + self.locavel.nome + ' bloqueado.'
             errors['locavel'] = error
 
-    def verificaChoque(self, errors):
+    # Ignore variables is for recurrent test, there's no need to check self conflict
+    def verificaChoque(self, errors, ignore=[]):
         reservas = type(self).objects.filter(locavel=self.locavel, data=self.data, estado="A").exclude(id=self.id)
+        for reserve in ignore:
+            try:
+                reservas = reservas.exclude(id=reserve.id)
+            except:
+                pass  # if we can't exclude from the query it means it's already not there
+
         for r in reservas:
             if  (
                 (self.horaFim  > r.horaInicio and self.horaFim < r.horaFim) or 
@@ -148,13 +177,5 @@ class ReservaEquipamento(Reserva):
 
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
-
-class ReservaPeriodica(models.Model):
-    estados = (('A','Aprovado'),('D','Desaprovado'),('E','Esperando'))
-    estado = models.CharField(max_length=1, choices=estados, default='E')
-    dataInicio = models.DateField()
-    dataFim = models.DateField()
-    reserve_type = models.TextField(blank=True)
-    reserve_ids = models.TextField(blank=True)
 
 import admin as adm

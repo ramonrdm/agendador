@@ -6,6 +6,7 @@ from django.conf import settings
 from django import forms
 from django.contrib.admin import widgets
 import datetime
+from datetime import timedelta
 from django.core.mail import send_mail
 from django.forms import ModelForm, Form, HiddenInput, models, fields
 from django.contrib.admin.sites import AdminSite
@@ -17,7 +18,13 @@ from django.contrib.auth.models import User, Group, Permission
 from django.db.models.fields.related import ManyToOneRel
 import admin
 
+translated_week_names = dict(Sunday='domingo', Monday='segunda-feira', Tuesday='terça-feira', Wednesday='quarta-feira', Thursday='quinta-feira', Friday='sexta-feira', Saturday='sábado')
+
 class ReservaAdminForm(forms.ModelForm):
+    recorrente = forms.BooleanField(required=False)
+    dataInicio = forms.DateField(required=False)
+    dataFim = forms.DateField(required=False)
+
     class Meta:
         model = Reserva
         fields = '__all__'
@@ -26,13 +33,17 @@ class ReservaAdminForm(forms.ModelForm):
         self.request = kwargs.pop("request", None)
         self.admin_type = kwargs.pop('admin_type', None)
         self.reservable_type = kwargs.pop('reservable_type', None)
+        self.reserve_type = kwargs.pop('reserve_type', None)
         super(ReservaAdminForm, self).__init__(*args, **kwargs)
+        self.is_new_object = True  # start assuming the form is to create a new object in the db
 
         # If the user is trying to edit a reserve for a reservable not being responsable for it, he can only read
         # If the user is creating a new reserve or trying to edit a form he has permission, he can change the fields accordingly
         readOnly = False
         if 'instance' in kwargs:
             if kwargs['instance']:
+                self.is_new_object = False  # the form is to edit an existing object
+                self.instance = kwargs['instance']
                 reservable = kwargs['instance'].locavel
                 if self.request.user not in reservable.responsavel.all():
                     readOnly = True
@@ -46,6 +57,22 @@ class ReservaAdminForm(forms.ModelForm):
             self.init_reservable_field(kwargs)
             self.init_activity_field()
             self.init_user_field()
+            self.init_recurrent_field(kwargs)
+
+    def init_recurrent_field(self, kwargs):
+        self.fields['recorrente'].widget = RecurrentReserveWidget()
+        if self.is_new_object:
+            self.fields['dataInicio'].widget = forms.HiddenInput()
+            self.fields['dataInicio'].label = ''
+        elif kwargs['instance'].recorrencia:
+            instance = kwargs['instance']
+            self.fields['dataInicio'].initial = instance.recorrencia.dataInicio
+            self.fields['dataInicio'].widget = ReadOnlyWidget()
+            self.fields['dataInicio'].disabled = True
+            self.fields['dataFim'].widget = ReadOnlyWidget()
+            self.fields['dataFim'].disabled = True
+            self.fields['dataFim'].initial = instance.recorrencia.dataFim
+            self.fields['recorrente'].initial = True
 
     def init_read_only(self, kwargs):
         # For all fields, put the readonly widget and makes sure the data can't be tempered
@@ -62,13 +89,27 @@ class ReservaAdminForm(forms.ModelForm):
         self.fields['ramal'].disabled = True
         self.fields['finalidade'].widget = ReadOnlyWidget()
         self.fields['finalidade'].disabled = True
+        self.fields['recorrente'].widget = ReadOnlyWidget(check_box=True, check_box_value=kwargs['instance'].recorrencia)
+        self.fields['recorrente'].disabled = True
+
+        if kwargs['instance'].recorrencia:
+            self.fields['dataInicio'].initial = kwargs['instance'].recorrencia.dataInicio
+            self.fields['dataInicio'].widget = ReadOnlyWidget()
+            self.fields['dataInicio'].disabled = True
+            self.fields['dataFim'].initial = kwargs['instance'].recorrencia.dataFim
+            self.fields['dataFim'].widget = ReadOnlyWidget()
+            self.fields['dataFim'].disabled= True
+        else:
+            self.fields['dataInicio'].widget = forms.HiddenInput()
+            self.fields['dataInicio'].label = ''
+            self.fields['dataFim'].widget = forms.HiddenInput()
+            self.fields['dataFim'].label = ''
 
         # The hidden fields are hidded
         self.fields['estado'].label = ''
         self.fields['estado'].widget = forms.HiddenInput()
         self.fields['usuario'].widget = forms.HiddenInput()
         self.fields['usuario'].label = ''
-
 
     def init_status_field(self, kwargs):
         # If we're creating a new form it's okay to hide the status.
@@ -190,34 +231,49 @@ class ReservaAdminForm(forms.ModelForm):
         start = instance.horaInicio
         end = instance.horaFim
         responsables = reservable.responsavel.all()
+
+        # add e-mail text that alerts a recurrent reserve
+        if self.cleaned_data['recorrente']:
+            day_name = instance.recorrencia.dataInicio.strftime("%A")
+            translated_day_name = translated_week_names[day_name]
+            if translated_day_name == 'sabado' or translated_day_name == 'domingo':
+                conector = 'todo'
+            else:
+                conector = 'toda'
+            ending_date = instance.recorrencia.dataFim
+            date = instance.recorrencia.dataInicio
+            recurrent_text= ' ao dia %s, %s %s' % (ending_date.strftime('%d/%m/%Y'), conector, translated_day_name)
+        else:
+            recurrent_text = ''
+
         # First we send an email to the user who asked for the reserve
         if status == 'A':
             email_title = 'Reserva de %s confirmada.' % reservable.nome.encode("utf-8")
             email_text = '''
                 Olá, %s,
-                Sua reserva de %s para o dia %s, das %s às %s, foi confirmada.
+                Sua reserva de %s para o dia %s%s, das %s às %s, foi confirmada.
 
                 -------
                 E-mail automático, por favor não responda.
-            ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), start.strftime('%H:%M'), end.strftime('%H:%M'))
+            ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'))
         elif status == 'E':
             email_title = 'Reserva de %s aguardando aprovação.' % reservable.nome.encode("utf-8")
             email_text = '''
                 Olá, %s,
-                Sua reserva de %s para o dia %s, das %s às %s, está aguardando aprovação. Você receberá uma notificação quando o estado da sua reserva for atualizado.
+                Sua reserva de %s para o dia %s%s, das %s às %s, está aguardando aprovação. Você receberá uma notificação quando o estado da sua reserva for atualizado.
 
                 -------
                 E-mail automático, por favor não responda.
-            ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), start.strftime('%H:%M'), end.strftime('%H:%M'))
+            ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'))
         elif status == 'D':
             email_title = 'Reserva de %s negada.' % reservable.nome.encode("utf-8")
             email_text = '''
                 Olá, %s,
-                Sua reserva de %s para o dia %s, das %s às %s, foi negada.
+                Sua reserva de %s para o dia %s%s, das %s às %s, foi negada.
 
                 -------
                 E-mail automático, por favor não responda.
-            ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), start.strftime('%H:%M'), end.strftime('%H:%M'))
+            ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'))
         try:
             send_mail(email_title, email_text, settings.EMAIL_HOST_USER, [user.email])
         except:
@@ -238,39 +294,162 @@ class ReservaAdminForm(forms.ModelForm):
                 email_title = 'Pedido de reserva de %s' % reservable.nome.encode("utf-8")
                 email_text = '''
                     Olá, %s,
-                    %s fez um pedido de reserva em %s, para o dia %s, das %s às %s. Use o link abaixo para analisar o pedido.
+                    %s fez um pedido de reserva em %s, para o dia %s%s, das %s às %s. Use o link abaixo para analisar o pedido.
                     %s
 
                     -------
                     E-mail automático, por favor não responda.
-                ''' % (responsable, user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), start.strftime('%H:%M'), end.strftime('%H:%M'), url)
+                ''' % (responsable, user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'), url)
                 try:
                     send_mail(email_title, email_text, settings.EMAIL_HOST_USER, [responsable.email])
                 except:
                     messages.error(self.request, 'E-mail não enviado para responsável')
 
+    def clean(self):
+        cleaned_data = super(ReservaAdminForm, self).clean()
+        recurrent = cleaned_data['recorrente']
+        if recurrent and self.is_valid():
+            # check if starting and ending date was selected
+            errors = dict()
+            if (not cleaned_data['dataInicio']) and (not self.is_new_object):
+                errors['dataInicio'] = 'Este campo é obrigatório.'
+            if not cleaned_data['dataFim']:
+                errors['dataFim'] = 'Este campo é obrigatório.'
+            if bool(errors):
+                raise ValidationError(errors)
+
+            # check if ending date is bigger than starting
+            if (self.is_new_object) and (cleaned_data['dataFim'] < cleaned_data['data']):
+                raise ValidationError({'dataFim': 'Data final deve ser maior que a inicial.'})
+
+            # If fisical aspects of the reserve have been changed we need to check for conflict, otherwise not
+            check_conflict = False
+            dont_check_field = ['estado', 'atividade', 'ramal', 'finalidade', 'usuario', 'recorrente', 'dataInicio', 'dataFim']
+            # Check form variables
+            for key in cleaned_data:
+                if (key in self.changed_data) and (key not in dont_check_field):
+                    check_conflict = True
+            # Check recurrent object variables
+            recurrent_object = self.instance.recorrencia
+            if not self.is_new_object:
+                if (cleaned_data['dataInicio'] != recurrent_object.dataInicio) or (cleaned_data['dataFim'] != recurrent_object.dataFim):
+                    check_conflict = True
+
+            # check if there isn't datetime conflict in the selected timespan
+            if check_conflict:
+                recurrent_reserve_possible = self.recurrent_option_possible(cleaned_data)
+                if not recurrent_reserve_possible:
+                    raise ValidationError({'dataFim': 'Reservas nesse período causarão choque de horário.'})
+
+        return cleaned_data
+
+    # Maybe this function has to be in the model, but that wouldn't allow correct error feedback for the user
+    def recurrent_option_possible(self,cleaned_data):
+        # get necessary variables
+        reservable = cleaned_data['locavel']
+        starting_date = cleaned_data['data']
+        ending_date = cleaned_data['dataFim']
+        starting_time = cleaned_data['horaInicio']
+        ending_time = cleaned_data['horaFim']
+        dummy_activitie = Atividade.objects.create(nome='dummy', descricao='dummy')
+
+        # Don't need to check self reserves in case of an update
+        try:
+            query = self.instance.recorrencia.get_reserves()
+        except:
+            query = self.reserve_type.objects.none()
+
+        #setup loop
+        recurrente_reserve_possible = True
+        current_date = starting_date
+        while current_date <= ending_date:
+            dummy_reserve = self.reserve_type.objects.create(data=current_date, horaInicio=starting_time, horaFim=ending_time, atividade=dummy_activitie, usuario=self.request.user, ramal=1, finalidade='1', locavel=reservable)
+            error = dict()
+            dummy_reserve.verificaChoque(error, query)
+            dummy_reserve.delete()
+            if bool(error):
+                recurrente_reserve_possible = False
+            current_date = current_date + timedelta(days=7)
+
+        dummy_activitie.delete()
+        return recurrente_reserve_possible
+
     def save(self, *args, **kwargs):
         user_query = kwargs.pop('query', None)
         reservable = self.cleaned_data['locavel']
         status = self.cleaned_data['estado']
-        instance = super(ReservaAdminForm, self).save(commit=False)
 
+        instance = super(ReservaAdminForm, self).save(commit=False)
         # Check if the user has permission in this reservable
         # If it is, the reserve is automatically accepted
         if reservable in user_query:
             status = 'A'
         instance.estado = status
+
         instance.save()
+        # Treat recurrent reserves
+        if self.is_new_object:
+            self.create_recurrent_reserve(instance)
+        elif self.cleaned_data['recorrente']:
+            self.update_recurrent_reserves(instance)
+
         self.send_mail(status, instance)
+
         return instance
+
+    def update_recurrent_reserves(self, instance):
+        # Look for the recurrent reserve that matches the current reserve
+        current_reserve_chain = instance.recorrencia
+
+        # Get queryset
+        reserve_query = current_reserve_chain.get_reserves()
+
+        # Change it's fields to match the new version, except for the data
+        for reserve in reserve_query:
+            today = datetime.now().date()
+            if reserve.data >= today:
+                for key in reserve.__dict__:
+                    if key != 'data':
+                        setattr(reserve, key, getattr(instance, key))
+                        reserve.save()
+        current_reserve_chain.update_fields(instance.data)
+
+
+    def create_recurrent_reserve(self, instance):
+        # If reserve is recurrent, create all reserves
+        # Get all necessary variables
+        date = self.cleaned_data['data']
+        starting_date = date
+        ending_date = self.cleaned_data['dataFim']
+        starting_time = self.cleaned_data['horaInicio']
+        ending_date = self.cleaned_data['dataFim']
+        ending_time = self.cleaned_data['horaFim']
+        activity = self.cleaned_data['atividade']
+        user = self.cleaned_data['usuario']
+        ramal = self.cleaned_data['ramal']
+        reason = self.cleaned_data['finalidade']
+        reservable = self.cleaned_data['locavel']
+        recurrent_chain = ReservaRecorrente.objects.create(dataInicio=date, dataFim=ending_date)  # create the recurrent object that will chain the reserves
+        recurrent_chain.save()
+
+        # Create reserves
+        if self.cleaned_data['recorrente']:  # TODO put the if in the save function
+            instance.recorrencia = recurrent_chain  # add the recurrent_chain to the original reserve
+            current_date = date + timedelta(days=7) # the starting will aready be created by the form
+            while current_date <= ending_date:
+                recurrent_reserve = self.reserve_type.objects.create(estado=instance.estado, data=current_date, recorrencia=recurrent_chain, horaInicio=starting_time, horaFim=ending_time, atividade=activity, usuario=user, ramal=ramal, finalidade=reason, locavel=reservable)
+                recurrent_reserve.save()
+                current_date = current_date + timedelta(days=7)
+
 
 class ReservaEquipamentoAdminForm(ReservaAdminForm):
     class Meta:
         model = ReservaEquipamento
-        fields = ('estado', 'data', 'horaInicio', 'horaFim', 'locavel', 'atividade', 'usuario', 'ramal', 'finalidade')
+        fields = ('estado', 'data', 'recorrente', 'dataInicio', 'dataFim', 'horaInicio', 'horaFim', 'locavel', 'atividade', 'usuario', 'ramal', 'finalidade')
     def __init__(self, *args, **kwargs):
         kwargs['admin_type'] = admin.EquipamentoAdmin
         kwargs['reservable_type'] = Equipamento
+        kwargs['reserve_type'] = ReservaEquipamento
         super(ReservaEquipamentoAdminForm, self).__init__(*args, **kwargs)
 
     def save(self, *args, **kwargs):
@@ -284,10 +463,11 @@ class ReservaEquipamentoAdminForm(ReservaAdminForm):
 class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
     class Meta:
         model = ReservaEspacoFisico
-        fields = ('estado', 'data', 'horaInicio', 'horaFim', 'locavel', 'atividade', 'usuario', 'ramal', 'finalidade')
+        fields = ('estado', 'data', 'recorrente', 'dataInicio', 'dataFim', 'horaInicio', 'horaFim', 'locavel', 'atividade', 'usuario', 'ramal', 'finalidade')
     def __init__(self, *args, **kwargs):
         kwargs['admin_type'] = admin.EspacoFisicoAdmin
         kwargs['reservable_type'] = EspacoFisico
+        kwargs['reserve_type'] = ReservaEspacoFisico
         super(ReservaEspacoFisicoAdminForm, self).__init__(*args, **kwargs)
 
     def save(self, *args, **kwargs):

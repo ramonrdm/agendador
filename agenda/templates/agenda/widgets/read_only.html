@@ -1,15 +1,28 @@
 <div class='read-only-widget-wrapper'>
-    <div class="input-field">
-        <input class="ufsc_time" data-lang="pt-br" id="id_{{ name }}" name="{{ name }}" type="text" value="{{ initial }}" readonly>
-        <label for="id_{{ name }}">{{ name|title }}</label>
+    <div id="id_{{ name }}_container">
+        {% if check_box %}
+            <div class="checkbox-field">
+                {% if check_box_value %}
+                    <input id="id_{{ name }}" class="filled-in" name="{{ name }}" type="checkbox" checked="" disabled="disabled">
+                {% else %}
+                    <input id="id_{{ name }}" class="filled-in" name="{{ name }}" type="checkbox" disabled="disabled">
+                {% endif %}
+                <label for="id_{{ name }}">{{ name|title }}</label>
+            </div>
+        {% else %}
+            <div class="input-field">
+                <input data-lang="pt-br" id="id_{{ name }}" name="{{ name }}" type="text" value="{{ initial }}" readonly>
+                <label for="id_{{ name }}">{{ name|title }}</label>
+            </div>
+            {% if model_field %}
+            <div hidden class='options'>
+                <select id='id_{{ name }}' name='{{ name }}'>
+                    <!-- Material does some strange things. the next line is made to avoid them -->
+                    <option value='0'></option>
+                    <option value='{{ item_id }}' selected="selected">{{ initial }}</option>
+                </select>
+            </div>
+            {% endif %}
+        {% endif %}
     </div>
-    {% if model_field %}
-    <div hidden class='options'>
-        <select id='id_{{ name }}' name='{{ name }}'>
-            <!-- Material does some strange things. the next line is made to avoid them -->
-            <option value='0'></option>
-            <option value='{{ item_id }}' selected="selected">{{ initial }}</option>
-        </select>
-    </div>
-    {% endif %}
 </div>
