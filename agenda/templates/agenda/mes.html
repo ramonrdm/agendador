@@ -40,6 +40,7 @@ jQuery(document).ready(function() {
    jQuery('#calendar').fullCalendar({
         monthNames:["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
         dayNamesShort:["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+        firstDay: 1,
 
         events: [
         {% for week in month_days %}
