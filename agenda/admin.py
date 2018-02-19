@@ -49,15 +49,6 @@ class UnidadeAdmin(admin.ModelAdmin):
         units = units.distinct()
         return units
 
-    def get_readonly_fields(self, request, obj=None):
-        qs = super(UnidadeAdmin, self).get_queryset(request)
-        qsResp = qs.filter(responsavel=request.user)
-        if request.user.is_superuser:
-            return []
-        if obj in qsResp:
-            return ['responsavel']
-        return []
-
 class ReservaAdmin(admin.ModelAdmin):
     list_display = ('usuario', 'locavel', 'data', 'ramal', 'finalidade', 'estado')
     search_fields = ['finalidade', 'usuario__username']
