@@ -213,6 +213,7 @@ class EquipamentoAdmin(LocavelAdmin):
 admin.site.register(Equipamento, EquipamentoAdmin)
 
 class EspacoFisicoAdmin(LocavelAdmin):
+    form = forms.EspacoFisicoAdminForm
 
     def get_queryset(self, request):
         groups = request.user.groups.all()

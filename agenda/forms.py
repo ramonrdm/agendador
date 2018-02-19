@@ -337,9 +337,9 @@ class ReservaAdminForm(forms.ModelForm):
 
             # check if there isn't datetime conflict in the selected timespan
             if check_conflict:
-                recurrent_reserve_possible = self.recurrent_option_possible(cleaned_data)
-                if not recurrent_reserve_possible:
-                    raise ValidationError({'dataFim': 'Reservas nesse período causarão choque de horário.'})
+                error = self.recurrent_option_possible(cleaned_data)
+                if error:
+                    raise ValidationError({'dataFim': error})
 
         return cleaned_data
 
@@ -359,20 +359,26 @@ class ReservaAdminForm(forms.ModelForm):
         except:
             query = self.reserve_type.objects.none()
 
-        #setup loop
-        recurrente_reserve_possible = True
+        # Test max advance reserve
+        advance = (ending_date - datetime.now().date()).days
+        if reservable.antecedenciaMaxima != 0:
+            if advance > reservable.antecedenciaMaxima:
+                return ('Este locável tem antecedência máxima de %d dias.' % (reservable.antecedenciaMaxima, ))
+
+        # test if there's no conflict
         current_date = starting_date
+        error = ''
         while current_date <= ending_date:
             dummy_reserve = self.reserve_type.objects.create(data=current_date, horaInicio=starting_time, horaFim=ending_time, atividade=dummy_activitie, usuario=self.request.user, ramal=1, finalidade='1', locavel=reservable)
             error = dict()
             dummy_reserve.verificaChoque(error, query)
             dummy_reserve.delete()
             if bool(error):
-                recurrente_reserve_possible = False
+                error =  'Reservas nesse período causarão choque de horário.'
             current_date = current_date + timedelta(days=7)
 
         dummy_activitie.delete()
-        return recurrente_reserve_possible
+        return error
 
     def save(self, *args, **kwargs):
         user_query = kwargs.pop('query', None)
@@ -550,6 +556,10 @@ class LocavelAdminForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(LocavelAdminForm, self).__init__(*args, **kwargs)
+        self.fields['antecedenciaMinima'].label = 'Antecedencia minima para reserva. (Em dias, 0 para sem antecedencia)'
+        self.fields['antecedenciaMaxima'].label = 'Antecedencia maxima para reserva. (Em dias, 0 para sem antecedencia)'
+        self.fields['antecedenciaMinima'].initial = 0
+        self.fields['antecedenciaMaxima'].initial = 0
 
     def save(self, *args, **kwargs):
         instance = super(LocavelAdminForm, self).save(commit=False)
@@ -569,3 +579,8 @@ class EquipamentoAdminForm(LocavelAdminForm):
         instance.save()
 
         return instance
+
+class EspacoFisicoAdminForm(LocavelAdminForm):
+
+    def __init__(self, *args, **kwargs):
+        super(EspacoFisicoAdminForm, self).__init__(*args, **kwargs)

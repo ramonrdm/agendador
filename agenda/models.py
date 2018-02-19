@@ -43,6 +43,8 @@ class Locavel(models.Model):
     grupos = models.ManyToManyField(Group, blank=True)
     bloqueado = models.BooleanField(default=False)
     invisivel = models.BooleanField(default=False)
+    antecedenciaMinima = models.PositiveSmallIntegerField(default=0)
+    antecedenciaMaxima = models.PositiveIntegerField(default=0)
     localizacao = models.TextField()
     fotoLink = models.URLField(blank=True)
     atividadesPermitidas = models.ManyToManyField(Atividade)
@@ -102,6 +104,7 @@ class Reserva(models.Model):
                 self.verificaChoque(errors)
             self.verificaBloqueado(errors)
             self.verificaCoerencia(errors)
+            self.verificaAntecedencia(errors)
         except:
             pass
         if bool(errors):
@@ -113,6 +116,16 @@ class Reserva(models.Model):
         if self.horaInicio > self.horaFim:
             errors['horaInicio'] = 'Horário incoerente.'
             errors['horaFim'] = 'Horário incoerente.'
+
+    def verificaAntecedencia(self, errors):
+        if self.locavel.antecedenciaMinima != 0:
+            antecedencia = (self.data - date.today()).days
+            if antecedencia < self.locavel.antecedenciaMinima:
+                errors['data'] = 'Este locável tem antecedência mínima de %d dias.' % (self.locavel.antecedenciaMinima, )
+        if self.locavel.antecedenciaMaxima != 0:
+            antecedencia = (self.data - date.today()).days
+            if antecedencia > self.locavel.antecedenciaMaxima:
+                errors['data'] = 'Este locável tem antecedência máxima de %d dias.' % (self.locavel.antecedenciaMaxima, )
 
     def verificaBloqueado(self, errors):
         class MockRequest:
