@@ -58,17 +58,16 @@ class ReservaAdmin(admin.ModelAdmin):
             return reserveModel.objects.all()
 
         reserves = reserveModel.objects.none()
+
         #Check if unit responsible
         unit_responsible = Unidade.objects.filter(responsavel=request.user)
         if unit_responsible:
-            reservable = reservableModel.objects.filter(unidade=unit_responsible)
-            reserves = reserves | reserveModel.objects.filter(locavel=reservable)
+            reservable = reservableModel.objects.filter(unidade__in=unit_responsible)
+            reserves = reserves | reserveModel.objects.filter(locavel__in=reservable)
             #Check for children unit
             for unit in unit_responsible:
                 reserves = self.search_children(reserves, unit, reserveModel, reservableModel)
-#               item = Equipamento.objects.filter(unidade=child)
-#               for item_child in item:
-#                   reserves = reserves | item_child.reservalocavel_set.all()
+
         #Check if reservable responsible
         reservable_responsible = reservableModel.objects.filter(responsavel=request.user)
         if reservable_responsible:
@@ -149,7 +148,7 @@ class LocavelAdmin(admin.ModelAdmin):
         elif unit in user.unidade_set.all() or responsable:
             reservables = reservables | reservableModel.objects.filter(id=reservable.id)
         return reservables
-    
+
     def search_children(self, reservables, unit, user, responsable, reservableModel):
         children = Unidade.objects.filter(unidadePai=unit)
         for child in children:
@@ -175,6 +174,7 @@ class LocavelAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return reservableModel.objects.all()
         reservables = reservableModel.objects.none()
+
         # Check if unit responsible
         # Also check user unit via group, for form list purposes
         groups = request.user.groups.all()
