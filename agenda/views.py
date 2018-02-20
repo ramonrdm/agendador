@@ -51,8 +51,8 @@ def index(request, unidade=unidade_default):
     #titulo = "Agendador UFSC"
     #corpo = "Bem vindo ao Agendador de espaços físicos e equipamentos da UFSC"
 
-            
-    
+
+
     unidades = Unidade.objects.filter(unidadePai=unidade)
 
     espacosFisicos = EspacoFisico.objects.filter(unidade=unidade).filter(invisivel=False)
@@ -82,6 +82,12 @@ def index(request, unidade=unidade_default):
 def sobre(request):
 	return render(request, "agenda/sobre.html")
 
+def redirect_to_calendar(request, reservable_type, reservable_id):
+    today = datetime.today()
+    year = today.year
+    month = today.month
+    return mes(request, reservable_type, reservable_id, year, month)
+
 def ano(request, unidade=None ,year=None):
     # prev / next years
     if year: year = int(year)
@@ -97,7 +103,7 @@ def ano(request, unidade=None ,year=None):
                 current = True
             mlst.append(dict(n=n+1, name=month, current=current))
         lst.append((y, mlst))
-    
+
     espacosfisicos = EspacoFisico.objects.filter(unidade=unidade)
 
     return render_to_response("ano.html", dict(years=lst, user=request.user, year=year, espacosfisicos=espacosfisicos))
@@ -120,9 +126,10 @@ def locavel(request, tipo=None, locavel=None):
     responsaveis = locavel.responsavel.all()
     grupos = locavel.grupos.all()
     ret = request.META.get('HTTP_REFERER')
-    return render(request, 'agenda/locavel.html', 
-                dict(tipo=tipo, locavel=locavel, responsaveis=responsaveis, 
-                    grupos=grupos, specific=specific, ret=ret))
+    url_to_reserves = request.build_absolute_uri() + 'reservas'
+    return render(request, 'agenda/locavel.html',
+                dict(tipo=tipo, locavel=locavel, responsaveis=responsaveis,
+                    grupos=grupos, specific=specific, ret=ret, url_to_reserves=url_to_reserves))
 
 def mes(request, tipo=None, espaco=None, year=None, month=None, change=None):
     """Listing of days in `month`."""
@@ -163,9 +170,9 @@ def mes(request, tipo=None, espaco=None, year=None, month=None, change=None):
         tipo = 'f'
     return render(
             request,
-            "agenda/mes.html", 
+            "agenda/mes.html",
             dict(
-                espaco=espacofisico, year=year, month=month, 
+                espaco=espacofisico, year=year, month=month,
                 user=request.user, month_days=lst, mname=month_names[month-1],
                 tipo=tipo
                 ))
@@ -229,7 +236,7 @@ def filtroLocavelDisponivel(request, unit, tipo, sData, sHoraInicio, sHoraFim):
     elif tipo == 'e':
         query = unit.equipamento_set.all()
         tipo_reserva = ReservaEquipamento
-        
+
     dummy_user = User.objects.create(username='dummy_user')
     for locavel in query:
         reserva_dummy = tipo_reserva.objects.create(data=data, horaInicio=horaInicio, horaFim=horaFim, atividade=atividade_dummy, usuario=dummy_user, ramal=1, finalidade='1', locavel=locavel)
