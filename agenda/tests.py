@@ -390,7 +390,7 @@ class ReserveFormTests(TestCase):
         }, initial={'recorrente': recurrent}, request=request, instance=instance)
         return form
 
-    def test_create_reserve_form(self):
+    def test_reserve_form(self):
         print '-TESTING RESERVE FORM'
         self.create_preset()
         responsable = User.objects.get(username='responsable')
@@ -401,6 +401,8 @@ class ReserveFormTests(TestCase):
 
         self.status_test(responsable, permission_user, no_permission_user, physical_space, equipment)
         self.recurrent_reserve_test(responsable, permission_user, no_permission_user, physical_space, equipment)
+        self.model_clean_tests(no_permission_user, responsable, physical_space, equipment)
+
         print '-RESERVE FORM TEST PASSED'
 
     def status_test(self, responsable, permission_user, no_permission_user, physical_space, equipment):
@@ -530,3 +532,154 @@ class ReserveFormTests(TestCase):
         ReservaEquipamento.objects.all().delete()
         ReservaEspacoFisico.objects.all().delete()
         ReservaRecorrente.objects.all().delete()
+
+    def model_clean_tests(self, user, responsable, physical_space, equipment):
+        self.unit_clean_test()
+        self.reserve_clean_test(user, responsable, physical_space, equipment)
+
+    def unit_clean_test(self):
+        # unit cannot have space in initials
+        print '--TESTING UNIT WITH SPACE IN INITIALS'
+        unit = Unidade.objects.create(sigla='initials with space', nome='a', descricao='d')
+        self.assertRaises(ValidationError, lambda: unit.clean())
+        unit.delete()
+        print '--UNIT WITH SPACE IN INITIALS TEST PASSED'
+
+    def reserve_clean_test(self, user, responsable, physical_space, equipment):
+        default_date = datetime.strptime('01/01/9999', '%d/%m/%Y').date()
+        default_starting_time = datetime.strptime('00:01', '%H:%M').time()
+        default_ending_time = datetime.strptime('00:02', '%H:%M').time()
+        activitie = Atividade.objects.all()[0]
+
+        # cannot make reserve in past days
+        print '--TESTING RESERVE IN PAST DAYS'
+        past_date = datetime.strptime('01/01/0001', '%d/%m/%Y').date()
+        reserve = ReservaEspacoFisico.objects.create(data=past_date, horaInicio=default_starting_time, horaFim=default_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=physical_space)
+        self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        reserve = ReservaEquipamento.objects.create(data=past_date, horaInicio=default_starting_time, horaFim=default_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=equipment)
+        self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        print '--RESERVE IN PAST DAYS TEST PASSED'
+
+        # ending time has to be after starting time
+        print '--TESTING ENDING TIME AFTER STARTING TIME'
+        error_ending_time = datetime.strptime('00:00', '%H:%M').time()
+        reserve = ReservaEspacoFisico.objects.create(data=default_date, horaInicio=default_starting_time, horaFim=error_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=physical_space)
+        self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        reserve = ReservaEquipamento.objects.create(data=default_date, horaInicio=default_starting_time, horaFim=error_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=equipment)
+        self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        print '--ENDING TIME AFTER STARTING TIME TEST PASSED'
+
+        # Test blocked reservable, user cannot reserve
+        print '--TESTING BLOCKED RESERVABLE RESERVE TEST'
+        physical_space.bloqueado = True
+        equipment.bloqueado = True
+        reserve = ReservaEspacoFisico.objects.create(data=default_date, horaInicio=default_starting_time, horaFim=default_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=physical_space)
+        self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        reserve = ReservaEquipamento.objects.create(data=default_date, horaInicio=default_starting_time, horaFim=default_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=equipment)
+        self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        # responsable can reserve
+        reserve = ReservaEspacoFisico.objects.create(data=default_date, horaInicio=default_starting_time, horaFim=default_ending_time, atividade=activitie, usuario=responsable, ramal=0, finalidade='w', locavel=physical_space)
+        try:
+            reserve.clean()
+        except:
+            self.fail('reserve.clean() raised an exception unexpectedly!')
+        reserve.delete()
+        reserve = ReservaEquipamento.objects.create(data=default_date, horaInicio=default_starting_time, horaFim=default_ending_time, atividade=activitie, usuario=responsable, ramal=0, finalidade='w', locavel=equipment)
+        try:
+            reserve.clean()
+        except:
+            self.fail('reserve.clean() raised an exception unexpectedly!')
+        reserve.delete()
+        equipment.bloqueado = False
+        physical_space.bloqueado = False
+        print '--BLOCKED RESERVABLE RESERVE TEST PASSED'
+
+        # Test advance max reserves
+        print '--TESTING MAX ADVANCE'
+        distant_date = default_date
+        physical_space.antecedenciaMaxima = 1
+        equipment. antecedenciaMaxima = 1
+        reserve = ReservaEspacoFisico.objects.create(data=distant_date, horaInicio=default_starting_time, horaFim=default_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=physical_space)
+        self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        reserve = ReservaEquipamento.objects.create(data=distant_date, horaInicio=default_starting_time, horaFim=default_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=equipment)
+        self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        physical_space.antecedenciaMaxima = 0
+        equipment. antecedenciaMaxima = 0
+        print '--MAX ADVANCE TEST PASSED'
+
+        # Test min advance reserves
+        print '--TESTING MIN ADVANCE'
+        physical_space.antecedenciaMinima = 1
+        equipment. antecedenciaMinima = 1
+        error_date = datetime.today().date()
+        reserve = ReservaEspacoFisico.objects.create(data=error_date, horaInicio=default_starting_time, horaFim=default_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=physical_space)
+        self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        reserve = ReservaEquipamento.objects.create(data=error_date, horaInicio=default_starting_time, horaFim=default_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=equipment)
+        self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        physical_space.antecedenciaMinima = 0
+        equipment. antecedenciaMinima = 0
+        print '--MIN ADVANCE TEST PASSED'
+
+        # Test for datetime conflict, 5 cases
+        # TODO: create a ".dia" with an explanation drawing of the 5 cases
+        print '--TESTING DATETIME CONFLICT'
+        conflict_starting_time = datetime.strptime('08:00', '%H:%M').time()
+        conflict_ending_time = datetime.strptime('10:00', '%H:%M').time()
+        conflict_physical_space_reserve = ReservaEspacoFisico.objects.create(estado='A', data=default_date, horaInicio=conflict_starting_time, horaFim=conflict_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=physical_space)
+        conflict_equipment_reserve = ReservaEquipamento.objects.create(estado='A', data=default_date, horaInicio=conflict_starting_time, horaFim=conflict_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=equipment)
+        # Case 1
+        error_starting_time = (datetime.combine(datetime.today().date(), conflict_starting_time) - timedelta(hours=1)).time()
+        error_ending_time = (datetime.combine(datetime.today().date(), conflict_starting_time) + timedelta(hours=1)).time()
+        reserve = ReservaEspacoFisico.objects.create(data=default_date, horaInicio=error_starting_time, horaFim=error_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=physical_space)
+        self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        reserve = ReservaEquipamento.objects.create(data=default_date, horaInicio=error_starting_time, horaFim=error_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=equipment)
+        self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        # Case 2
+        error_starting_time = (datetime.combine(datetime.today().date(), conflict_starting_time) + timedelta(hours=1)).time()
+        error_ending_time = conflict_ending_time
+        reserve = ReservaEspacoFisico.objects.create(data=default_date, horaInicio=error_starting_time, horaFim=error_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=physical_space)
+        self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        reserve = ReservaEquipamento.objects.create(data=default_date, horaInicio=error_starting_time, horaFim=error_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=equipment)
+        self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        # Case 3
+        error_starting_time = conflict_starting_time
+        error_ending_time = conflict_ending_time
+        reserve = ReservaEspacoFisico.objects.create(data=default_date, horaInicio=error_starting_time, horaFim=error_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=physical_space)
+        self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        reserve = ReservaEquipamento.objects.create(data=default_date, horaInicio=error_starting_time, horaFim=error_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=equipment)
+        self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        # Case 4
+        error_starting_time = (datetime.combine(datetime.today().date(), conflict_starting_time) - timedelta(hours=1)).time()
+        error_ending_time = (datetime.combine(datetime.today().date(), conflict_starting_time) + timedelta(hours=1)).time()
+        reserve = ReservaEspacoFisico.objects.create(data=default_date, horaInicio=error_starting_time, horaFim=error_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=physical_space)
+        self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        reserve = ReservaEquipamento.objects.create(data=default_date, horaInicio=error_starting_time, horaFim=error_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=equipment)
+        self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        # Case 5
+        error_starting_time = (datetime.combine(datetime.today().date(), conflict_ending_time) - timedelta(hours=1)).time()
+        error_ending_time = (datetime.combine(datetime.today().date(), conflict_ending_time) + timedelta(hours=1)).time()
+        reserve = ReservaEspacoFisico.objects.create(data=default_date, horaInicio=error_starting_time, horaFim=error_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=physical_space)
+        self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        reserve = ReservaEquipamento.objects.create(data=default_date, horaInicio=error_starting_time, horaFim=error_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=equipment)
+        self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        print '--DATETIME CONFLICT TEST PASSED'
