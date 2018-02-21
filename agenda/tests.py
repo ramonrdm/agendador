@@ -321,7 +321,7 @@ class UserFilterTests(TestCase):
 
         print '-GROUP FILTERS PASS'
 
-class ReserveFormests(TestCase):
+class ReserveFormTests(TestCase):
 
     def create_preset(self):
 
@@ -481,3 +481,52 @@ class ReserveFormests(TestCase):
         for reserve in query:
             self.assertEqual(reserve.estado, 'A')
         print '--EDIT RECURRENT RESERVE TEST PASSED'
+
+        #  Ending date must be necessary only if recurrent
+        print '--TESTING ENDING DATE NECESSARY WHEN RECURRENT'
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '24/09/9999', True, None, '00:01', '00:02', physical_space, no_permission_user)
+        self.assertIs(form.is_valid(), False)
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '24/09/9999', True, None, '00:01', '00:02', equipment, no_permission_user)
+        self.assertIs(form.is_valid(), False)
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '24/09/9999', False, None, '00:01', '00:02', physical_space, no_permission_user)
+        self.assertIs(form.is_valid(), True)
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '24/09/9999', False, None, '00:01', '00:02', equipment, no_permission_user)
+        self.assertIs(form.is_valid(), True)
+        print '--ENDING DATE NECESSARY WHEN RECURRENT TEST PASSED'
+
+        #  If starting date is bigger than ending, form is invalid
+        print '--TESTING ENDING AFTER STARTING DATE'
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '24/06/9999', True, '23/06/9999', '00:01', '00:02', physical_space, no_permission_user)
+        self.assertIs(form.is_valid(), False)
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '24/06/9999', True, '23/06/9999', '00:01', '00:02', equipment, no_permission_user)
+        self.assertIs(form.is_valid(), False)
+        print '--ENDING AFTER STARTING TEST PASSED'
+
+        #  If recurrent reserve causes time conflict, form is invalid
+        print '--TESTING DATETIME CONFLICT IN RECURRENT RESERVES'
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '25/05/9999', True, '22/06/9999', '00:01', '00:02', physical_space, no_permission_user)
+        self.assertIs(form.is_valid(), False)
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '25/05/9999', True, '22/06/9999', '00:01', '00:02', equipment, no_permission_user)
+        self.assertIs(form.is_valid(), False)
+        print '--DATETIME CONFLICT IN RECURRENT RESERVES TEST PASSED'
+
+        # ending date can't pass max advance
+        print '--TESTING MAX ADVANCE RESERVE IN RECURRENT'
+        physical_space.antecedenciaMaxima = 1
+        physical_space.save()
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '15/07/9999', True, '22/07/9999', '00:01', '00:02', physical_space, no_permission_user)
+        self.assertIs(form.is_valid(), False)
+        physical_space.antecedenciaMaxima = 0
+        physical_space.save()
+        equipment.antecedenciaMaxima = 1
+        equipment.save()
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '15/07/9999', True, '22/07/9999', '00:01', '00:02', equipment, no_permission_user)
+        self.assertIs(form.is_valid(), False)
+        equipment.antecedenciaMaxima = 0
+        equipment.save()
+        print '--MAX ADVANCE RESERVE IN RECURRENT TEST PASSED'
+
+        #clean database for next tests
+        ReservaEquipamento.objects.all().delete()
+        ReservaEspacoFisico.objects.all().delete()
+        ReservaRecorrente.objects.all().delete()
