@@ -22,14 +22,29 @@ from material.frontend.views import ModelViewSet
 month_names = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 unidade_default = 'ufsc'
 
-def index(request, unidade=unidade_default):
-    try:
-        unidade = Unidade.objects.get(sigla=unidade)
+def index(request, unidade=None):
+    # get unit
+    try:  # try to get given unit
+        unidade = Unidade.objects.get(sigla__iexact=unidade)
+    # no given unit. check if unit was given in the domain
     except Unidade.DoesNotExist:
-        try:
-            unidade = Unidade.objects.get(sigla="UFSC")
-        except Unidade.DoesNotExist:
-            return render_to_response("agenda/index.html")
+        typed_url = request.build_absolute_uri()
+        splitted_url = typed_url.split('.')
+        unidade = None
+        for url_part in splitted_url:  # check url for unit
+            lower_root = unidade_default.lower()  # the programmer may have put uppercase in root. Lets avoid errors
+            if url_part != lower_root:  # skip root unit, since it may be part of the domain
+                try:
+                    unidade = Unidade.objects.get(sigla__iexact=url_part)
+                    break
+                except:
+                    pass  # url_part was not an unit. that's ok
+        # no unit found
+        if not unidade:
+            try:
+                unidade = Unidade.objects.get(sigla__iexact=unidade_default)  # get root unit
+            except Unidade.DoesNotExist:
+                return render_to_response("agenda/index.html")  # can't find unit to load. render blank
 
     if request.method == 'POST':
         search_form = SearchFilterForm(request.POST)
