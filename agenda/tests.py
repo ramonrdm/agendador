@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User, Permission
 from django.contrib.admin.sites import AdminSite
 from datetime import datetime
+from datetime import timedelta
 
 from .forms import *
 from .models import *
@@ -360,7 +361,7 @@ class ReserveFormests(TestCase):
         unit.save()
         group.save()
 
-    def create_form(self, reserve_type, form_type, status, date, recurrent, ending_date, starting_time, ending_time, reservable, user):
+    def create_form(self, reserve_type, form_type, status, date, recurrent, ending_date, starting_time, ending_time, reservable, user, instance=None):
         date = datetime.strptime(date, '%d/%m/%Y').date()
         if ending_date:
             ending_date = datetime.strptime(ending_date, '%d/%m/%Y').date()
@@ -374,7 +375,6 @@ class ReserveFormests(TestCase):
         def a(a):
             return ''
         request.build_absolute_uri = a
-
         form = form_type(data={
             'estado': status,
             'data': date,
@@ -387,7 +387,7 @@ class ReserveFormests(TestCase):
             'usuario': user.pk,
             'ramal': ramal,
             'finalidade': reason,
-        }, request=request)
+        }, initial={'recorrente': recurrent}, request=request, instance=instance)
         return form
 
     def test_create_reserve_form(self):
@@ -400,6 +400,7 @@ class ReserveFormests(TestCase):
         equipment = Equipamento.objects.get(nome='equipment')
 
         self.status_test(responsable, permission_user, no_permission_user, physical_space, equipment)
+        self.recurrent_reserve_test(responsable, permission_user, no_permission_user, physical_space, equipment)
         print '-RESERVE FORM TEST PASSED'
 
     def status_test(self, responsable, permission_user, no_permission_user, physical_space, equipment):
@@ -410,7 +411,7 @@ class ReserveFormests(TestCase):
         instance = ReservaEspacoFisico.objects.all()[0]
         self.assertEqual(instance.estado, 'A')
         instance.delete()
-        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, responsable)
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', equipment, responsable)
         form.save()
         instance = ReservaEquipamento.objects.all()[0]
         self.assertEqual(instance.estado, 'A')
@@ -422,7 +423,7 @@ class ReserveFormests(TestCase):
         instance = ReservaEspacoFisico.objects.all()[0]
         self.assertEqual(instance.estado, 'A')
         instance.delete()
-        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, permission_user)
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', equipment, permission_user)
         form.save()
         instance = ReservaEquipamento.objects.all()[0]
         self.assertEqual(instance.estado, 'A')
@@ -434,10 +435,49 @@ class ReserveFormests(TestCase):
         instance = ReservaEspacoFisico.objects.all()[0]
         self.assertEqual(instance.estado, 'E')
         instance.delete()
-        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, no_permission_user)
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', equipment, no_permission_user)
         form.save()
         instance = ReservaEquipamento.objects.all()[0]
         self.assertEqual(instance.estado, 'E')
         instance.delete()
 
         print '--AUTO APPROVE TEST PASSED'
+
+    def recurrent_reserve_test(self, responsable, permission_user, no_permission_user, physical_space, equipment):
+        # create a recurrent reserve
+        print '--TESTING CREATE RECURRENT RESERVE'
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'E', '01/06/9999', True, '22/06/9999', '00:01', '00:02', physical_space, no_permission_user)
+        form.save()
+        query = ReservaEspacoFisico.objects.all()
+        self.assertEqual(len(query), 4)
+        current_date = datetime.strptime('01/06/9999', '%d/%m/%Y').date()
+        for reserve in query:
+            self.assertEqual(reserve.data, current_date)
+            current_date = current_date + timedelta(days=7)
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'E', '01/06/9999', True, '22/06/9999', '00:01', '00:02', equipment, no_permission_user)
+        form.save()
+        query = ReservaEquipamento.objects.all()
+        self.assertEqual(len(query), 4)
+        current_date = datetime.strptime('01/06/9999', '%d/%m/%Y').date()
+        for reserve in query:
+            self.assertEqual(reserve.data, current_date)
+            current_date = current_date + timedelta(days=7)
+        print '--CREATE RECURRENT RESERVE TEST PASSED'
+
+        # edit one reserve must aplly to all
+        print '--TESTING EDIT RECURRENT RESERVE'
+        instance = ReservaEspacoFisico.objects.all()[0]
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '01/06/9999', True, '22/06/9999', '00:01', '00:02', physical_space, no_permission_user, instance)
+        form.is_valid()
+        form.save()
+        query = ReservaEspacoFisico.objects.all()
+        for reserve in query:
+            self.assertEqual(reserve.estado, 'A')
+        instance = ReservaEquipamento.objects.all()[0]
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '01/06/9999', True, '22/06/9999', '00:01', '00:02', equipment, no_permission_user, instance)
+        form.is_valid()
+        form.save()
+        query = ReservaEquipamento.objects.all()
+        for reserve in query:
+            self.assertEqual(reserve.estado, 'A')
+        print '--EDIT RECURRENT RESERVE TEST PASSED'

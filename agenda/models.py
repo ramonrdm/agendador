@@ -55,7 +55,7 @@ class Locavel(models.Model):
 
 class EspacoFisico(Locavel):
     capacidade = models.PositiveSmallIntegerField()
-    
+
 
 class Equipamento(Locavel):
     patrimonio = models.PositiveIntegerField()
@@ -75,16 +75,15 @@ class ReservaRecorrente(models.Model):
         self.save()
 
     def get_reserves(self):
-        try:
-            query = self.reservaespacofisico_set.all()
-        except:
-            query = self.reservaequipament_set.all()
+        query = self.reservaespacofisico_set.all()
+        if not query:
+            query = self.reservaequipamento_set.all()
         return query
 
 class Reserva(models.Model):
     class Meta:
         abstract = True
-    
+
     estados = (('A','Aprovado'),('D','Desaprovado'),('E','Esperando'))
     estado = models.CharField(max_length=1, choices=estados, default='E')
     recorrencia = models.ForeignKey(ReservaRecorrente, blank=True, null=True, default=None)
@@ -161,20 +160,20 @@ class Reserva(models.Model):
 
         for r in reservas:
             if  (
-                (self.horaFim  > r.horaInicio and self.horaFim < r.horaFim) or 
-                (self.horaInicio > r.horaInicio and self.horaInicio < r.horaFim ) or 
+                (self.horaFim  > r.horaInicio and self.horaFim < r.horaFim) or
+                (self.horaInicio > r.horaInicio and self.horaInicio < r.horaFim ) or
                 (self.horaInicio == r.horaInicio and self.horaFim == r.horaFim) or
                 (r.horaInicio > self.horaInicio and r.horaInicio < self.horaFim) or
                 (self.horaInicio < r.horaFim < self.horaFim)
                 ):
                 errors['data'] = 'Já existem reservas para esse dia e hora'
-    
+
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
 
 class ReservaEspacoFisico(Reserva):
     locavel = models.ForeignKey(EspacoFisico)
-    
+
     def clean(self):
         super(ReservaEspacoFisico, self).clean()
 

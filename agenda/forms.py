@@ -394,10 +394,11 @@ class ReservaAdminForm(forms.ModelForm):
 
         instance.save()
         # Treat recurrent reserves
-        if self.is_new_object:
-            self.create_recurrent_reserve(instance)
-        elif self.cleaned_data['recorrente']:
-            self.update_recurrent_reserves(instance)
+        if self.cleaned_data['recorrente']:
+            if self.is_new_object:
+                self.create_recurrent_reserve(instance)
+            else:
+                self.update_recurrent_reserves(instance)
 
         self.send_mail(status, instance)
 
@@ -439,13 +440,13 @@ class ReservaAdminForm(forms.ModelForm):
         recurrent_chain.save()
 
         # Create reserves
-        if self.cleaned_data['recorrente']:  # TODO put the if in the save function
-            instance.recorrencia = recurrent_chain  # add the recurrent_chain to the original reserve
-            current_date = date + timedelta(days=7) # the starting will aready be created by the form
-            while current_date <= ending_date:
-                recurrent_reserve = self.reserve_type.objects.create(estado=instance.estado, data=current_date, recorrencia=recurrent_chain, horaInicio=starting_time, horaFim=ending_time, atividade=activity, usuario=user, ramal=ramal, finalidade=reason, locavel=reservable)
-                recurrent_reserve.save()
-                current_date = current_date + timedelta(days=7)
+        instance.recorrencia = recurrent_chain  # add the recurrent_chain to the original reserve
+        current_date = date + timedelta(days=7) # the starting will aready be created by the form
+        while current_date <= ending_date:
+            recurrent_reserve = self.reserve_type.objects.create(estado=instance.estado, data=current_date, recorrencia=recurrent_chain, horaInicio=starting_time, horaFim=ending_time, atividade=activity, usuario=user, ramal=ramal, finalidade=reason, locavel=reservable)
+            recurrent_reserve.save()
+            current_date = current_date + timedelta(days=7)
+        instance.save()
 
 
 class ReservaEquipamentoAdminForm(ReservaAdminForm):
