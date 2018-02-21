@@ -461,7 +461,7 @@ class ReservaEquipamentoAdminForm(ReservaAdminForm):
     def save(self, *args, **kwargs):
         temp_request = self.request
         temp_request.user = self.cleaned_data['usuario']
-        ma = admin.EspacoFisicoAdmin(Equipamento, AdminSite())
+        ma = admin.EquipamentoAdmin(Equipamento, AdminSite())
         user_query = ma.get_queryset(temp_request)
         kwargs['query'] = user_query
         return super(ReservaEquipamentoAdminForm, self).save(*args, **kwargs)

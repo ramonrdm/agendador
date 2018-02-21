@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User, Permission
 from django.contrib.admin.sites import AdminSite
+from datetime import datetime
 
 from .forms import *
 from .models import *
@@ -267,7 +268,7 @@ class UserFilterTests(TestCase):
         group_y.unidade_set.add(child_left)
         group_y.user_set.add(child_left_user)
         child_left.grupos.add(group_y)
-    
+
         child_right_right.grupos.add(group_x)
         child_right_right.grupos.add(group_y)
         group_x.unidade_set.add(child_right_right)
@@ -318,3 +319,125 @@ class UserFilterTests(TestCase):
         self.makeChecks(items, 'root_group_user', [0, 1])
 
         print '-GROUP FILTERS PASS'
+
+class ReserveFormests(TestCase):
+
+    def create_preset(self):
+
+        # create models
+        activitie = Atividade.objects.create(nome='activitie', descricao='default')
+        activitie.save()
+        responsable = User.objects.create_user('responsable', password='a')
+        responsable.save()
+        unit = Unidade.objects.create(sigla='pru', nome='unit', descricao='test')
+        unit.save()
+        physical_space = EspacoFisico.objects.create(nome='physical_space', descricao='q', unidade=unit, bloqueado=False, localizacao='q', capacidade=2)
+        physical_space.responsavel.add(responsable)
+        physical_space.atividadesPermitidas.add(activitie)
+        physical_space.save()
+        equipment = Equipamento.objects.create(nome='equipment', descricao='q', unidade=unit, localizacao='q', patrimonio=2)
+        equipment.responsavel.add(responsable)
+        equipment.atividadesPermitidas.add(activitie)
+        equipment.save()
+        no_permission_user = User.objects.create_user('no_permission_user', password='a')
+        no_permission_user.save()
+        permission_user = User.objects.create_user('permission_user', password='a')
+        permission_user.save()
+
+        # give permissions so users can create stuff
+        permissions = Permission.objects.all()
+        responsable.user_permissions.set(permissions)
+        responsable.save()
+        no_permission_user.user_permissions.set(permissions)
+        no_permission_user.save()
+        permission_user.user_permissions.set(permissions)
+        permission_user.save()
+
+        # create a group to the unit
+        group = Group.objects.create(name='group')
+        unit.grupos.add(group)
+        group.user_set.add(permission_user)
+        unit.save()
+        group.save()
+
+    def create_form(self, reserve_type, form_type, status, date, recurrent, ending_date, starting_time, ending_time, reservable, user):
+        date = datetime.strptime(date, '%d/%m/%Y').date()
+        if ending_date:
+            ending_date = datetime.strptime(ending_date, '%d/%m/%Y').date()
+        starting_time = datetime.strptime(starting_time, '%H:%M').time()
+        ending_time = datetime.strptime(ending_time, '%H:%M').time()
+        activitie = Atividade.objects.get(nome='activitie')
+        ramal = 6
+        reason = 'test'
+        request.user = user
+        request.session = dict()
+        def a(a):
+            return ''
+        request.build_absolute_uri = a
+
+        form = form_type(data={
+            'estado': status,
+            'data': date,
+            'recorrente': recurrent,
+            'dataFim': ending_date,
+            'horaInicio': starting_time,
+            'horaFim': ending_time,
+            'locavel': reservable.pk,
+            'atividade': activitie.pk,
+            'usuario': user.pk,
+            'ramal': ramal,
+            'finalidade': reason,
+        }, request=request)
+        return form
+
+    def test_create_reserve_form(self):
+        print '-TESTING RESERVE FORM'
+        self.create_preset()
+        responsable = User.objects.get(username='responsable')
+        permission_user = User.objects.get(username='permission_user')
+        no_permission_user = User.objects.get(username='no_permission_user')
+        physical_space = EspacoFisico.objects.get(nome='physical_space')
+        equipment = Equipamento.objects.get(nome='equipment')
+
+        self.status_test(responsable, permission_user, no_permission_user, physical_space, equipment)
+        print '-RESERVE FORM TEST PASSED'
+
+    def status_test(self, responsable, permission_user, no_permission_user, physical_space, equipment):
+        print '--TESTING AUTO APPROVE'
+        # Test responsable making reserve
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, responsable)
+        form.save()
+        instance = ReservaEspacoFisico.objects.all()[0]
+        self.assertEqual(instance.estado, 'A')
+        instance.delete()
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, responsable)
+        form.save()
+        instance = ReservaEquipamento.objects.all()[0]
+        self.assertEqual(instance.estado, 'A')
+        instance.delete()
+
+        # Test user in group making reserve
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, permission_user)
+        form.save()
+        instance = ReservaEspacoFisico.objects.all()[0]
+        self.assertEqual(instance.estado, 'A')
+        instance.delete()
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, permission_user)
+        form.save()
+        instance = ReservaEquipamento.objects.all()[0]
+        self.assertEqual(instance.estado, 'A')
+        instance.delete()
+
+        # Test user not in group making reserve
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, no_permission_user)
+        form.save()
+        instance = ReservaEspacoFisico.objects.all()[0]
+        self.assertEqual(instance.estado, 'E')
+        instance.delete()
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, no_permission_user)
+        form.save()
+        instance = ReservaEquipamento.objects.all()[0]
+        self.assertEqual(instance.estado, 'E')
+        instance.delete()
+
+        print '--AUTO APPROVE TEST PASSED'
