@@ -631,7 +631,6 @@ class ReserveFormTests(TestCase):
         print '--MIN ADVANCE TEST PASSED'
 
         # Test for datetime conflict, 5 cases
-        # TODO: create a ".dia" with an explanation drawing of the 5 cases
         print '--TESTING DATETIME CONFLICT'
         conflict_starting_time = datetime.strptime('08:00', '%H:%M').time()
         conflict_ending_time = datetime.strptime('10:00', '%H:%M').time()
