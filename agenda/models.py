@@ -103,7 +103,8 @@ class Reserva(models.Model):
                 self.verificaChoque(errors)
             self.verificaBloqueado(errors)
             self.verificaCoerencia(errors)
-            self.verificaAntecedencia(errors)
+            if self.usuario not in self.locavel.responsavel.all():
+                self.verificaAntecedencia(errors)
         except:
             pass
         if bool(errors):

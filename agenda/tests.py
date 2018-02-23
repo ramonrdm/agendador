@@ -611,6 +611,18 @@ class ReserveFormTests(TestCase):
         reserve = ReservaEquipamento.objects.create(data=distant_date, horaInicio=default_starting_time, horaFim=default_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=equipment)
         self.assertRaises(ValidationError, lambda: reserve.clean())
         reserve.delete()
+        reserve = ReservaEspacoFisico.objects.create(data=distant_date, horaInicio=default_starting_time, horaFim=default_ending_time, atividade=activitie, usuario=responsable, ramal=0, finalidade='w', locavel=physical_space)
+        try:
+            reserve.clean()
+        except:
+            self.fail('reserve.clean() raised an exception unexpectedly!')
+        reserve.delete()
+        reserve = ReservaEquipamento.objects.create(data=distant_date, horaInicio=default_starting_time, horaFim=default_ending_time, atividade=activitie, usuario=responsable, ramal=0, finalidade='w', locavel=equipment)
+        try:
+            reserve.clean()
+        except:
+            self.fail('reserve.clean() raised an exception unexpectedly!')
+        reserve.delete()
         physical_space.antecedenciaMaxima = 0
         equipment. antecedenciaMaxima = 0
         print '--MAX ADVANCE TEST PASSED'
@@ -625,6 +637,18 @@ class ReserveFormTests(TestCase):
         reserve.delete()
         reserve = ReservaEquipamento.objects.create(data=error_date, horaInicio=default_starting_time, horaFim=default_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=equipment)
         self.assertRaises(ValidationError, lambda: reserve.clean())
+        reserve.delete()
+        reserve = ReservaEspacoFisico.objects.create(data=error_date, horaInicio=default_starting_time, horaFim=default_ending_time, atividade=activitie, usuario=responsable, ramal=0, finalidade='w', locavel=physical_space)
+        try:
+            reserve.clean()
+        except:
+            self.fail('reserve.clean() raised an exception unexpectedly!')
+        reserve.delete()
+        reserve = ReservaEquipamento.objects.create(data=error_date, horaInicio=default_starting_time, horaFim=default_ending_time, atividade=activitie, usuario=responsable, ramal=0, finalidade='w', locavel=equipment)
+        try:
+            reserve.clean()
+        except:
+            self.fail('reserve.clean() raised an exception unexpectedly!')
         reserve.delete()
         physical_space.antecedenciaMinima = 0
         equipment. antecedenciaMinima = 0
