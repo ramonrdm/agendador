@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^filtro_locavel_disponivel/(\d+)/(e|f|s)/(\w+)/(\w+)/(\w+)/', views.filtroLocavelDisponivel, name='resultado'),
     url(r'^get_atividade_set/$', views.get_atividade_set, name='get_atividade_set'),
     url(r'^locavel/(e|f|s)/(\d+)/reservas/$', views.redirect_to_calendar, name='redirect to calendar'),
+    url(r'^faq/$', views.faq, name='faq'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

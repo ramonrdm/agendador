@@ -13,6 +13,8 @@ from agenda.models import *
 from agenda.forms import ReservaEspacoFisicoAdminForm
 from django import forms
 from django.contrib.admin.sites import AdminSite
+from django.contrib.flatpages.models import FlatPage
+
 from datetime import date
 import admin
 from forms import *
@@ -287,3 +289,9 @@ def get_atividade_set(request):
             data = {'atividades': n, 'ids': i}
             return JsonResponse(data)
     return HttpResponseNotFound()
+
+def faq(request):
+    faq_pages = list(FlatPage.objects.filter(url__contains='faq'))  # a list so it can be editted
+    absolute_url = request.build_absolute_uri('/')
+    # add 'pages' to urls to the template can use the true url
+    return render(request, "agenda/faq.html", dict(pages=faq_pages))

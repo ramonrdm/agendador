@@ -1,0 +1,43 @@
+{% extends "agenda/base_module.html" %}
+{% load i18n material_frontend %}
+{% load static %}
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/faq.css' %}" />
+{% endblock %}
+{% block js %}
+    <script src="{% static 'material/js/jquery.js' %}"></script>
+    <script src="{% static 'material/js/materialize.js' %}"></script>
+    <script>
+        $(document).ready(function(){
+            $(".button-collapse").sideNav();
+            $('.modal').modal();
+        });
+    </script>
+{% endblock %}
+
+{% block title %}{{flatpage.title}}{% endblock %}
+
+{% block page_title %}
+    <strong>{{flatpage.title}}</strong>
+{% endblock %}
+
+{% block userphoto %}
+<a href="#"><i id='icon' class="circle material-icons medium">help_outline</i></a>
+{% endblock %}
+
+
+{% block content %}
+<div id='content' class='row'>
+    <div class='col s12'>
+        <div class="card">
+            <div class="card-content">
+                <span class='flow-text'>{{ flatpage.content }}</span>
+                <div class='return'>
+                    <a href="/faq/" class='flow-text'>Retornar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
