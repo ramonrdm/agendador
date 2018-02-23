@@ -8,6 +8,7 @@
 {% block js %}
     <script src="{% static 'material/js/jquery.js' %}"></script>
     <script src="{% static 'material/js/materialize.js' %}"></script>
+    <script src="{% static 'agenda/js/faq.js' %}"></script>
     <script>
         $(document).ready(function(){
             $(".button-collapse").sideNav();
@@ -33,11 +34,27 @@
         <div class="card">
             <div class="card-content">
                 <h5>Tópicos</h5>
+                <form action='#'>
+                    <div id='options'>
+                        <p>
+                            <input class="with-gap filter-option" name="filter" type="radio" id="title-filter" checked />
+                            <label class='flow-text' for="title-filter">Filtrar título</label>
+                        </p>
+                        <p id="content-filter-option">
+                            <input class="with-gap filter-option" name="filter" type="radio" id="content-filter"/>
+                            <label for="content-filter">Filtrar conteúdo</label>
+                        </p>
+                    </div>
+                    <div class="input-field col s12">
+                        <input id="filter-text" type="text" class="validate">
+                        <label  for="filter-text">Filtrar tópicos</label>
+                    </div>
+                </form>
                 <table class='striped'>
                     <tbody>
                         {% for page in pages %}
-                        <tr>
-                            <td><a href='{{ page.url }}'>{{ page.title }}</a></td>
+                        <tr class='faq-item'>
+                            <td><a href='{{ page.url }}' class='faq-title'>{{ page.title }}</a></td>
                         </tr>
                         {% endfor %}
                     </tbody>

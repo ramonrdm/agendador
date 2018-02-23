@@ -289,5 +289,18 @@ def get_atividade_set(request):
     return HttpResponseNotFound()
 
 def faq(request):
-    faq_pages = FlatPage.objects.filter(url__contains='faq')
-    return render(request, "agenda/faq.html", dict(pages=faq_pages))
+    if request.method == 'GET':
+        faq_pages = FlatPage.objects.filter(url__contains='faq')
+        return render(request, "agenda/faq.html", dict(pages=faq_pages))
+    elif request.method == 'POST':
+        filter_type = request.POST['filterType']
+        filter_text = request.POST['filter']
+        if 'title-filter' == filter_type:
+            query = FlatPage.objects.filter(url__contains='faq', title__icontains=filter_text)
+        elif 'content-filter' == filter_type:
+            query = FlatPage.objects.filter(url__contains='faq', content__icontains=filter_text)
+        faq_items = list()
+        for query_item in query:
+            faq_items.append(query_item.title)
+        data = {'faqItems': faq_items}
+        return JsonResponse(data)
