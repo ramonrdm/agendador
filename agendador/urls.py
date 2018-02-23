@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^equipamentos/$', views.equipamentos, name='equipamentos'),
     url(r"^mes/(e|f|s)/(\d+)/(\d+)/(\d+)/(prev|next)/$", views.mes, name="mes"),
     url(r"^mes/(e|f|s)/(\d+)/(\d+)/(\d+)/$", views.mes, name="mes"),
+    url(r'^mes/(e|f|s)/(\d+)/$', views.mes, name='mes'),
     url(r"^mes/$", views.mes, name="mes"),
     url(r"^dia/(\d+)/(\d+)/(\d+)/(\d+)/$", views.dia, name="dia"),
     url(r'^ano/(\d+)/$', views.ano, name='ano'),
@@ -31,7 +32,6 @@ urlpatterns = [
     url(r'^locavel/(e|f|s)/(\d+)/$', views.locavel, name='locavel'),
     url(r'^filtro_locavel_disponivel/(\d+)/(e|f|s)/(\w+)/(\w+)/(\w+)/', views.filtroLocavelDisponivel, name='resultado'),
     url(r'^get_atividade_set/$', views.get_atividade_set, name='get_atividade_set'),
-    url(r'^mes/(e|f|s)/(\d+)/$', views.redirect_to_calendar, name='redirect_to_calendar'),
     url(r'^faq/$', views.faq, name='faq'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

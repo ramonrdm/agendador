@@ -99,12 +99,6 @@ def index(request, unidade=None):
 def sobre(request):
 	return render(request, "agenda/sobre.html")
 
-def redirect_to_calendar(request, reservable_type, reservable_id):
-    today = datetime.today()
-    year = today.year
-    month = today.month
-    return mes(request, reservable_type, reservable_id, year, month)
-
 def ano(request, unidade=None ,year=None):
     # prev / next years
     if year: year = int(year)
@@ -148,6 +142,11 @@ def locavel(request, tipo=None, locavel=None):
                     grupos=grupos, specific=specific, ret=ret))
 
 def mes(request, tipo=None, espaco=None, year=None, month=None, change=None):
+    if not month and not year:
+        today = datetime.today()
+        year = today.year
+        month = today.month
+
     """Listing of days in `month`."""
     espaco, year, month = int(espaco), int(year), int(month)
     # apply next / previous change
