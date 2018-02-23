@@ -143,10 +143,9 @@ def locavel(request, tipo=None, locavel=None):
     responsaveis = locavel.responsavel.all()
     grupos = locavel.grupos.all()
     ret = request.META.get('HTTP_REFERER')
-    url_to_reserves = request.build_absolute_uri() + 'reservas'
     return render(request, 'agenda/locavel.html',
                 dict(tipo=tipo, locavel=locavel, responsaveis=responsaveis,
-                    grupos=grupos, specific=specific, ret=ret, url_to_reserves=url_to_reserves))
+                    grupos=grupos, specific=specific, ret=ret))
 
 def mes(request, tipo=None, espaco=None, year=None, month=None, change=None):
     """Listing of days in `month`."""
@@ -291,7 +290,5 @@ def get_atividade_set(request):
     return HttpResponseNotFound()
 
 def faq(request):
-    faq_pages = list(FlatPage.objects.filter(url__contains='faq'))  # a list so it can be editted
-    absolute_url = request.build_absolute_uri('/')
-    # add 'pages' to urls to the template can use the true url
+    faq_pages = FlatPage.objects.filter(url__contains='faq')
     return render(request, "agenda/faq.html", dict(pages=faq_pages))

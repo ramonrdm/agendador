@@ -60,7 +60,7 @@
                         <div class='{{ key }}'><strong>{{ key|capfirst }}: </strong>{{ info }}.</div>
                         {% endfor %}
                         <div class='reserves-link'>
-                            <a href='{{ url_to_reserves }}'>Link para reservas</a>
+                            <a href='{% url "redirect_to_calendar" tipo locavel.id %}'>Link para reservas</a>
                         </div>
                     </div>
                     {% if ret %}
