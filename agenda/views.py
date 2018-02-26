@@ -297,8 +297,12 @@ def faq(request):
         filter_text = request.POST['filter']
         if 'title-filter' == filter_type:
             query = FlatPage.objects.filter(url__contains='faq', title__icontains=filter_text)
-        elif 'content-filter' == filter_type:
-            query = FlatPage.objects.filter(url__contains='faq', content__icontains=filter_text)
+        elif 'content-filter' == filter_type: # have the words typed, not necessarily in order
+            filter_text = filter_text.split(' ')
+            query = FlatPage.objects.filter(url__contains='faq', content__icontains=filter_text[0])  # get a base query
+            filter_text.pop(0)  #remove first, since it's already been filtered
+            for word in filter_text:  # filter the remaining words
+                query = query.filter(content__icontains=word)
         faq_items = list()
         for query_item in query:
             faq_items.append(query_item.title)
