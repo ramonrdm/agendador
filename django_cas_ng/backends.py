@@ -7,6 +7,7 @@ import datetime
 from django.utils.six.moves import urllib_parse
 from django.utils.six.moves.urllib_request import urlopen, Request
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group, Permission
 from django.conf import settings
 
 from uuid import uuid4
@@ -325,6 +326,13 @@ class CASBackend(object):
             user.save()
             created = True
 
+            # add user to default permission group
+            group, group_created = Group.objects.get_or_create(name='user_group')
+            if group_created:
+                group = self.give_permissions(group)
+            group.user_set.add(user)
+            group.save()
+
         # send the `cas_user_authenticated` signal
         cas_user_authenticated.send(
             sender=self,
@@ -343,3 +351,27 @@ class CASBackend(object):
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None
+
+    def give_permissions(self, group):
+        # physical space permissions
+        add_physical_space_reserve = Permission.objects.filter(codename='add_reservaespacofisico', name='Can add reserva espaco fisico')
+        for permission in add_physical_space_reserve:
+            group.permissions.add(permission)
+        change_physical_space_reserve = Permission.objects.filter(codename='change_reservaespacofisico', name='Can change reserva espaco fisico')
+        for permission in change_physical_space_reserve:
+            group.permissions.add(permission)
+        delete_physical_space_reserve = Permission.objects.filter(codename='delete_reservaespacofisico', name='Can delete reserva espaco fisico')
+        for permission in delete_physical_space_reserve:
+            group.permissions.add(permission)
+
+        # equipment permissions
+        add_equipment_reserve = Permission.objects.filter(codename='add_reservaequipamento', name='Can add reserva equipamento')
+        for permission in add_equipment_reserve:
+            group.permissions.add(permission)
+        change_equipment_reserve = Permission.objects.filter(codename='change_reservaequipamento', name='Can change reserva equipamento')
+        for permission in change_equipment_reserve:
+            group.permissions.add(permission)
+        delete_equipment_reserve = Permission.objects.filter(codename='delete_reservaequipamento', name='Can delete reserva equipamento')
+        for permission in delete_equipment_reserve:
+            group.permissions.add(permission)
+        return group
