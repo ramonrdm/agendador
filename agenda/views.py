@@ -290,7 +290,7 @@ def get_atividade_set(request):
 
 def faq(request):
     if request.method == 'GET':
-        faq_pages = FlatPage.objects.filter(url__contains='faq')
+        faq_pages = FlatPage.objects.filter(url__icontains='faq')
         return render(request, "agenda/faq.html", dict(pages=faq_pages))
     elif request.method == 'POST':
         filter_type = request.POST['filterType']
