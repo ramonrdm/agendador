@@ -327,7 +327,7 @@ class CASBackend(object):
             created = True
 
             # add user to default permission group
-            group, group_created = Group.objects.get_or_create(name='user_group')
+            group, group_created = Group.objects.get_or_create(name='pode reservar')
             if group_created:
                 group = self.give_permissions(group)
             group.user_set.add(user)

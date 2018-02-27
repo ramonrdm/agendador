@@ -52,7 +52,7 @@ jQuery(document).ready(function() {
                                 start: "{{ entry.data|date:"Y-m-d" }}",
                                 description: `
                                     <p><b>Usuário:</b> {{ entry.usuario.first_name }}</p>
-                                    <p><b>Unidades do usuário:</b> {% for item in entry.usuario.groups.all %}{% if item.name != 'user_group' %}{{item}}{% if forloop.last %}{% else %}, {% endif %}{% endif %}{% endfor %}</p>
+                                    <p><b>Unidades do usuário:</b> {% for item in entry.usuario.groups.all %}{% if item.name != 'pode reservar' %}{{item}}{% if forloop.last %}{% else %}, {% endif %}{% endif %}{% endfor %}</p>
                                     <p><b>Data:</b> {{ entry.data }}</p>
                                     <p><b>Inicio:</b> {{ entry.horaInicio }}</p>
                                     <p><b>Fim:</b> {{ entry.horaFim }}</p>
