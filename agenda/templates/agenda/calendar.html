@@ -1,0 +1,41 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+{% load static %}
+{% block css %}
+    <link rel='stylesheet' href="{% static 'agenda/css/mes.css' %}" type='text/css' />
+    <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/topbar.css' %}" />
+    <link rel='stylesheet' href="{% static 'agenda/fullcalendar/fullcalendar.css' %}" />
+
+{% endblock %}
+{% block js %}
+    <script src="{% static 'material/js/jquery.js' %}"></script>
+    <script src="{% static 'material/js/materialize.js' %}"></script>
+    <script src="{% static 'agenda/fullcalendar/lib/moment.min.js' %}"></script>
+    <script src="{% static 'agenda/fullcalendar/fullcalendar.js' %}"></script>
+    <script src="{% static 'agenda/fullcalendar/locale/pt-br.js' %}"></script>
+{% endblock %}
+<script type="text/javascript">
+	$(document).ready(function(){
+		var month = "{{ month }}";
+		alert(month);
+		$('#calendar').fullCalendar({
+			header: {
+				left: 'prev, next today',
+				center:'title',
+				right:'month, agendaWeek,agendaDay,listWeek'
+			},
+			defaultDate: moment('2014-09-01'),
+		});
+	});
+
+</script>
+</head>
+
+<body>
+	<div id="calendar">
+		
+	</div>
+</body>
+</html> 

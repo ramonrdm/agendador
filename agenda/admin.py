@@ -8,9 +8,13 @@ import forms
 admin.site.register(Atividade)
 
 @admin.register(Unidade)
+
 class UnidadeAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">account_balance</i>'
     form = forms.UnidadeAdminForm
+    list_display = ('sigla','unidadePai', 'get_responsavel')
+    def get_responsavel(self, obj):
+        return ", ".join(responsavel.username for responsavel in obj.responsavel.all())
 
     def get_form(self, request, obj=None, **kwargs):
         AdminForm =  super(UnidadeAdmin, self).get_form(request, obj, **kwargs)
