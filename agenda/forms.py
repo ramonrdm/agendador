@@ -64,12 +64,13 @@ class ReservaAdminForm(forms.ModelForm):
         if self.is_new_object:
             self.fields['dataInicio'].widget = forms.HiddenInput()
             self.fields['dataInicio'].label = ''
+            self.fields['dataFim'].label = 'Data Fim'
         elif kwargs['instance'].recorrencia:
             instance = kwargs['instance']
             self.fields['dataInicio'].initial = instance.recorrencia.dataInicio
-            self.fields['dataInicio'].widget = ReadOnlyWidget()
+            self.fields['dataInicio'].widget = ReadOnlyWidget(attrs=dict(label='Data início'))
             self.fields['dataInicio'].disabled = True
-            self.fields['dataFim'].widget = ReadOnlyWidget()
+            self.fields['dataFim'].widget = ReadOnlyWidget(attrs=dict(label='Data fim'))
             self.fields['dataFim'].disabled = True
             self.fields['dataFim'].initial = instance.recorrencia.dataFim
             self.fields['recorrente'].initial = True
@@ -78,11 +79,11 @@ class ReservaAdminForm(forms.ModelForm):
         # For all fields, put the readonly widget and makes sure the data can't be tempered
         self.fields['data'].widget = ReadOnlyWidget()
         self.fields['data'].disabled = True
-        self.fields['horaInicio'].widget = ReadOnlyWidget()
+        self.fields['horaInicio'].widget = ReadOnlyWidget(attrs=dict(label='Hora início'))
         self.fields['horaInicio'].disabled = True
-        self.fields['horaFim'].widget = ReadOnlyWidget()
+        self.fields['horaFim'].widget = ReadOnlyWidget(attrs=dict(label='Hora fim'))
         self.fields['horaFim'].disabled = True
-        self.fields['locavel'].widget = ReadOnlyWidget(type(kwargs['instance'].locavel))
+        self.fields['locavel'].widget = ReadOnlyWidget(attrs=dict(label='Locável'), search_model=type(kwargs['instance'].locavel))
         self.fields['locavel'].disabled = True
         self.fields['atividade'].widget = ReadOnlyWidget(type(kwargs['instance'].atividade))
         self.fields['ramal'].widget = ReadOnlyWidget()
@@ -95,6 +96,7 @@ class ReservaAdminForm(forms.ModelForm):
         if kwargs['instance'].recorrencia:
             self.fields['dataInicio'].initial = kwargs['instance'].recorrencia.dataInicio
             self.fields['dataInicio'].widget = ReadOnlyWidget()
+            self.fields['dataInicio'].label = 'Data início'
             self.fields['dataInicio'].disabled = True
             self.fields['dataFim'].initial = kwargs['instance'].recorrencia.dataFim
             self.fields['dataFim'].widget = ReadOnlyWidget()
@@ -141,7 +143,7 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['usuario'].widget = forms.HiddenInput()
             self.fields['usuario'].label = ''
         else:
-            attrs = {}
+            attrs = dict(label='Usuário')
             if 'usuario' in self.errors:
                 attrs['error'] = self.errors['usuario']
             self.fields['usuario'].widget = AutocompleteWidget(attrs=attrs, query=User.objects.all(), model=User)
@@ -195,13 +197,16 @@ class ReservaAdminForm(forms.ModelForm):
         self.request.session['id_reservable_backup'] = self.id_reservable
         self.request.session['id_reservable'] = None
 
+        # set label
+        self.fields['locavel'].label = 'Locável'
+
     def init_hour_fields(self):
         # Check fields for error and intialize Widgets
-        attrs = {}
+        attrs = dict(label='Hora início')
         if 'horaInicio' in self.errors:
             attrs['error'] = self.errors['horaInicio']
         self.fields['horaInicio'] = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget(attrs=attrs))
-        attrs = {}
+        attrs = dict(label='Hora fim')
         if 'horaFim' in self.errors:
             attrs['error'] = self.errors['horaFim']
         self.fields['horaFim'] = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget(attrs=attrs))
@@ -212,6 +217,7 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['horaFim'].initial = self.request.session['horaFim']
         except:
             pass
+
         self.request.session['horaInicio'] = ''
         self.request.session['horaFim'] = ''
 
@@ -503,6 +509,14 @@ class UnidadeAdminForm(forms.ModelForm):
         except:
             self.initial_responsables = User.objects.none()
 
+        self.init_labels()
+
+    def init_labels(self):
+        self.fields['unidadePai'].label = 'Unidade pai'
+        self.fields['responsavel'].label = 'Responsáveis'
+        self.fields['descricao'].label = 'Descrição '
+        self.fields['logoLink'].label = 'Link para a logo'
+
     def save(self, *args, **kwargs):
         new_responsables = self.cleaned_data['responsavel']
         instance = super(UnidadeAdminForm, self).save(commit=False)
@@ -557,10 +571,19 @@ class LocavelAdminForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(LocavelAdminForm, self).__init__(*args, **kwargs)
-        self.fields['antecedenciaMinima'].label = 'Antecedencia minima para reserva. (Em dias, 0 para sem antecedencia)'
-        self.fields['antecedenciaMaxima'].label = 'Antecedencia maxima para reserva. (Em dias, 0 para sem antecedencia)'
         self.fields['antecedenciaMinima'].initial = 0
         self.fields['antecedenciaMaxima'].initial = 0
+        self.init_labels()
+
+    def init_labels(self):
+        self.fields['antecedenciaMinima'].label = 'Antecedência mínima para reserva. (Em dias, 0 para sem antecedencia)'
+        self.fields['antecedenciaMaxima'].label = 'Antecedência máxima para reserva. (Em dias, 0 para sem antecedencia)'
+        self.fields['fotoLink'].label = 'Link para foto'
+        self.fields['atividadesPermitidas'].label = 'Atividades permitidas'
+        self.fields['descricao'].label = 'Descrição'
+        self.fields['responsavel'].label = 'Responsáveis'
+        self.fields['invisivel'].label = 'Invisível'
+        self.fields['localizacao'].label = 'Localização'
 
     def save(self, *args, **kwargs):
         instance = super(LocavelAdminForm, self).save(commit=False)
@@ -573,6 +596,7 @@ class EquipamentoAdminForm(LocavelAdminForm):
 
     def __init__(self, *args, **kwargs):
         super(EquipamentoAdminForm, self).__init__(*args, **kwargs)
+        self.fields['patrimonio'].label = 'Patrimônio'
         print('he')
 
     def save(self, *args, **kwargs):

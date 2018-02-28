@@ -22,7 +22,7 @@ $(document).ready(function() {
         {% else %}
             <input type="text" id="autocomplete-{{ name }}" class="autocomplete" autocomplete="off">
         {% endif %}
-        <label for="autocomplete-{{ name }}">{{ name|title }}</label>
+        <label for="autocomplete-{{ name }}">{{ label|title }}</label>
     </div>
     <div hidden class='options'>
         <select id='id_{{ name }}' name='{{ name }}'>

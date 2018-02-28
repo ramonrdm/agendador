@@ -21,12 +21,15 @@ class SelectTimeWidget(Widget):
 
     def render(self, name, value, attrs=None):
         initial = None
+        label = name
+        if 'label' in self.attrs:
+            label = self.attrs['label']
         if value:
             try:
                 initial = value.strftime('%H:%M')
             except:
                 initial = datetime.strptime(value, '%H:%M').strftime('%H:%M')
-        return render_to_string('agenda/widgets/select_time.html', dict(name=name, attrs=self.attrs, initial=initial))
+        return render_to_string('agenda/widgets/select_time.html', dict(name=name, attrs=self.attrs, initial=initial, label=label))
 
 class SelectDateWidget(Widget):
 
@@ -65,11 +68,14 @@ class AutocompleteWidget(Widget):
         js = ('material/js/materialize.js', 'agenda/js/autocomplete.js',)
 
     def render(self, name, value, attrs=None):
+        label = name
+        if 'label' in self.attrs:
+            label = self.attrs['label']
         try:
             initial = self.model.objects.get(id=value)
         except:
             initial = None
-        return render_to_string('agenda/widgets/autocomplete.html', dict(name=name, query=self.query, attrs=self.attrs, initial=initial))
+        return render_to_string('agenda/widgets/autocomplete.html', dict(name=name, query=self.query, attrs=self.attrs, initial=initial, label=label))
 
 class ReadOnlyWidget(Widget):
     def __init__(self, search_model=None, check_box=False, check_box_value=None, attrs=None):
@@ -86,6 +92,9 @@ class ReadOnlyWidget(Widget):
     def render(self, name, value=None, attrs=None):
         model_field = False
         item_id = 0
+        label = name
+        if 'label' in self.attrs:
+            label = self.attrs['label']
         try:
             value = datetime.strftime(value, '%d/%m/%Y')
         except:
@@ -94,7 +103,7 @@ class ReadOnlyWidget(Widget):
             item_id = value
             value = self.search_model.objects.get(id=value)
             model_field = True
-        return render_to_string('agenda/widgets/read_only.html', dict(name=name, attrs=self.attrs, initial=value, model_field=model_field, item_id = item_id, check_box=self.check_box, check_box_value=self.check_box_value))
+        return render_to_string('agenda/widgets/read_only.html', dict(name=name, attrs=self.attrs, initial=value, model_field=model_field, item_id = item_id, check_box=self.check_box, check_box_value=self.check_box_value, label=label))
 
 class RecurrentReserveWidget(CheckboxInput):
 
