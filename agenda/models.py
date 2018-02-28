@@ -15,8 +15,26 @@ class Unidade(models.Model):
     logoLink = models.URLField(blank=True)
 
     def clean(self):
+        errors={}
+        try:
+            self.check_sigla(errors)
+            self.check_logoLink(errors)
+        except:
+            pass
+        if bool(errors):
+            raise ValidationError(errors)
+
+    def check_logoLink(self, errors):
+        image_extensions = ['jpg', 'jpeg', 'png']
+        link = self.logoLink.split('.')
+        extension = link[-1]
+        if extension not in image_extensions:
+            errors['logoLink'] = 'Insira uma imagem em uma extensão válida: %s' % ', '.join(map(str, image_extensions))
+
+
+    def check_sigla(self, errors):
         if ' ' in self.sigla:
-            raise ValidationError({'sigla': "Uso de espaço não permitido. Troque por ' - '."})
+            errors['sigla'] = "Uso de espaço não permitido. Troque por ' - '."
 
     def __unicode__(self):
         return self.sigla
@@ -48,6 +66,23 @@ class Locavel(models.Model):
     localizacao = models.TextField()
     fotoLink = models.URLField(blank=True)
     atividadesPermitidas = models.ManyToManyField(Atividade)
+
+    def clean(self):
+        errors={}
+        try:
+            self.check_fotoLink(errors)
+        except:
+            pass
+        if bool(errors):
+            raise ValidationError(errors)
+
+    def check_fotoLink(self, errors):
+        image_extensions = ['jpg', 'jpeg', 'png']
+        link = self.fotoLink.split('.')
+        extension = link[-1]
+        if extension not in image_extensions:
+            errors['fotoLink'] = 'Insira uma imagem em uma extensão válida: %s' % ', '.join(map(str, image_extensions))
+
     def __unicode__(self):
         return self.nome
     def __str__(self):
@@ -56,9 +91,15 @@ class Locavel(models.Model):
 class EspacoFisico(Locavel):
     capacidade = models.PositiveSmallIntegerField()
 
+    def clean(self):
+        super(EspacoFisico, self).clean()
+
 
 class Equipamento(Locavel):
     patrimonio = models.PositiveIntegerField()
+
+    def clean(self):
+        super(Equipamento, self).clean()
 
 
 class ReservaRecorrente(models.Model):

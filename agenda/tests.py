@@ -398,10 +398,11 @@ class ReserveFormTests(TestCase):
         no_permission_user = User.objects.get(username='no_permission_user')
         physical_space = EspacoFisico.objects.get(nome='physical_space')
         equipment = Equipamento.objects.get(nome='equipment')
+        unit = Unidade.objects.get(nome='unit')
 
         self.status_test(responsable, permission_user, no_permission_user, physical_space, equipment)
         self.recurrent_reserve_test(responsable, permission_user, no_permission_user, physical_space, equipment)
-        self.model_clean_tests(no_permission_user, responsable, physical_space, equipment)
+        self.model_clean_tests(no_permission_user, responsable, physical_space, equipment, unit)
 
         print '-RESERVE FORM TEST PASSED'
 
@@ -533,9 +534,34 @@ class ReserveFormTests(TestCase):
         ReservaEspacoFisico.objects.all().delete()
         ReservaRecorrente.objects.all().delete()
 
-    def model_clean_tests(self, user, responsable, physical_space, equipment):
+    def model_clean_tests(self, user, responsable, physical_space, equipment, unit):
         self.unit_clean_test()
         self.reserve_clean_test(user, responsable, physical_space, equipment)
+        self.reservable_clean_test(unit)
+
+    def reservable_clean_test(self, unit):
+        # fotoLink must be an image
+        print '--TESTING RESERVABLE IMAGELINK'
+        physical_space = EspacoFisico.objects.create(nome='b', descricao='d', unidade=unit, localizacao='a', capacidade=1, fotoLink='http://www.pudim.com.br/pudim.jpg')
+        try:
+            physical_space.clean()
+        except:
+            self.fail('EspacoFisico.clean() raised an exception unexpectedly!')
+        physical_space.delete()
+        physical_space = EspacoFisico.objects.create(nome='b', descricao='d', unidade=unit, localizacao='a', capacidade=1, fotoLink='http://www.pudim.com.br/')
+        self.assertRaises(ValidationError, lambda: physical_space.clean())
+        physical_space.delete()
+
+        equipment = Equipamento.objects.create(nome='b', descricao='d', unidade=unit, localizacao='a', patrimonio=1, fotoLink='http://www.pudim.com.br/pudim.jpg')
+        try:
+            equipment.clean()
+        except:
+            self.fail('Equipamento.clean() raised an exception unexpectedly!')
+        equipment.delete()
+        equipment = Equipamento.objects.create(nome='b', descricao='d', unidade=unit, localizacao='a', patrimonio=1, fotoLink='http://www.pudim.com.br/')
+        self.assertRaises(ValidationError, lambda: equipment.clean())
+        equipment.delete()
+        print '--RESERVABLE IMAGELINK TEST PASSED'
 
     def unit_clean_test(self):
         # unit cannot have space in initials
@@ -544,6 +570,20 @@ class ReserveFormTests(TestCase):
         self.assertRaises(ValidationError, lambda: unit.clean())
         unit.delete()
         print '--UNIT WITH SPACE IN INITIALS TEST PASSED'
+
+        # logoLink must be an image
+        print '--TESTING UNIT LOGOLINK'
+        unit = Unidade.objects.create(sigla='a', nome='a', descricao='d', logoLink='http://www.pudim.com.br/pudim.jpg')
+        try:
+            unit.clean()
+        except:
+            self.fail('unit.clean() raised an exception unexpectedly!')
+        unit.delete()
+        unit = Unidade.objects.create(sigla='initials with space', nome='a', descricao='d', logoLink='http://www.pudim.com.br/')
+        self.assertRaises(ValidationError, lambda: unit.clean())
+        unit.delete()
+        print '--UNIT LOGOLINK TEST PASSED'
+
 
     def reserve_clean_test(self, user, responsable, physical_space, equipment):
         default_date = datetime.strptime('01/01/9999', '%d/%m/%Y').date()
