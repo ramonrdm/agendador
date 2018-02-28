@@ -1,6 +1,10 @@
 {% extends 'material/frontend/base_module.html' %}
 {% load i18n material_frontend %}
 {% load static %}
+{% block head %}
+    {{ block.super }}
+    <link rel='shortcut icon' type='image/x-icon' href='/media/favicon.ico' />
+{% endblock %}
 {% block js %}
     {{ block.super }}
     <link rel='stylesheet' href="{% static 'agenda/fullcalendar/fullcalendar.css' %}" />
