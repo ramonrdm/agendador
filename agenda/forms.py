@@ -156,7 +156,9 @@ class ReservaAdminForm(forms.ModelForm):
 
         # Initialize the widget that dynamically change activities according to the selected reservable
         rel = Reserva._meta.get_field('atividade').rel
-        self.fields['atividade'].widget = DynamicAtividadeWidget(Select(choices=models.ModelChoiceIterator(self.fields['atividade'])), rel, admin.admin.site, can_change_related=True)
+        self.fields['atividade'].widget = DynamicAtividadeWidget(Select(choices=models.ModelChoiceIterator(self.fields['atividade'])), rel, admin.admin.site)
+        self.fields['atividade'].widget.can_add_related = False  # remove add button
+        self.fields['atividade'].widget.can_change_related = False  # remove edit button
 
     def init_reservable_field(self, kwargs):
         # If there was a error of validation there's the need to recover the reservable as pre-selected
@@ -197,8 +199,9 @@ class ReservaAdminForm(forms.ModelForm):
         self.request.session['id_reservable_backup'] = self.id_reservable
         self.request.session['id_reservable'] = None
 
-        # set label
-        self.fields['locavel'].label = 'Locável'
+        self.fields['locavel'].label = 'Locável'  # set label
+        self.fields['locavel'].widget.can_add_related = False  # remove add button
+        self.fields['locavel'].widget.can_change_related = False  # remove edit button
 
     def init_hour_fields(self):
         # Check fields for error and intialize Widgets
@@ -510,6 +513,13 @@ class UnidadeAdminForm(forms.ModelForm):
             self.initial_responsables = User.objects.none()
 
         self.init_labels()
+        self.remove_add_and_edit_icons()
+
+    def remove_add_and_edit_icons(self):
+        self.fields['unidadePai'].widget.can_add_related = False  # remove add button
+        self.fields['unidadePai'].widget.can_change_related = False  # remove edit button
+        self.fields['responsavel'].widget.can_add_related = False  # remove add button
+        self.fields['grupos'].widget.can_add_related = False  # remove add button
 
     def init_labels(self):
         self.fields['unidadePai'].label = 'Unidade pai'
@@ -574,6 +584,16 @@ class LocavelAdminForm(forms.ModelForm):
         self.fields['antecedenciaMinima'].initial = 0
         self.fields['antecedenciaMaxima'].initial = 0
         self.init_labels()
+        self.remove_add_and_edit_icons()
+
+    def remove_add_and_edit_icons(self):
+        self.fields['responsavel'].widget.can_add_related = False  # remove add button
+        self.fields['responsavel'].widget.can_change_related = False  # remove edit button
+        self.fields['unidade'].widget.can_add_related = False  # remove add button
+        self.fields['unidade'].widget.can_change_related = False  # remove edit button
+        self.fields['atividadesPermitidas'].widget.can_add_related = False  # remove add button
+        self.fields['atividadesPermitidas'].widget.can_change_related = False  # remove edit button
+        self.fields['grupos'].widget.can_add_related = False  # remove add button
 
     def init_labels(self):
         self.fields['antecedenciaMinima'].label = 'Antecedência mínima para reserva. (Em dias, 0 para sem antecedencia)'
