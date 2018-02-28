@@ -3,7 +3,7 @@ $(document).ready(function() {
     $('input.autocomplete').autocomplete({
         data: {
             {% for item in query %}
-                {{ item }}: null,
+                '{{ item }}': null,
             {% endfor %}
         },
         minLength: 0,
