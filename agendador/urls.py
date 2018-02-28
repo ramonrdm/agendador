@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^filtro_locavel_disponivel/(\d+)/(e|f|s)/(\w+)/(\w+)/(\w+)/', views.filtroLocavelDisponivel, name='resultado'),
     url(r'^get_atividade_set/$', views.get_atividade_set, name='get_atividade_set'),
     url(r'^faq/$', views.faq, name='faq'),
+    #url(r'^calendar/(?P<month>[1-12])$', views._calendar,name='cute_calendar'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
