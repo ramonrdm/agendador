@@ -18,7 +18,8 @@ class Unidade(models.Model):
         errors={}
         try:
             self.check_sigla(errors)
-            self.check_logoLink(errors)
+            if self.logoLink:
+                self.check_logoLink(errors)
         except:
             pass
         if bool(errors):
@@ -70,7 +71,8 @@ class Locavel(models.Model):
     def clean(self):
         errors={}
         try:
-            self.check_fotoLink(errors)
+            if self.fotoLink:
+                self.check_fotoLink(errors)
         except:
             pass
         if bool(errors):
