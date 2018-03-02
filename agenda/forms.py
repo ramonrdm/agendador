@@ -543,8 +543,10 @@ class UnidadeAdminForm(forms.ModelForm):
             # Check if user removed from responsable.
             if old_responsable not in new_responsables.all():
                 # check if it has other permissions, aside for the one being remove. if not remove from group
-                user_units = old_responsable.unidade_set.exclude(id=instance.id)
-                if not user_units:
+                user_responsabilities = bool(old_responsable.unidade_set.exclude(id=instance.id))
+                user_responsabilities = user_responsabilities or bool(old_responsable.espacofisico_set.all())
+                user_responsabilities = user_responsabilities or bool(old_responsable.equipamento_set.all())
+                if not user_responsabilities:
                     group.user_set.remove(old_responsable)
                     old_responsable.is_staff = False
                     old_responsable.save()
@@ -580,11 +582,19 @@ class SearchFilterForm(forms.Form):
 class LocavelAdminForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
+        self.reservable_type = kwargs.pop('reservable_type')
         super(LocavelAdminForm, self).__init__(*args, **kwargs)
         self.fields['antecedenciaMinima'].initial = 0
         self.fields['antecedenciaMaxima'].initial = 0
         self.init_labels()
         self.remove_add_and_edit_icons()
+
+        # get the old responsables for future comparissons
+        try:
+            self.initial_responsables = kwargs['instance'].responsavel
+        # if it's a new form there's no old responsables
+        except:
+            self.initial_responsables = User.objects.none()
 
     def remove_add_and_edit_icons(self):
         self.fields['responsavel'].widget.can_add_related = False  # remove add button
@@ -606,26 +616,50 @@ class LocavelAdminForm(forms.ModelForm):
         self.fields['localizacao'].label = 'Localização'
 
     def save(self, *args, **kwargs):
+        new_responsables = self.cleaned_data['responsavel']
         instance = super(LocavelAdminForm, self).save(commit=False)
         instance.save()
 
+        group = Group.objects.get_or_create(name='responsables')[0]
+        # Add new responsables to group
+        for user in new_responsables:
+            user.is_staff = True
+            user.save()
+            group.user_set.add(user)
+
+        for old_responsable in self.initial_responsables.all():
+            # Check if user removed from responsable.
+            if old_responsable not in new_responsables.all():
+                # check if it has other permissions, aside for the one being remove. if not remove from group
+                user_responsabilities = bool(old_responsable.unidade_set.all())
+                if self.reservable_type == Equipamento:
+                    user_responsabilities = user_responsabilities or bool(old_responsable.espacofisico_set.all())
+                    user_responsabilities = user_responsabilities or bool(old_responsable.equipamento_set.exclude(id=instance.id))
+                elif self.reservable_type == EspacoFisico:
+                    user_responsabilities = user_responsabilities or bool(old_responsable.equipamento_set.all())
+                    user_responsabilities = user_responsabilities or bool(old_responsable.espacofisico_set.exclude(id=instance.id))
+                if not user_responsabilities:
+                    group.user_set.remove(old_responsable)
+                    old_responsable.is_staff = False
+                    old_responsable.save()
         return instance
 
 
 class EquipamentoAdminForm(LocavelAdminForm):
 
     def __init__(self, *args, **kwargs):
+        kwargs['reservable_type'] = Equipamento
         super(EquipamentoAdminForm, self).__init__(*args, **kwargs)
         self.fields['patrimonio'].label = 'Patrimônio'
-        print('he')
 
     def save(self, *args, **kwargs):
-        instance = super(LocavelAdminForm, self).save(commit=False)
-        instance.save()
-
-        return instance
+        return super(EquipamentoAdminForm, self).save(*args, **kwargs)
 
 class EspacoFisicoAdminForm(LocavelAdminForm):
 
     def __init__(self, *args, **kwargs):
+        kwargs['reservable_type'] = EspacoFisico
         super(EspacoFisicoAdminForm, self).__init__(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        return super(EspacoFisicoAdminForm, self).save(*args, **kwargs)
