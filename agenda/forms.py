@@ -582,13 +582,16 @@ class SearchFilterForm(forms.Form):
 class LocavelAdminForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request')
         self.reservable_type = kwargs.pop('reservable_type')
         super(LocavelAdminForm, self).__init__(*args, **kwargs)
         self.fields['antecedenciaMinima'].initial = 0
         self.fields['antecedenciaMaxima'].initial = 0
         self.init_labels()
         self.remove_add_and_edit_icons()
-
+        ma = admin.UnidadeAdmin(Unidade, AdminSite())
+        queryset = ma.get_queryset(self.request)
+        self.fields['unidade'].queryset = queryset
         # get the old responsables for future comparissons
         try:
             self.initial_responsables = kwargs['instance'].responsavel

@@ -214,6 +214,15 @@ class EquipamentoAdmin(LocavelAdmin):
             group_reservables = group_reservables | group.equipamento_set.all()
         return super(EquipamentoAdmin, self).get_queryset(request, Equipamento, group_reservables)
 
+    def get_form(self, request, obj=None, **kwargs):
+        AdminForm =  super(EquipamentoAdmin, self).get_form(request, obj, **kwargs)
+        class AdminFormWithRequest(AdminForm):
+            def __new__(cls, *args, **kwargs):
+                kwargs['request'] = request
+                return AdminForm(*args, **kwargs)
+
+        return AdminFormWithRequest
+
 admin.site.register(Equipamento, EquipamentoAdmin)
 
 class EspacoFisicoAdmin(LocavelAdmin):
@@ -225,5 +234,14 @@ class EspacoFisicoAdmin(LocavelAdmin):
         for group in groups:
             group_reservables = group_reservables | group.espacofisico_set.all()
         return super(EspacoFisicoAdmin, self).get_queryset(request, EspacoFisico, group_reservables)
+
+    def get_form(self, request, obj=None, **kwargs):
+        AdminForm =  super(EspacoFisicoAdmin, self).get_form(request, obj, **kwargs)
+        class AdminFormWithRequest(AdminForm):
+            def __new__(cls, *args, **kwargs):
+                kwargs['request'] = request
+                return AdminForm(*args, **kwargs)
+
+        return AdminFormWithRequest
 
 admin.site.register(EspacoFisico, EspacoFisicoAdmin)
