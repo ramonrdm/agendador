@@ -1,11 +1,12 @@
 {% extends 'admin/base.html' %}
+{% load static %}
 {% load i18n %}
 {% block head %}
     {{ block.super }}
-    <link rel='shortcut icon' type='image/x-icon' href='http://www.iconj.com/ico/y/s/ys3ibq9k10.ico' />
+    <link rel='shortcut icon' type='image/x-icon' href="{% static 'agenda/img/favico.ico' %}" />
 {% endblock %}
 {% block userphoto %}
-<a href="#"><img class="circle" src="https://seeklogo.com/images/B/Bras_and__227_o_UFSC-logo-7C99FCB2FC-seeklogo.com.png"></a>
+<a href="#"><img class="circle" src="{% static 'agenda/img/logoufsc2.png' %}"></a>
 {% endblock %}
 
 {% block userlinks %}
