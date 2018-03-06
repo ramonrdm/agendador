@@ -3,6 +3,7 @@
 from agenda.models import *
 from django.contrib import messages
 from django.conf import settings
+from django.contrib.auth.forms import UserChangeForm
 from django import forms
 from django.contrib.admin import widgets
 import datetime
@@ -666,3 +667,42 @@ class EspacoFisicoAdminForm(LocavelAdminForm):
 
     def save(self, *args, **kwargs):
         return super(EspacoFisicoAdminForm, self).save(*args, **kwargs)
+
+class UserAdminForm(UserChangeForm):
+
+    class Meta:
+        model = User
+        fields = ('username', 'password', 'email', 'first_name', 'last_name', 'is_superuser', 'is_staff', 'is_active', 'groups', 'user_permissions', 'last_login', 'date_joined')
+
+    def __init__(self, *args, **kwargs):
+        super(UserAdminForm, self).__init__(*args, **kwargs)
+        if not self.request.user.is_superuser:
+            self.hide_fields()
+        self.init_groups_field()
+        self.init_permissions_field()
+
+    def init_permissions_field(self):
+        self.fields['user_permissions'].widget = FilteredSelectMultipleJs(verbose_name="Permissões", is_stacked=False)
+        self.fields['user_permissions'].help_text = ''
+        self.fields['user_permissions'].label = 'Permissões'
+        self.fields['user_permissions'].queryset = Permission.objects.all()
+
+    def init_groups_field(self):
+        self.fields['groups'].widget = FilteredSelectMultipleJs(verbose_name="Grupos", is_stacked=False)
+        self.fields['groups'].help_text = ''
+        self.fields['groups'].label = 'Grupos'
+        self.fields['groups'].queryset = Group.objects.all()
+
+    def hide_fields(self):
+        self.fields['password'].widget = HiddenInput()
+        self.fields['password'].label = ''
+        self.fields['password'].help_text = ''
+        self.fields['is_superuser'].widget = HiddenInput()
+        self.fields['is_superuser'].label = ''
+        self.fields['is_superuser'].help_text = ''
+        self.fields['is_staff'].widget = HiddenInput()
+        self.fields['is_staff'].label = ''
+        self.fields['is_staff'].help_text = ''
+        self.fields['is_active'].widget = HiddenInput()
+        self.fields['is_active'].label = ''
+        self.fields['is_active'].help_text = ''

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from agenda.models import *
 from django.contrib.auth.models import User
+from django.contrib.auth.admin import UserAdmin as UserAdmin_
 from django.forms import HiddenInput
 from django.contrib.admin.sites import AdminSite
 import forms
@@ -245,3 +246,15 @@ class EspacoFisicoAdmin(LocavelAdmin):
         return AdminFormWithRequest
 
 admin.site.register(EspacoFisico, EspacoFisicoAdmin)
+
+class UserAdmin(admin.ModelAdmin):
+    form = forms.UserAdminForm
+
+    def get_form(self, request, *args, **kwargs):
+        form = super(UserAdmin, self).get_form(request, *args, **kwargs)
+        form.request = request
+        return form
+
+
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)

@@ -171,10 +171,6 @@ class Reserva(models.Model):
                 errors['data'] = 'Este locável tem antecedência máxima de %d dias.' % (self.locavel.antecedenciaMaxima, )
 
     def verificaBloqueado(self, errors):
-        class MockRequest:
-            pass
-        request = MockRequest()
-        request.user = self.usuario
         # Check if superuser
         responsable = self.usuario.is_superuser
         # Check if responsable for locable
@@ -183,10 +179,7 @@ class Reserva(models.Model):
             if locable_responsable.id == self.usuario.id:
                 responsable = True
         # Check if unit responsable
-        unit_responsables = self.locavel.unidade.responsavel.all()
-        ma = adm.UnidadeAdmin(Unidade, admin.sites.AdminSite())
-        queryset = ma.get_queryset(request)
-        if self.locavel.unidade in queryset:
+        if self.usuario in self.locavel.unidade.responsavel.all():
             responsable = True
 
         if self.locavel.bloqueado and not responsable:
@@ -234,4 +227,3 @@ class ReservaEquipamento(Reserva):
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
 
-import admin as adm

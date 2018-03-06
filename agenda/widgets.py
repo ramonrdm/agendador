@@ -2,11 +2,19 @@
 import re
 from django.forms.extras.widgets import SelectDateWidget
 from django.forms.widgets import Widget, Select, MultiWidget, CheckboxInput
+from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
 from django.contrib.admin import widgets
 from django import forms
 from datetime import datetime
+
+class FilteredSelectMultipleJs(FilteredSelectMultiple):
+    class Media():
+        js = ('agenda/js/filtered_select_multiple.js',)
+        css = {
+            'all': ('agenda/css/filtered_select_multiple.css',),
+        }
 
 class SelectTimeWidget(Widget):
 
