@@ -5,6 +5,7 @@ from django.contrib.auth.admin import UserAdmin as UserAdmin_
 from django.forms import HiddenInput
 from django.contrib.admin.sites import AdminSite
 import forms
+from django.contrib.admin.models import LogEntry
 
 admin.site.register(Atividade)
 
@@ -258,3 +259,4 @@ class UserAdmin(admin.ModelAdmin):
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
+admin.site.register(LogEntry)
