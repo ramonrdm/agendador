@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin as UserAdmin_
 from django.forms import HiddenInput
 from django.contrib.admin.sites import AdminSite
+from django.contrib.auth.admin import UserAdmin
 import forms
 from django.contrib.admin.models import LogEntry
 
@@ -248,7 +249,7 @@ class EspacoFisicoAdmin(LocavelAdmin):
 
 admin.site.register(EspacoFisico, EspacoFisicoAdmin)
 
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(UserAdmin):
     form = forms.UserAdminForm
 
     def get_form(self, request, *args, **kwargs):
