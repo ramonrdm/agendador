@@ -21,10 +21,16 @@ from forms import *
 
 from material.frontend.views import ModelViewSet
 
+from django.contrib.admin.models import LogEntry
+
 month_names = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 unidade_default = 'ufsc'
 
 def index(request, unidade=None):
+
+    logs = LogEntry.objects.all()
+    for l in logs:
+        print(l)
     # get unit
     try:  # try to get given unit
         unidade = Unidade.objects.get(sigla__iexact=unidade)
