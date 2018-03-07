@@ -515,6 +515,17 @@ class UnidadeAdminForm(forms.ModelForm):
 
         self.init_labels()
         self.remove_add_and_edit_icons()
+        self.init_many_to_many_fields()
+
+    def init_many_to_many_fields(self):
+        self.fields['grupos'].widget = FilteredSelectMultipleJs(verbose_name="Grupos", is_stacked=False)
+        self.fields['grupos'].queryset = Group.objects.all()
+        self.fields['grupos'].help_text = ''
+        self.fields['responsavel'].widget = FilteredSelectMultipleJs(verbose_name="Responsáveis", is_stacked=False)
+        self.fields['responsavel'].queryset = User.objects.all()
+        self.fields['responsavel'].help_text = ''
+
+
 
     def remove_add_and_edit_icons(self):
         self.fields['unidadePai'].widget.can_add_related = False  # remove add button
@@ -590,6 +601,7 @@ class LocavelAdminForm(forms.ModelForm):
         self.fields['antecedenciaMaxima'].initial = 0
         self.init_labels()
         self.remove_add_and_edit_icons()
+        self.init_many_to_many_fields()
         ma = admin.UnidadeAdmin(Unidade, AdminSite())
         queryset = ma.get_queryset(self.request)
         self.fields['unidade'].queryset = queryset
@@ -599,6 +611,18 @@ class LocavelAdminForm(forms.ModelForm):
         # if it's a new form there's no old responsables
         except:
             self.initial_responsables = User.objects.none()
+
+    def init_many_to_many_fields(self):
+        self.fields['grupos'].widget = FilteredSelectMultipleJs(verbose_name="Grupos", is_stacked=False)
+        self.fields['grupos'].queryset = Group.objects.all()
+        self.fields['grupos'].help_text = ''
+        self.fields['responsavel'].widget = FilteredSelectMultipleJs(verbose_name="Responsáveis", is_stacked=False)
+        self.fields['responsavel'].queryset = User.objects.all()
+        self.fields['responsavel'].help_text = ''
+        self.fields['atividadesPermitidas'].widget = FilteredSelectMultipleJs(verbose_name="Atividades permitidas", is_stacked=False)
+        self.fields['atividadesPermitidas'].queryset = Atividade.objects.all()
+        self.fields['atividadesPermitidas'].help_text = ''
+
 
     def remove_add_and_edit_icons(self):
         self.fields['responsavel'].widget.can_add_related = False  # remove add button
