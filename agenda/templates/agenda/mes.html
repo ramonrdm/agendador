@@ -103,6 +103,8 @@ jQuery(document).ready(function() {
     $('#close-modal').on('click', function() {
         $('#fullCalModal').modal('close');
     });
+
+    $('#calendar').fullCalendar('option', 'height', $('main').height() - $('.topbar').height());
 });
 
 function setMonth() {
