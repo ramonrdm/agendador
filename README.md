@@ -33,13 +33,13 @@ Executando o projeto localmente:
     $ cd my_project
 ```
 + se não conseguir criar a virtualenv: http://docs.python-guide.org/en/latest/dev/virtualenvs/
-+ Criada a virtualenv, execute:
++ Criada a virtualenv, execute para instalar dependências:
 ```
-    $ pip install django==1.10.01
+    $ pip install -r requirements.txt
 ```
 + Faça o download do projeto executando:
 ```
-    $ git clone -b develop https://github.com/ramonrdm/agendador
+    $ git clone https://github.com/ramonrdm/agendador
 ```
 + Execute:
 ```
