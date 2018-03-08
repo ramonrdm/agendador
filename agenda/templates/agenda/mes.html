@@ -27,6 +27,8 @@
 <a href="#"><i class="circle material-icons medium">location_on</i></a>
 {% elif tipo == 'e' %}
 <a href="#"><i class="circle material-icons medium">power</i></a>
+{% elif tipo == 's' %}
+<a href="#"><i class="circle material-icons medium">accessibility</i></a>
 {% endif %}
 {% endblock %}
 
@@ -133,6 +135,8 @@ function sendRequest(data) {
                     location.href = '/admin/agenda/reservaespacofisico/add/';
                 } else if ('{{ tipo }}' === 'e') {
                     location.href = '/admin/agenda/reservaequipamento/add/';
+                } else if ('{{ tipo }}' === 's') {
+                    location.href = '/admin/agenda/reservaservico/add/'
                 }
             }
         }

@@ -35,6 +35,13 @@
             });
         {% endif %}
     {% endfor %}
+    {% for field in search_s.visible_fields %}
+        {% if field.errors %}
+            $(document).ready(function(){
+                $('.modal_filter_s').modal('open');
+            });
+        {% endif %}
+    {% endfor %}
     </script>
 {% endblock %}
 {% block page_title %}
@@ -158,6 +165,47 @@
         </div>
     </div>
     {% endif %}
+    {% if servicos %}
+    <div class="divider"></div>
+    <div class="row">
+        <div class="col s12">
+        <ul class="collapsible row" data-collapsible="accordion">
+            <li><div class="collapsible-header active col s12">
+                <div class='col s11 m10 l11'>
+                <i class="small material-icons">expand_more</i><h5 class='service-header'>Serviços de {{unidade.sigla}}</h5>
+                </div>
+                <a class="light-blue darken-4 btn modal-trigger col s4 m2 l1 right waves-effect waves-light filter_e" href="#filter_s">Filtrar</a>
+            </div>
+            <div class='collapsible-body col s12' id="servicosCard">
+                <div class="card" id="servicos">
+                    <div class="card-tabs">
+                        <ul class="tabs">
+                        {% for year, months in years %}
+                            <li class='tab'><a href="'#year{{ forloop.counter }}Servico"> {{ year }} </a></li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-content white">
+                    {% for year, months in years %}
+                    <div id="year{{ forloop.counter }}Servico" class="row">
+                        {% for month in months %}
+                            <div class="collection col l2 m4 s6 month">
+                                <a class="collection-header"><b>{{ month.name }}</b></a>
+                                {% for servico in servicos %}
+                                    <a  class="collection-item" href="{% url 'mes' 's' servico.id year month.n %}">{{ servico.nome }}</a>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </li>
+        </ul>
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 <!-- Modals structure -->
@@ -193,6 +241,27 @@
                 {{ field.errors }}
             {% endfor %}
             {% for field in search_e.hidden_fields %}
+                {{ field }}
+            {% endfor %}
+        </div>
+        <div class="modal-footer">
+            <button class="light-blue darken-4 btn waves-effect waves-light" type="submit" name="action">Filtrar
+                <i class="material-icons right">send</i>
+            </button>
+        </div>
+    </form>
+</div>
+
+<div id="filter_s" class="modal modal_filter_s">
+    <form method='post'>
+        {% csrf_token %}
+        <div class="modal-content">
+            <h4>Filtrar serviço</h4>
+            {% for field in search_s.visible_fields %}
+                {{ field }}
+                {{ field.errors }}
+            {% endfor %}
+            {% for field in search_s.hidden_fields %}
                 {{ field }}
             {% endfor %}
         </div>

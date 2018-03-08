@@ -67,6 +67,8 @@ function sendRequest(id) {
                     location.href = '/admin/agenda/reservaespacofisico/add/';
                 } else if ('{{ tipo }}' === 'e') {
                     location.href = '/admin/agenda/reservaequipamento/add/';
+                } else if ('{{ tipo }}' === 's') {
+                    location.href = '/admin/agenda/reservaservico/add/'
                 }
             }
         }

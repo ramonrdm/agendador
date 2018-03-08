@@ -65,12 +65,20 @@ def index(request, unidade=None):
         elif search_form.data['tipo'] == 'f':
             search_f = search_form
             search_e = SearchFilterForm(tipo='e')
+            search_s = SearchFilterForm(tipo='s')
         elif search_form.data['tipo'] == 'e':
             search_f = SearchFilterForm(tipo='f')
             search_e = search_form
+            search_s = SearchFilterForm(tipo='s')
+        elif search_form.data['tipo'] == 's':
+            search_f = SearchFilterForm(tipo='f')
+            search_e = SearchFilterForm(tipo='e')
+            search_s = search_form
+
     else:
         search_f = SearchFilterForm(tipo='f')
         search_e = SearchFilterForm(tipo='e')
+        search_s = SearchFilterForm(tipo='s')
     #titulo = "Agendador UFSC"
     #corpo = "Bem vindo ao Agendador de espaços físicos e equipamentos da UFSC"
 
@@ -80,6 +88,7 @@ def index(request, unidade=None):
 
     espacosFisicos = EspacoFisico.objects.filter(unidade=unidade).filter(invisivel=False)
     equipamentos = Equipamento.objects.filter(unidade=unidade).filter(invisivel=False)
+    servicos = Servico.objects.filter(unidade=unidade).filter(invisivel=False)
 
     year = time.localtime()[0]
     current_year, current_month = time.localtime()[:2]
@@ -97,8 +106,8 @@ def index(request, unidade=None):
         "agenda/index.html",
         dict(
             unidade=unidade, unidades=unidades,
-            espacosfisicos=espacosFisicos, equipamentos=equipamentos,
-            years=lst, user=request.user, search_f=search_f, search_e=search_e
+            espacosfisicos=espacosFisicos, equipamentos=equipamentos, servicos=servicos,
+            years=lst, user=request.user, search_f=search_f, search_e=search_e, search_s=search_s
             )
         )
 
@@ -130,14 +139,21 @@ def locavel(request, tipo=None, locavel=None):
     if tipo == 'e':
         locavel = Equipamento.objects.get(id=locavel)
         specific['patrimonio'] = locavel.patrimonio
-    else:
+    elif tipo == 'f':
         locavel = EspacoFisico.objects.get(id=locavel)
         specific['capacidade'] = locavel.capacidade
-        atividadesPermitidas = locavel.atividadesPermitidas.all()
-        atividades = list()
-        for atividade in atividadesPermitidas:
-            atividades.append(atividade.nome)
-        specific['atividades permitidas'] = (", ").join(atividades)
+    else:
+        locavel = Servico.objects.get(id=locavel)
+        profissionais = locavel.profissionais.all()
+        names = list()
+        for profissional in profissionais:
+            names.append(profissional.first_name)
+        specific['profissionais envolvidos'] = (", ").join(names)
+    atividadesPermitidas = locavel.atividadesPermitidas.all()
+    atividades = list()
+    for atividade in atividadesPermitidas:
+        atividades.append(atividade.nome)
+    specific['atividades permitidas'] = (", ").join(atividades)
     if locavel.invisivel:
         return HttpResponseNotFound()
     responsaveis = locavel.responsavel.all()
@@ -174,8 +190,10 @@ def mes(request, tipo=None, espaco=None, year=None, month=None, change=None):
         if day:
             if tipo=="e":
                 entries = ReservaEquipamento.objects.filter(data__year=year, data__month=month, data__day=day, locavel=espaco, estado="A")
-            else:
+            elif tipo == "f":
                 entries = ReservaEspacoFisico.objects.filter(data__year=year, data__month=month, data__day=day, locavel=espaco, estado="A")
+            elif tipo == "s":
+                entries = ReservaServico.objects.filter(data__year=year, data__month=month, data__day=day, locavel=espaco, estado="A")
 
         if day == nday and year == nyear and month == nmonth:
             current = True
@@ -185,15 +203,16 @@ def mes(request, tipo=None, espaco=None, year=None, month=None, change=None):
             lst.append([])
             week += 1
     if(tipo=="e"):
-        espacofisico = Equipamento.objects.get(id=espaco)
+        reservable = Equipamento.objects.get(id=espaco)
+    elif tipo == 'f':
+        reservable = EspacoFisico.objects.get(id=espaco)
     else:
-        espacofisico = EspacoFisico.objects.get(id=espaco)
-        tipo = 'f'
+        reservable = Servico.objects.get(id=espaco)
     return render(
             request,
             "agenda/mes.html",
             dict(
-                espaco=espacofisico, year=year, month=month,
+                espaco=reservable, year=year, month=month,
                 user=request.user, month_days=lst, mname=month_names[month-1],
                 tipo=tipo
                 ))
@@ -253,10 +272,12 @@ def filtroLocavelDisponivel(request, unit, tipo, sData, sHoraInicio, sHoraFim):
     if tipo == 'f':
         query = unit.espacofisico_set.all()
         tipo_reserva = ReservaEspacoFisico
-
     elif tipo == 'e':
         query = unit.equipamento_set.all()
         tipo_reserva = ReservaEquipamento
+    elif tipo == 's':
+        query = unit.servico_set.all()
+        tipo_reserva = ReservaServico
 
     dummy_user = User.objects.create(username='dummy_user')
     for locavel in query:
@@ -283,6 +304,9 @@ def get_atividade_set(request):
         elif 'equipamento' in tipo:
             locavel = Equipamento.objects.get(nome=locavel)
             ma = admin.EquipamentoAdmin(Equipamento, AdminSite())
+        elif unicode('serviço', 'utf-8') in tipo:
+            locavel = Servico.objects.get(nome=locavel)
+            ma = admin.ServicoAdmin(Servico, AdminSite())
         query = ma.get_queryset(request)
         if locavel in query:
             atividades = locavel.atividadesPermitidas.all()

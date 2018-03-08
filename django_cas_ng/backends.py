@@ -354,13 +354,13 @@ class CASBackend(object):
 
     def give_permissions(self, group):
         # physical space permissions
-        add_physical_space_reserve = Permission.objects.filter(codename='add_reservaespacofisico', name='Can add reserva espaco fisico')
+        add_physical_space_reserve = Permission.objects.filter(codename='add_reservaespacofisico')
         for permission in add_physical_space_reserve:
             group.permissions.add(permission)
-        change_physical_space_reserve = Permission.objects.filter(codename='change_reservaespacofisico', name='Can change reserva espaco fisico')
+        change_physical_space_reserve = Permission.objects.filter(codename='change_reservaespacofisico')
         for permission in change_physical_space_reserve:
             group.permissions.add(permission)
-        delete_physical_space_reserve = Permission.objects.filter(codename='delete_reservaespacofisico', name='Can delete reserva espaco fisico')
+        delete_physical_space_reserve = Permission.objects.filter(codename='delete_reservaespacofisico')
         for permission in delete_physical_space_reserve:
             group.permissions.add(permission)
 
@@ -373,5 +373,16 @@ class CASBackend(object):
             group.permissions.add(permission)
         delete_equipment_reserve = Permission.objects.filter(codename='delete_reservaequipamento', name='Can delete reserva equipamento')
         for permission in delete_equipment_reserve:
+            group.permissions.add(permission)
+
+        # services permissions
+        add_service_reserve = Permission.objects.filter(codename='add_reservaservico')
+        for permission in add_service_reserve:
+            group.permissions.add(permission)
+        change_service_reserve = Permission.objects.filter(codename='change_reservaservico')
+        for permission in change_service_reserve:
+            group.permissions.add(permission)
+        delete_service_reserve = Permission.objects.filter(codename='delete_reservaservico')
+        for permission in delete_service_reserve:
             group.permissions.add(permission)
         return group

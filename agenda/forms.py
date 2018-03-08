@@ -126,6 +126,8 @@ class ReservaAdminForm(forms.ModelForm):
                     reservable_set = self.request.user.espacofisico_set.all()
                 elif isinstance(reservable, Equipamento):
                     reservable_set = self.request.user.equipamento_set.all()
+                elif isinstance(reservable, Servico):
+                    reservable_set = self.request.user.servico_set.all()
                 if reservable not in reservable_set:
                     hide = True
             else:
@@ -295,6 +297,8 @@ class ReservaAdminForm(forms.ModelForm):
                 reserve_type = 'reservaespacofisico'
             elif isinstance(reservable, Equipamento):
                 reserve_type = 'reservaequipamento'
+            elif isinstance(reservable, Servico):
+                reserve_type = 'reservaservico'
 
             base_url = self.request.build_absolute_uri('/')
             url = "%sadmin/agenda/%s/%d/change/" % (base_url, reserve_type, instance.id)
@@ -495,6 +499,25 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
         kwargs['query'] = user_query
         return super(ReservaEspacoFisicoAdminForm, self).save(*args, **kwargs)
 
+class ReservaServicoAdminForm(ReservaAdminForm):
+    class Meta:
+        model = ReservaServico
+        fields = ('estado', 'data', 'recorrente', 'dataInicio', 'dataFim', 'horaInicio', 'horaFim', 'locavel', 'atividade', 'usuario', 'ramal', 'finalidade')
+
+    def __init__(self, *args, **kwargs):
+        kwargs['admin_type'] = admin.ServicoAdmin
+        kwargs['reservable_type'] = Servico
+        kwargs['reserve_type'] = ReservaServico
+        super(ReservaServicoAdminForm, self).__init__(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        temp_request = self.request
+        temp_request.user = self.cleaned_data['usuario']
+        ma = admin.ServicoAdmin(Servico, AdminSite())
+        user_query = ma.get_queryset(self.request)
+        kwargs['query'] = user_query
+        return super(ReservaServicoAdminForm, self).save(*args, **kwargs)
+
 class UnidadeAdminForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -670,6 +693,18 @@ class EspacoFisicoAdminForm(LocavelAdminForm):
 
     def save(self, *args, **kwargs):
         return super(EspacoFisicoAdminForm, self).save(*args, **kwargs)
+
+class ServicoAdminForm(LocavelAdminForm):
+
+    def __init__(self, *args, **kwargs):
+        kwargs['reservable_type'] = Servico
+        super(ServicoAdminForm, self).__init__(*args, **kwargs)
+        self.fields['profissionais'].widget = FilteredSelectMultipleJs(verbose_name="Profissionais", is_stacked=False)
+        self.fields['profissionais'].queryset = User.objects.all()
+        self.fields['profissionais'].help_text = ''
+
+    def save(self, *args, **kwargs):
+        return super(ServicoAdminForm, self).save(*args, **kwargs)
 
 class UserAdminForm(UserChangeForm):
 

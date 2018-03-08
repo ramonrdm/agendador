@@ -108,6 +108,15 @@ class Equipamento(Locavel):
     def clean(self):
         super(Equipamento, self).clean()
 
+class Servico(Locavel):
+    class Meta:
+        verbose_name = 'Serviço'
+        verbose_name_plural = 'Serviços'
+
+    profissionais = models.ManyToManyField(User, verbose_name='Profissionais que executam o serviço', related_name='profissionais')
+    def clean(self):
+        super(Servico, self).clean()
+
 
 class ReservaRecorrente(models.Model):
     dataInicio = models.DateField(blank=True, null=True)
@@ -236,3 +245,15 @@ class ReservaEquipamento(Reserva):
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
 
+class ReservaServico(Reserva):
+    class Meta:
+        verbose_name = 'Reserva serviço'
+        verbose_name_plural = 'Reserva serviços'
+
+    locavel = models.ForeignKey(Servico, verbose_name='Locável')
+
+    def clean(self):
+        super(ReservaServico, self).clean()
+
+    def __unicode__(self):
+        return self.usuario.username+"/"+self.atividade.nome

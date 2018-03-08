@@ -141,6 +141,24 @@ class ReservaEspacoFisicoAdmin(ReservaAdmin):
 
 admin.site.register(ReservaEspacoFisico, ReservaEspacoFisicoAdmin)
 
+class ReservaServicoAdmin(ReservaAdmin):
+    form = forms.ReservaServicoAdminForm
+    icon = '<i class="material-icons">accessibility</i>'
+
+    def get_form(self, request, obj=None, **kwargs):
+        AdminForm =  super(ReservaServicoAdmin, self).get_form(request, obj, **kwargs)
+        class AdminFormWithRequest(AdminForm):
+            def __new__(cls, *args, **kwargs):
+                kwargs['request'] = request
+                return AdminForm(*args, **kwargs)
+
+        return AdminFormWithRequest
+
+    def get_queryset(self, request):
+        return super(ReservaServicoAdmin, self).get_queryset(request, ReservaServico, Servico)
+
+admin.site.register(ReservaServico, ReservaServicoAdmin)
+
 class LocavelAdmin(admin.ModelAdmin):
     list_display = ('nome','unidade','get_responsavel')
     def get_responsavel(self, obj):
@@ -248,6 +266,28 @@ class EspacoFisicoAdmin(LocavelAdmin):
         return AdminFormWithRequest
 
 admin.site.register(EspacoFisico, EspacoFisicoAdmin)
+
+class ServicoAdmin(LocavelAdmin):
+    form = forms.ServicoAdminForm
+    icon = '<i class="material-icons">accessibility</i>'
+
+    def get_queryset(self, request):
+        groups = request.user.groups.all()
+        group_reservables = Servico.objects.none()
+        for group in groups:
+            group_reservables = group_reservables | group.servico_set.all()
+        return super(ServicoAdmin, self).get_queryset(request, Servico, group_reservables)
+
+    def get_form(self, request, obj=None, **kwargs):
+        AdminForm =  super(ServicoAdmin, self).get_form(request, obj, **kwargs)
+        class AdminFormWithRequest(AdminForm):
+            def __new__(cls, *args, **kwargs):
+                kwargs['request'] = request
+                return AdminForm(*args, **kwargs)
+
+        return AdminFormWithRequest
+
+admin.site.register(Servico, ServicoAdmin)
 
 class UserAdmin(UserAdmin):
     form = forms.UserAdminForm
