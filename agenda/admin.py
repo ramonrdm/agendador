@@ -200,17 +200,26 @@ class LocavelAdmin(admin.ModelAdmin):
             return reservableModel.objects.all()
         reservables = reservableModel.objects.none()
 
-        # Check if unit responsible
-        # Also check user unit via group, for form list purposes
-        groups = request.user.groups.all()
-        group_units = Unidade.objects.none()
-        for group in groups:
-            if group.unidade_set:
-                group_units = group_units | group.unidade_set.all()
-        if group_units:
-            for unit in group_units:
-                reservables = self.search_children(reservables, unit, request.user, False, reservableModel)
+        # check user unit via group, for form list purposes
+        # ATENTION: this is for filling reserves form only! This cannot be returned if the user is trying to see the reservable admin list.
+        # by the time this was noticed this method has been used too much, so the next lines are a cheap temporary workaround.
+        url = request.build_absolute_uri('?')
+        url = url.split('/')
+        check_groups = True
+        if 'espacofisico' in url or 'equipamento' in url or 'servico' in url:
+            check_groups = False
 
+        if check_groups:
+            groups = request.user.groups.all()
+            group_units = Unidade.objects.none()
+            for group in groups:
+                if group.unidade_set:
+                    group_units = group_units | group.unidade_set.all()
+            if group_units:
+                for unit in group_units:
+                    reservables = self.search_children(reservables, unit, request.user, False, reservableModel)
+
+        # Check if unit responsible
         unit_responsible = Unidade.objects.filter(responsavel=request.user)
         if unit_responsible:
             for unit in unit_responsible:
