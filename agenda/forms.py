@@ -80,11 +80,11 @@ class ReservaAdminForm(forms.ModelForm):
         # For all fields, put the readonly widget and makes sure the data can't be tempered
         self.fields['data'].widget = ReadOnlyWidget()
         self.fields['data'].disabled = True
-        self.fields['horaInicio'].widget = ReadOnlyWidget(attrs=dict)
+        self.fields['horaInicio'].widget = ReadOnlyWidget(attrs={})
         self.fields['horaInicio'].disabled = True
-        self.fields['horaFim'].widget = ReadOnlyWidget(attrs=dict)
+        self.fields['horaFim'].widget = ReadOnlyWidget(attrs={})
         self.fields['horaFim'].disabled = True
-        self.fields['locavel'].widget = ReadOnlyWidget(attrs=dict, search_model=type(kwargs['instance'].locavel))
+        self.fields['locavel'].widget = ReadOnlyWidget(attrs={}, search_model=type(kwargs['instance'].locavel))
         self.fields['locavel'].disabled = True
         self.fields['atividade'].widget = ReadOnlyWidget(type(kwargs['instance'].atividade))
         self.fields['ramal'].widget = ReadOnlyWidget()
@@ -393,11 +393,12 @@ class ReservaAdminForm(forms.ModelForm):
         user_query = kwargs.pop('query', None)
         reservable = self.cleaned_data['locavel']
         status = self.cleaned_data['estado']
+        user = self.cleaned_data['usuario']
 
         instance = super(ReservaAdminForm, self).save(commit=False)
         # Check if the user has permission in this reservable
         # If it is, the reserve is automatically accepted
-        if reservable in user_query:
+        if (reservable in user_query) and (not reservable.permissaoNecessaria) or (user in reservable.responsavel.all()):
             status = 'A'
         instance.estado = status
 

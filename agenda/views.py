@@ -276,7 +276,8 @@ def get_atividade_set(request):
     if request.method == 'POST':
         tipo = request.POST['title']
         locavel = request.POST['locavel']
-        if 'espaco fisico' in tipo:
+        print tipo
+        if unicode('espaço físico', 'utf-8') in tipo:
             locavel = EspacoFisico.objects.get(nome=locavel)
             ma = admin.EspacoFisicoAdmin(EspacoFisico, AdminSite())
         elif 'equipamento' in tipo:

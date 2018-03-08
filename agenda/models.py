@@ -62,6 +62,7 @@ class Locavel(models.Model):
     grupos = models.ManyToManyField(Group, blank=True, verbose_name='Grupos que podem reservar automaticamente')
     bloqueado = models.BooleanField(default=False)
     invisivel = models.BooleanField(default=False, verbose_name='Invisível')
+    permissaoNecessaria = models.BooleanField(default=False, verbose_name='Reservar somente com autorização de um responsável')
     antecedenciaMinima = models.PositiveSmallIntegerField(default=0, verbose_name='Antecedência máxima')
     antecedenciaMaxima = models.PositiveIntegerField(default=0, verbose_name='Antecedência mínima')
     localizacao = models.TextField(verbose_name='Localização')

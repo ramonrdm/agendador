@@ -444,6 +444,26 @@ class ReserveFormTests(TestCase):
         self.assertEqual(instance.estado, 'E')
         instance.delete()
 
+        # Test if reservable needs responsable approval
+        physical_space.permissaoNecessaria = True
+        physical_space.save()
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, permission_user)
+        form.save()
+        instance = ReservaEspacoFisico.objects.all()[0]
+        self.assertEqual(instance.estado, 'E')
+        instance.delete()
+        physical_space.permissaoNecessaria = False
+        physical_space.save()
+        equipment.permissaoNecessaria = True
+        equipment.save()
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', equipment, permission_user)
+        form.save()
+        instance = ReservaEquipamento.objects.all()[0]
+        self.assertEqual(instance.estado, 'E')
+        instance.delete()
+        equipment.permissaoNecessaria = False
+        equipment.save()
+
         print '--AUTO APPROVE TEST PASSED'
 
     def recurrent_reserve_test(self, responsable, permission_user, no_permission_user, physical_space, equipment):
