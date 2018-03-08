@@ -80,11 +80,11 @@ class ReservaAdminForm(forms.ModelForm):
         # For all fields, put the readonly widget and makes sure the data can't be tempered
         self.fields['data'].widget = ReadOnlyWidget()
         self.fields['data'].disabled = True
-        self.fields['horaInicio'].widget = ReadOnlyWidget(attrs=dict(label='Hora início'))
+        self.fields['horaInicio'].widget = ReadOnlyWidget(attrs=dict)
         self.fields['horaInicio'].disabled = True
-        self.fields['horaFim'].widget = ReadOnlyWidget(attrs=dict(label='Hora fim'))
+        self.fields['horaFim'].widget = ReadOnlyWidget(attrs=dict)
         self.fields['horaFim'].disabled = True
-        self.fields['locavel'].widget = ReadOnlyWidget(attrs=dict(label='Locável'), search_model=type(kwargs['instance'].locavel))
+        self.fields['locavel'].widget = ReadOnlyWidget(attrs=dict, search_model=type(kwargs['instance'].locavel))
         self.fields['locavel'].disabled = True
         self.fields['atividade'].widget = ReadOnlyWidget(type(kwargs['instance'].atividade))
         self.fields['ramal'].widget = ReadOnlyWidget()
@@ -144,7 +144,7 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['usuario'].widget = forms.HiddenInput()
             self.fields['usuario'].label = ''
         else:
-            attrs = dict(label='Usuário')
+            attrs = {}
             if 'usuario' in self.errors:
                 attrs['error'] = self.errors['usuario']
             self.fields['usuario'].widget = AutocompleteWidget(attrs=attrs, query=User.objects.all(), model=User)
@@ -200,17 +200,16 @@ class ReservaAdminForm(forms.ModelForm):
         self.request.session['id_reservable_backup'] = self.id_reservable
         self.request.session['id_reservable'] = None
 
-        self.fields['locavel'].label = 'Locável'  # set label
         self.fields['locavel'].widget.can_add_related = False  # remove add button
         self.fields['locavel'].widget.can_change_related = False  # remove edit button
 
     def init_hour_fields(self):
         # Check fields for error and intialize Widgets
-        attrs = dict(label='Hora início')
+        attrs = {}
         if 'horaInicio' in self.errors:
             attrs['error'] = self.errors['horaInicio']
         self.fields['horaInicio'] = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget(attrs=attrs))
-        attrs = dict(label='Hora fim')
+        attrs = {}
         if 'horaFim' in self.errors:
             attrs['error'] = self.errors['horaFim']
         self.fields['horaFim'] = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget(attrs=attrs))
@@ -513,7 +512,6 @@ class UnidadeAdminForm(forms.ModelForm):
         except:
             self.initial_responsables = User.objects.none()
 
-        self.init_labels()
         self.remove_add_and_edit_icons()
         self.init_many_to_many_fields()
 
@@ -525,19 +523,11 @@ class UnidadeAdminForm(forms.ModelForm):
         self.fields['responsavel'].queryset = User.objects.all()
         self.fields['responsavel'].help_text = ''
 
-
-
     def remove_add_and_edit_icons(self):
         self.fields['unidadePai'].widget.can_add_related = False  # remove add button
         self.fields['unidadePai'].widget.can_change_related = False  # remove edit button
         self.fields['responsavel'].widget.can_add_related = False  # remove add button
         self.fields['grupos'].widget.can_add_related = False  # remove add button
-
-    def init_labels(self):
-        self.fields['unidadePai'].label = 'Unidade pai'
-        self.fields['responsavel'].label = 'Responsáveis'
-        self.fields['descricao'].label = 'Descrição '
-        self.fields['logoLink'].label = 'Link para a logo'
 
     def save(self, *args, **kwargs):
         new_responsables = self.cleaned_data['responsavel']
@@ -599,7 +589,6 @@ class LocavelAdminForm(forms.ModelForm):
         super(LocavelAdminForm, self).__init__(*args, **kwargs)
         self.fields['antecedenciaMinima'].initial = 0
         self.fields['antecedenciaMaxima'].initial = 0
-        self.init_labels()
         self.remove_add_and_edit_icons()
         self.init_many_to_many_fields()
         ma = admin.UnidadeAdmin(Unidade, AdminSite())
@@ -632,16 +621,6 @@ class LocavelAdminForm(forms.ModelForm):
         self.fields['atividadesPermitidas'].widget.can_add_related = False  # remove add button
         self.fields['atividadesPermitidas'].widget.can_change_related = False  # remove edit button
         self.fields['grupos'].widget.can_add_related = False  # remove add button
-
-    def init_labels(self):
-        self.fields['antecedenciaMinima'].label = 'Antecedência mínima para reserva. (Em dias, 0 para sem antecedencia)'
-        self.fields['antecedenciaMaxima'].label = 'Antecedência máxima para reserva. (Em dias, 0 para sem antecedencia)'
-        self.fields['fotoLink'].label = 'Link para foto'
-        self.fields['atividadesPermitidas'].label = 'Atividades permitidas'
-        self.fields['descricao'].label = 'Descrição'
-        self.fields['responsavel'].label = 'Responsáveis'
-        self.fields['invisivel'].label = 'Invisível'
-        self.fields['localizacao'].label = 'Localização'
 
     def save(self, *args, **kwargs):
         new_responsables = self.cleaned_data['responsavel']
@@ -678,7 +657,6 @@ class EquipamentoAdminForm(LocavelAdminForm):
     def __init__(self, *args, **kwargs):
         kwargs['reservable_type'] = Equipamento
         super(EquipamentoAdminForm, self).__init__(*args, **kwargs)
-        self.fields['patrimonio'].label = 'Patrimônio'
 
     def save(self, *args, **kwargs):
         return super(EquipamentoAdminForm, self).save(*args, **kwargs)

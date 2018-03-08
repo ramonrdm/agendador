@@ -8,11 +8,11 @@ from datetime import date
 class Unidade(models.Model):
     sigla = models.CharField(max_length=20, unique=True)
     nome = models.TextField()
-    unidadePai = models.ForeignKey('self', blank=True, null=True, default=1)
+    unidadePai = models.ForeignKey('self', blank=True, null=True, default=1, verbose_name='Unidade pai')
     grupos = models.ManyToManyField(Group, blank=True)
-    responsavel = models.ManyToManyField(User)
-    descricao = models.TextField()
-    logoLink = models.URLField(blank=True)
+    responsavel = models.ManyToManyField(User, verbose_name='Responsáveis')
+    descricao = models.TextField(verbose_name='Descrição')
+    logoLink = models.URLField(blank=True, verbose_name='Link para a logo')
 
     def clean(self):
         errors={}
@@ -44,7 +44,7 @@ class Unidade(models.Model):
 
 class Atividade(models.Model):
     nome = models.CharField(max_length=30)
-    descricao = models.TextField()
+    descricao = models.TextField(verbose_name='Descrição')
 
     def __unicode__(self):
         return self.nome
@@ -56,17 +56,17 @@ class Locavel(models.Model):
         abstract = True
 
     nome = models.TextField()
-    descricao = models.TextField()
-    responsavel = models.ManyToManyField(User)
+    descricao = models.TextField(verbose_name='Descrição')
+    responsavel = models.ManyToManyField(User, verbose_name='Responsáveis')
     unidade = models.ForeignKey(Unidade)
     grupos = models.ManyToManyField(Group, blank=True)
     bloqueado = models.BooleanField(default=False)
-    invisivel = models.BooleanField(default=False)
-    antecedenciaMinima = models.PositiveSmallIntegerField(default=0)
-    antecedenciaMaxima = models.PositiveIntegerField(default=0)
-    localizacao = models.TextField()
-    fotoLink = models.URLField(blank=True)
-    atividadesPermitidas = models.ManyToManyField(Atividade)
+    invisivel = models.BooleanField(default=False, verbose_name='Invisível')
+    antecedenciaMinima = models.PositiveSmallIntegerField(default=0, verbose_name='Antecedência máxima')
+    antecedenciaMaxima = models.PositiveIntegerField(default=0, verbose_name='Antecedência mínima')
+    localizacao = models.TextField(verbose_name='Localização')
+    fotoLink = models.URLField(blank=True, verbose_name='Link para foto')
+    atividadesPermitidas = models.ManyToManyField(Atividade, verbose_name='Atividades permitidas')
 
     def clean(self):
         errors={}
@@ -91,6 +91,10 @@ class Locavel(models.Model):
         return self.nome
 
 class EspacoFisico(Locavel):
+    class Meta:
+        verbose_name = 'Espaço físico'
+        verbose_name_plural = 'Espaços físicos'
+
     capacidade = models.PositiveSmallIntegerField()
 
     def clean(self):
@@ -98,7 +102,7 @@ class EspacoFisico(Locavel):
 
 
 class Equipamento(Locavel):
-    patrimonio = models.PositiveIntegerField()
+    patrimonio = models.PositiveIntegerField(verbose_name='Patrimônio')
 
     def clean(self):
         super(Equipamento, self).clean()
@@ -131,11 +135,11 @@ class Reserva(models.Model):
     estado = models.CharField(max_length=1, choices=estados, default='E')
     recorrencia = models.ForeignKey(ReservaRecorrente, blank=True, null=True, default=None)
     data = models.DateField()
-    horaInicio = models.TimeField()
-    horaFim = models.TimeField()
+    horaInicio = models.TimeField(verbose_name='Hora início')
+    horaFim = models.TimeField(verbose_name='Hora fim')
     dataReserva = models.DateTimeField(auto_now_add=True)
     atividade = models.ForeignKey(Atividade)
-    usuario = models.ForeignKey(User)
+    usuario = models.ForeignKey(User, verbose_name='Usuário')
     ramal = models.PositiveIntegerField()
     finalidade = models.TextField()
 
@@ -209,7 +213,11 @@ class Reserva(models.Model):
         return self.usuario.username+"/"+self.atividade.nome
 
 class ReservaEspacoFisico(Reserva):
-    locavel = models.ForeignKey(EspacoFisico)
+    class Meta:
+        verbose_name = 'Reserva espaço físico'
+        verbose_name_plural = 'Reservas espaços físicos'
+
+    locavel = models.ForeignKey(EspacoFisico, verbose_name='Locável')
 
     def clean(self):
         super(ReservaEspacoFisico, self).clean()
@@ -219,7 +227,7 @@ class ReservaEspacoFisico(Reserva):
 
 
 class ReservaEquipamento(Reserva):
-    locavel = models.ForeignKey(Equipamento)
+    locavel = models.ForeignKey(Equipamento, verbose_name='Locável')
 
     def clean(self):
         super(ReservaEquipamento, self).clean()
