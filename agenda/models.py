@@ -59,7 +59,7 @@ class Locavel(models.Model):
     descricao = models.TextField(verbose_name='Descrição')
     responsavel = models.ManyToManyField(User, verbose_name='Responsáveis')
     unidade = models.ForeignKey(Unidade)
-    grupos = models.ManyToManyField(Group, blank=True)
+    grupos = models.ManyToManyField(Group, blank=True, verbose_name='Grupos que podem reservar automaticamente')
     bloqueado = models.BooleanField(default=False)
     invisivel = models.BooleanField(default=False, verbose_name='Invisível')
     antecedenciaMinima = models.PositiveSmallIntegerField(default=0, verbose_name='Antecedência máxima')
