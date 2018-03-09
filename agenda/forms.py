@@ -519,15 +519,13 @@ class ReservaServicoAdminForm(ReservaAdminForm):
         return super(ReservaServicoAdminForm, self).save(*args, **kwargs)
 
 class UnidadeAdminForm(forms.ModelForm):
+    class Meta:
+        model = Unidade
+        fields = ('sigla', 'nome', 'unidadePai', 'grupos', 'responsavel', 'descricao', 'logoLink')
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request')
         super(UnidadeAdminForm, self).__init__(*args, **kwargs)
-        # get queryset from admin
-        ma = admin.UnidadeAdmin(Unidade, AdminSite())
-        queryset = ma.get_queryset(self.request)
-        # set possible options on the field
-        self.fields['unidadePai'].queryset = queryset
 
         # get the old responsables for future comparissons
         try:
@@ -536,8 +534,27 @@ class UnidadeAdminForm(forms.ModelForm):
         except:
             self.initial_responsables = User.objects.none()
 
+        # check if is an add form or and edit form
+        self.object = None
+        if 'instance' in kwargs:
+            if kwargs['instance']:
+                self.object = kwargs['instance']
+        self.init_unidadePai_field()
         self.remove_add_and_edit_icons()
         self.init_many_to_many_fields()
+
+    def init_unidadePai_field(self):
+        if self.request.user.is_superuser:
+            self.fields['unidadePai'].queryset = Unidade.objects.all()
+        else:
+            if self.object:
+                unidadePai = Unidade.objects.filter(id=self.object.unidadePai.id).distinct()
+            else:
+                unidadePai = Unidade.objects.none()
+            ma = admin.UnidadeAdmin(Unidade, AdminSite())
+            queryset = ma.get_queryset(self.request)
+            # set possible options on the field
+            self.fields['unidadePai'].queryset = unidadePai | queryset
 
     def init_many_to_many_fields(self):
         self.fields['grupos'].widget = FilteredSelectMultipleJs(verbose_name="Grupos", is_stacked=False)

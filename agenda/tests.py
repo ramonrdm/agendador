@@ -9,7 +9,8 @@ from .models import *
 from .admin import *
 
 class MockRequest:
-    pass
+    def build_absolute_uri(self, pru):
+        return '/pru/'
 request = MockRequest()
 class AdminViewPermissionsTests(TestCase):
 
@@ -321,7 +322,7 @@ class UserFilterTests(TestCase):
 
         print '-GROUP FILTERS PASS'
 
-class ReserveFormTests(TestCase):
+class FormTests(TestCase):
 
     def create_preset(self):
 
@@ -331,6 +332,7 @@ class ReserveFormTests(TestCase):
         responsable = User.objects.create_user('responsable', password='a')
         responsable.save()
         unit = Unidade.objects.create(sigla='pru', nome='unit', descricao='test')
+        unit.responsavel.add(responsable)
         unit.save()
         physical_space = EspacoFisico.objects.create(nome='physical_space', descricao='q', unidade=unit, bloqueado=False, localizacao='q', capacidade=2)
         physical_space.responsavel.add(responsable)
@@ -403,6 +405,7 @@ class ReserveFormTests(TestCase):
         self.status_test(responsable, permission_user, no_permission_user, physical_space, equipment)
         self.recurrent_reserve_test(responsable, permission_user, no_permission_user, physical_space, equipment)
         self.model_clean_tests(no_permission_user, responsable, physical_space, equipment, unit)
+        self.unit_form_test(unit, no_permission_user)
 
         print '-RESERVE FORM TEST PASSED'
 
@@ -604,6 +607,25 @@ class ReserveFormTests(TestCase):
         unit.delete()
         print '--UNIT LOGOLINK TEST PASSED'
 
+    def unit_form_test(self, unit, no_permission_user):
+        # while editing a form, user must be able to see parent unit even if he doesnt have permission
+        print '--TESTING EDIT UNIT FORM'
+        temp_unit = Unidade.objects.create(sigla='tem_pru', nome='temp_unit', unidadePai=unit, descricao='test')
+        temp_unit.responsavel.add(no_permission_user)
+        temp_unit.save()
+        request.user = no_permission_user
+        kwargs = dict()
+        kwargs['request'] = request
+        form = UnidadeAdminForm(**kwargs)
+        father_unit_query = form.fields['unidadePai'].queryset
+        self.assertEqual(1, len(father_unit_query))
+        kwargs['request'] = request
+        kwargs['instance'] = temp_unit
+        form = UnidadeAdminForm(**kwargs)
+        father_unit_query = form.fields['unidadePai'].queryset
+        self.assertEqual(2, len(father_unit_query))
+        temp_unit.delete()
+        print '--EDITING UNIT FORM TEST PASSED'
 
     def reserve_clean_test(self, user, responsable, physical_space, equipment):
         default_date = datetime.strptime('01/01/9999', '%d/%m/%Y').date()
