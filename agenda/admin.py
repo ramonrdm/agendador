@@ -58,7 +58,18 @@ class UnidadeAdmin(admin.ModelAdmin):
 
 class ReservaAdmin(admin.ModelAdmin):
     list_display = ('usuario', 'locavel', 'data', 'ramal', 'finalidade', 'estado')
-    search_fields = ['finalidade', 'usuario__username']
+    search_fields = ['finalidade', 'usuario__username', 'estado']
+
+    def get_search_results(self, request, queryset, search_term):
+        result_queryset, use_distinct = super(ReservaAdmin, self).get_search_results(request, queryset, search_term)
+        # check if user is searching for state. cannot be done automatically since the reserve model use just one letter, not the word
+        if 'aprovado'.startswith(search_term.lower()):
+            result_queryset = result_queryset | queryset.filter(estado='A')
+        if 'esperando'.startswith(search_term.lower()):
+            result_queryset = result_queryset | queryset.filter(estado='E')
+        if 'desaprovado'.startswith(search_term.lower()):
+            result_queryset = result_queryset | queryset.filter(estado='D')
+        return result_queryset, use_distinct
 
     def get_queryset(self, request, reserveModel, reservableModel):
         if request.user.is_superuser:

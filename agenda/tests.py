@@ -194,6 +194,43 @@ class AdminViewPermissionsTests(TestCase):
         self.assertItemsEqual(temp, room_reserves)
         print '-COMMON USER CASE PASS'
 
+    def test_reserve_search(self):
+        print '-TESTING SEARCHING IN RESERVE ADMIN'
+        things = self.create_preset()
+        things['room_reserves'][0].estado = 'A'
+        things['room_reserves'][0].save()
+        things['room_reserves'][2].estado = 'D'
+        things['room_reserves'][2].save()
+        queryset = ReservaEspacoFisico.objects.all()
+        ma = ReservaEspacoFisicoAdmin(ReservaEspacoFisico, AdminSite())
+        result, pru = ma.get_search_results(request, queryset, 'aprovado')
+        self.assertEqual(1, len(result))
+        self.assertEqual(result[0], things['room_reserves'][0])
+        result, pru = ma.get_search_results(request, queryset, 'esperando')
+        self.assertEqual(1, len(result))
+        self.assertEqual(result[0], things['room_reserves'][1])
+        result, pru = ma.get_search_results(request, queryset, 'desaprovado')
+        self.assertEqual(1, len(result))
+        self.assertEqual(result[0], things['room_reserves'][2])
+
+        things['equipment_reserves'][0].estado = 'A'
+        things['equipment_reserves'][0].save()
+        things['equipment_reserves'][2].estado = 'D'
+        things['equipment_reserves'][2].save()
+        queryset = ReservaEquipamento.objects.all()
+        ma = ReservaEquipamentoAdmin(ReservaEquipamento, AdminSite())
+        result, pru = ma.get_search_results(request, queryset, 'aprovado')
+        self.assertEqual(1, len(result))
+        self.assertEqual(result[0], things['equipment_reserves'][0])
+        result, pru = ma.get_search_results(request, queryset, 'esperando')
+        self.assertEqual(1, len(result))
+        self.assertEqual(result[0], things['equipment_reserves'][1])
+        result, pru = ma.get_search_results(request, queryset, 'desaprovado')
+        self.assertEqual(1, len(result))
+        self.assertEqual(result[0], things['equipment_reserves'][2])
+
+        print '-SEARCHING IN RESERVE ADMIN TEST PASSED'
+
 class UserFilterTests(TestCase):
     def createPreset(self):
         # Create one superuser to be responsable for everything
