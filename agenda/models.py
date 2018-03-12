@@ -135,6 +135,8 @@ class ReservaRecorrente(models.Model):
         query = self.reservaespacofisico_set.all()
         if not query:
             query = self.reservaequipamento_set.all()
+        if not query:
+            query = self.reservaservico_set.all()
         return query
 
 class Reserva(models.Model):
