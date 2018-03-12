@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import re
-from django.forms.extras.widgets import SelectDateWidget
 from django.forms.widgets import Widget, Select, MultiWidget, CheckboxInput
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.utils.safestring import mark_safe

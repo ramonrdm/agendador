@@ -14,10 +14,10 @@ from django.contrib.admin.sites import AdminSite
 from django.core.exceptions import ValidationError
 from django.contrib.admin import widgets
 from django.forms.widgets import Select
-from widgets import *
+from agenda.widgets import *
 from django.contrib.auth.models import User, Group, Permission
 from django.db.models.fields.related import ManyToOneRel
-import admin
+from agenda import admin
 
 translated_week_names = dict(Sunday='domingo', Monday='segunda-feira', Tuesday='terça-feira', Wednesday='quarta-feira', Thursday='quinta-feira', Friday='sexta-feira', Saturday='sábado')
 

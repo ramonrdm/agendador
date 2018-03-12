@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404, render_to_response, redi
 from django.utils.safestring import mark_safe
 import time, calendar
 from datetime import date, datetime, timedelta
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse, HttpResponseNotFound
 from django.forms.models import modelformset_factory
@@ -16,8 +16,8 @@ from django.contrib.admin.sites import AdminSite
 from django.contrib.flatpages.models import FlatPage
 
 from datetime import date
-import admin
-from forms import *
+from agenda import admin
+from agenda.forms import *
 
 from material.frontend.views import ModelViewSet
 
@@ -252,7 +252,6 @@ def intermediaria(request):
         horaFim = None
     request.session['id_reservable'] = id_reservable
     data_string = str(data_numero)
-    print data_numero
     data = data_string[0]+data_string[1]+'/'+data_string[2]+data_string[3]+'/'+data_string[4]+data_string[5]+data_string[6]+data_string[7]
     request.session['data'] = data
     if horaInicio and horaFim:
@@ -297,7 +296,6 @@ def get_atividade_set(request):
     if request.method == 'POST':
         tipo = request.POST['title']
         locavel = request.POST['locavel']
-        print tipo
         if unicode('espaço físico', 'utf-8') in tipo:
             locavel = EspacoFisico.objects.get(nome=locavel)
             ma = admin.EspacoFisicoAdmin(EspacoFisico, AdminSite())

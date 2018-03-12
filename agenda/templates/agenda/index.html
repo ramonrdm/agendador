@@ -1,5 +1,4 @@
 {% extends "agenda/base_module.html" %}
-{% load i18n material_frontend %}
 {% load static %}
 {% block title %} Agendador - {{unidade.sigla}}{% endblock %}
 {% block head %}
@@ -12,8 +11,8 @@
     <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/topbar.css' %}" />
 {% endblock %}
 {% block js %}
-    <script src="{% static 'material/js/jquery.js' %}"></script>
-    <script src="{% static 'material/js/materialize.js' %}"></script>
+    <script src="{% static 'agenda/js/jquery.js' %}"></script>
+    <script src="{% static 'agenda/js/materialize.js' %}"></script>
     <script>
         $(document).ready(function(){
             $(".button-collapse").sideNav();

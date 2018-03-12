@@ -1,5 +1,5 @@
 {% extends "agenda/base_module.html" %}
-{% load i18n material_frontend %}
+{% load i18n %}
 {% load static %}
 {% block css %}
     {{ block.super }}
@@ -9,8 +9,8 @@
 
 {% endblock %}
 {% block js %}
-    <script src="{% static 'material/js/jquery.js' %}"></script>
-    <script src="{% static 'material/js/materialize.js' %}"></script>
+    <script src="{% static 'agenda/js/jquery.js' %}"></script>
+    <script src="{% static 'agenda/js/materialize.js' %}"></script>
     <script src="{% static 'agenda/fullcalendar/lib/moment.min.js' %}"></script>
     <script src="{% static 'agenda/fullcalendar/fullcalendar.js' %}"></script>
 {% endblock %}

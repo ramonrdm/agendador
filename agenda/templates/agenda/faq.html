@@ -1,13 +1,12 @@
 {% extends "agenda/base_module.html" %}
-{% load i18n material_frontend %}
 {% load static %}
 {% block css %}
     {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/faq.css' %}" />
 {% endblock %}
 {% block js %}
-    <script src="{% static 'material/js/jquery.js' %}"></script>
-    <script src="{% static 'material/js/materialize.js' %}"></script>
+    <script src="{% static 'agenda/js/jquery.js' %}"></script>
+    <script src="{% static 'agenda/js/materialize.js' %}"></script>
     <script src="{% static 'agenda/js/faq.js' %}"></script>
     <script>
         $(document).ready(function(){

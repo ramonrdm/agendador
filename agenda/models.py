@@ -8,7 +8,7 @@ from datetime import date
 class Unidade(models.Model):
     sigla = models.CharField(max_length=20, unique=True)
     nome = models.TextField()
-    unidadePai = models.ForeignKey('self', blank=True, null=True, default=1, verbose_name='Unidade pai')
+    unidadePai = models.ForeignKey('self', blank=True, null=True, default=1, verbose_name='Unidade pai', on_delete=models.SET_NULL)
     grupos = models.ManyToManyField(Group, blank=True)
     responsavel = models.ManyToManyField(User, verbose_name='Responsáveis')
     descricao = models.TextField(verbose_name='Descrição')
@@ -58,7 +58,7 @@ class Locavel(models.Model):
     nome = models.TextField()
     descricao = models.TextField(verbose_name='Descrição')
     responsavel = models.ManyToManyField(User, verbose_name='Responsáveis')
-    unidade = models.ForeignKey(Unidade)
+    unidade = models.ForeignKey(Unidade, on_delete=models.CASCADE)
     grupos = models.ManyToManyField(Group, blank=True, verbose_name='Grupos que podem reservar automaticamente')
     bloqueado = models.BooleanField(default=False)
     invisivel = models.BooleanField(default=False, verbose_name='Invisível')
@@ -145,13 +145,13 @@ class Reserva(models.Model):
 
     estados = (('A','Aprovado'),('D','Desaprovado'),('E','Esperando'))
     estado = models.CharField(max_length=1, choices=estados, default='E')
-    recorrencia = models.ForeignKey(ReservaRecorrente, blank=True, null=True, default=None)
+    recorrencia = models.ForeignKey(ReservaRecorrente, blank=True, null=True, default=None, on_delete=models.CASCADE)
     data = models.DateField()
     horaInicio = models.TimeField(verbose_name='Hora início')
     horaFim = models.TimeField(verbose_name='Hora fim')
     dataReserva = models.DateTimeField(auto_now_add=True)
-    atividade = models.ForeignKey(Atividade)
-    usuario = models.ForeignKey(User, verbose_name='Usuário')
+    atividade = models.ForeignKey(Atividade, null=True, on_delete=models.SET_NULL)
+    usuario = models.ForeignKey(User, verbose_name='Usuário', on_delete=models.CASCADE)
     ramal = models.PositiveIntegerField()
     finalidade = models.TextField()
 
@@ -229,7 +229,7 @@ class ReservaEspacoFisico(Reserva):
         verbose_name = 'Reserva espaço físico'
         verbose_name_plural = 'Reservas espaços físicos'
 
-    locavel = models.ForeignKey(EspacoFisico, verbose_name='Locável')
+    locavel = models.ForeignKey(EspacoFisico, verbose_name='Locável', on_delete=models.CASCADE)
 
     def clean(self):
         super(ReservaEspacoFisico, self).clean()
@@ -239,7 +239,7 @@ class ReservaEspacoFisico(Reserva):
 
 
 class ReservaEquipamento(Reserva):
-    locavel = models.ForeignKey(Equipamento, verbose_name='Locável')
+    locavel = models.ForeignKey(Equipamento, verbose_name='Locável', on_delete=models.CASCADE)
 
     def clean(self):
         super(ReservaEquipamento, self).clean()
@@ -252,7 +252,7 @@ class ReservaServico(Reserva):
         verbose_name = 'Reserva serviço'
         verbose_name_plural = 'Reserva serviços'
 
-    locavel = models.ForeignKey(Servico, verbose_name='Locável')
+    locavel = models.ForeignKey(Servico, verbose_name='Locável', on_delete=models.CASCADE)
 
     def clean(self):
         super(ReservaServico, self).clean()

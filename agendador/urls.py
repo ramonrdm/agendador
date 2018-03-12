@@ -1,8 +1,9 @@
-from django.conf.urls import include, url
+from django.conf.urls import url
+from django.urls import include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from material.frontend import urls as frontend_urls
+from django.contrib.auth import views as auth_views
 from agenda import views
 from django_cas_ng import views as views2
 from django.views import generic
@@ -12,8 +13,9 @@ urlpatterns = [
     #url(r'^accounts/login/$', views2.login, name="cas_ng_login"),
     #url(r'^accounts/logout/$', views2.logout, name="cas_ng_logout"),
     #url(r'^admin/login/$', views2.login, name="cas_ng_login"),
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'', include(frontend_urls)),
+    url(r'^login/$', auth_views.login, name='login'),
+    url(r'^logout/$', auth_views.logout, name='logout'),
+    url(r'^admin/', admin.site.urls),
     url(r'^$', views.index, name="index"),
     url(r'^$', views.index, name='Reservas UFSC'),
     url(r'^sobre$', views.sobre, name="sobre"),
