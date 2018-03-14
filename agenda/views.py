@@ -339,3 +339,57 @@ def faq(request):
             faq_items.append(query_item.title)
         data = {'faqItems': faq_items}
         return JsonResponse(data)
+
+def _calendar(request, tipo=None, espaco=None, year=None, month=None, change=None):
+    if not month and not year:
+        today = datetime.today()
+        year = today.year
+        month = today.month
+
+    """Listing of days in `month`."""
+    espaco, year, month = int(espaco), int(year), int(month)
+    # apply next / previous change
+    if change in ("next", "prev"):
+        now, mdelta = date(year, month, 15), timedelta(days=31)
+        if change == "next":   mod = mdelta
+        elif change == "prev": mod = -mdelta
+
+        year, month = (now+mod).timetuple()[:2]
+
+    # init variables
+    cal = calendar.Calendar()
+    month_days = cal.itermonthdays(year, month)
+    nyear, nmonth, nday = time.localtime()[:3]
+    lst = [[]]
+    week = 0
+    for day in month_days:
+        entries = current = False
+        if day:
+            if tipo=="e":
+                entries = ReservaEquipamento.objects.filter(data__year=year, data__month=month, data__day=day, locavel=espaco, estado="A")
+            elif tipo == "f":
+                entries = ReservaEspacoFisico.objects.filter(data__year=year, data__month=month, data__day=day, locavel=espaco, estado="A")
+            elif tipo == "s":
+                entries = ReservaServico.objects.filter(data__year=year, data__month=month, data__day=day, locavel=espaco, estado="A")
+
+        if day == nday and year == nyear and month == nmonth:
+            current = True
+
+        lst[week].append((day, entries, current))
+        if len(lst[week]) == 7:
+            lst.append([])
+            week += 1
+    if(tipo=="e"):
+        reservable = Equipamento.objects.get(id=espaco)
+    elif tipo == 'f':
+        reservable = EspacoFisico.objects.get(id=espaco)
+    else:
+        reservable = Servico.objects.get(id=espaco)
+    return render(
+            request,
+            "agenda/calendar.html",
+            dict(
+                espaco=reservable, year=year, month=month,
+                user=request.user, month_days=lst, mname=month_names[month-1],
+                tipo=tipo
+                ))
