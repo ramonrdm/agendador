@@ -113,38 +113,38 @@ class AdminViewPermissionsTests(TestCase):
         if room:
             ma = EspacoFisicoAdmin(EspacoFisico, AdminSite())
             rooms = list(ma.get_queryset(request))
-            self.assertItemsEqual(rooms, items['rooms'])
+            self.assertCountEqual(rooms, items['rooms'])
         if equipment:
             ma = EquipamentoAdmin(Equipamento, AdminSite())
             equipments = list(ma.get_queryset(request))
-            self.assertItemsEqual(equipments, items['equipments'])
+            self.assertCountEqual(equipments, items['equipments'])
         if service:
             ma = ServicoAdmin(Servico, AdminSite())
             services = list(ma.get_queryset(request))
-            self.assertItemsEqual(services, items['services'])
+            self.assertCountEqual(services, items['services'])
         ma  = ReservaEspacoFisicoAdmin(ReservaEspacoFisico, AdminSite())
         room_reserves = list(ma.get_queryset(request))
-        self.assertItemsEqual(room_reserves, items['room_reserves'])
+        self.assertCountEqual(room_reserves, items['room_reserves'])
         ma = ReservaEquipamentoAdmin(ReservaEquipamento, AdminSite())
         equipment_reserves = list(ma.get_queryset(request))
-        self.assertItemsEqual(equipment_reserves, items['equipment_reserves'])
+        self.assertCountEqual(equipment_reserves, items['equipment_reserves'])
         ma = ReservaServicoAdmin(ReservaServico, AdminSite())
         service_reserves = list(ma.get_queryset(request))
-        self.assertItemsEqual(service_reserves, items['service_reserves'])
+        self.assertCountEqual(service_reserves, items['service_reserves'])
 
     def test_admin_view_filter(self):
-        print 'TESTING ADMIN VIEW FILTER'
+        print('TESTING ADMIN VIEW FILTER')
         items = self.create_preset()
 
         # First superuser, he must see everything in items
         user = User.objects.get(username='superuser')
         self.check_items(user, items)
-        print '-SUPERUSER CASE PASS'
+        print('-SUPERUSER CASE PASS')
 
         # Unit_responsable also must see every item, even though he's not responsable for reserves
         user = User.objects.get(username='unit_responsable')
         self.check_items(user, items)
-        print '-UNIT RESPONSABLE CASE PASS'
+        print('-UNIT RESPONSABLE CASE PASS')
 
         # Sub_unit_responsable must be able to see everything but room and equipment and service 2
         user = User.objects.get(username='sub_unit_responsable')
@@ -154,24 +154,24 @@ class AdminViewPermissionsTests(TestCase):
         self.assertEqual(2, len(rooms))
         temp = list(items['rooms'])
         temp.pop()
-        self.assertItemsEqual(temp, rooms)
+        self.assertCountEqual(temp, rooms)
 
         ma = EquipamentoAdmin(Equipamento, AdminSite())
         equipments = list(ma.get_queryset(request))
         self.assertEqual(2, len(equipments))
         temp = list(items['equipments'])
         temp.pop()
-        self.assertItemsEqual(temp, equipments)
+        self.assertCountEqual(temp, equipments)
 
         ma = ServicoAdmin(Servico, AdminSite())
         services = list(ma.get_queryset(request))
         self.assertEqual(2, len(services))
         temp = list(items['services'])
         temp.pop()
-        self.assertItemsEqual(temp, services)
+        self.assertCountEqual(temp, services)
 
         self.check_items(user, items, room=False, equipment=False, service=False)
-        print '-SUB UNIT RESPONSABLE CASE PASS'
+        print('-SUB UNIT RESPONSABLE CASE PASS')
 
         # Item responsable can only see rooms and equipments and services 0 and reserves 0 and 1
         user = User.objects.get(username='item_responsable')
@@ -183,7 +183,7 @@ class AdminViewPermissionsTests(TestCase):
         temp = list(items['rooms'])
         temp.pop()
         temp.pop()
-        self.assertItemsEqual(temp, rooms)
+        self.assertCountEqual(temp, rooms)
 
         ma = EquipamentoAdmin(Equipamento, AdminSite())
         equipments = list(ma.get_queryset(request))
@@ -191,7 +191,7 @@ class AdminViewPermissionsTests(TestCase):
         temp = list(items['equipments'])
         temp.pop()
         temp.pop()
-        self.assertItemsEqual(temp, equipments)
+        self.assertCountEqual(temp, equipments)
 
         ma = ServicoAdmin(Servico, AdminSite())
         services = list(ma.get_queryset(request))
@@ -199,29 +199,29 @@ class AdminViewPermissionsTests(TestCase):
         temp = list(items['services'])
         temp.pop()
         temp.pop()
-        self.assertItemsEqual(temp, services)  
+        self.assertCountEqual(temp, services)  
 
         ma = ReservaEspacoFisicoAdmin(ReservaEspacoFisico, AdminSite())
         room_reserves = list(ma.get_queryset(request))
         self.assertEqual(2, len(room_reserves))
         temp = list(items['room_reserves'])
         temp.pop()
-        self.assertItemsEqual(temp, room_reserves)
+        self.assertCountEqual(temp, room_reserves)
 
         ma = ReservaEquipamentoAdmin(ReservaEquipamento, AdminSite())
         equipment_reserves = list(ma.get_queryset(request))
         self.assertEqual(2, len(equipment_reserves))
         temp = list(items['equipment_reserves'])
         temp.pop()
-        self.assertItemsEqual(temp, equipment_reserves)
+        self.assertCountEqual(temp, equipment_reserves)
 
         ma = ReservaServicoAdmin(ReservaServico, AdminSite())
         service_reserves = list(ma.get_queryset(request))
         self.assertEqual(2, len(service_reserves))
         temp = list(items['service_reserves'])
         temp.pop()
-        self.assertItemsEqual(temp, service_reserves)
-        print '-ITEM RESPONSABLE CASE PASS'
+        self.assertCountEqual(temp, service_reserves)
+        print('-ITEM RESPONSABLE CASE PASS')
 
         # Common user can only see reserves 0
         user = User.objects.get(username='common')
@@ -245,7 +245,7 @@ class AdminViewPermissionsTests(TestCase):
         temp = list(items['equipment_reserves'])
         temp.pop()
         temp.pop()
-        self.assertItemsEqual(temp, equipment_reserves)
+        self.assertCountEqual(temp, equipment_reserves)
 
         ma = ReservaEspacoFisicoAdmin(ReservaEspacoFisico, AdminSite())
         room_reserves = list(ma.get_queryset(request))
@@ -253,7 +253,7 @@ class AdminViewPermissionsTests(TestCase):
         temp = list(items['room_reserves'])
         temp.pop()
         temp.pop()
-        self.assertItemsEqual(temp, room_reserves)
+        self.assertCountEqual(temp, room_reserves)
 
         ma = ReservaServicoAdmin(ReservaServico, AdminSite())
         service_reserves = list(ma.get_queryset(request))
@@ -261,11 +261,11 @@ class AdminViewPermissionsTests(TestCase):
         temp = list(items['service_reserves'])
         temp.pop()
         temp.pop()
-        self.assertItemsEqual(temp, service_reserves)
-        print '-COMMON USER CASE PASS'
+        self.assertCountEqual(temp, service_reserves)
+        print('-COMMON USER CASE PASS')
 
     def test_reserve_search(self):
-        print '-TESTING SEARCHING IN RESERVE ADMIN'
+        print('-TESTING SEARCHING IN RESERVE ADMIN')
         things = self.create_preset()
         things['room_reserves'][0].estado = 'A'
         things['room_reserves'][0].save()
@@ -315,7 +315,7 @@ class AdminViewPermissionsTests(TestCase):
         self.assertEqual(1, len(result))
         self.assertEqual(result[0], things['service_reserves'][2])
 
-        print '-SEARCHING IN RESERVE ADMIN TEST PASSED'
+        print('-SEARCHING IN RESERVE ADMIN TEST PASSED')
 
 class UserFilterTests(TestCase):
     def createPreset(self):
@@ -444,20 +444,20 @@ class UserFilterTests(TestCase):
         request.user = user
         ma = EspacoFisicoAdmin(EspacoFisico, AdminSite())
         bd_places = list(ma.get_queryset(request))
-        self.assertItemsEqual(bd_places, places)
+        self.assertCountEqual(bd_places, places)
 
         ma = EquipamentoAdmin(Equipamento, AdminSite())
         bd_equipments = list(ma.get_queryset(request))
-        self.assertItemsEqual(bd_equipments, equipments)
+        self.assertCountEqual(bd_equipments, equipments)
 
         ma = ServicoAdmin(Servico, AdminSite())
         bd_services = list(ma.get_queryset(request))
-        self.assertItemsEqual(bd_services, services)
+        self.assertCountEqual(bd_services, services)
 
     def test_user_groups_filter(self):
         items = self.createPreset()
 
-        print '-TESTING GROUP FILTERS'
+        print('-TESTING GROUP FILTERS')
 
         # Superuser must see everything since he's responsable
         self.makeChecks(items, 'superuser', [])
@@ -468,7 +468,7 @@ class UserFilterTests(TestCase):
         # root_group_user must see item 2, 3, blocked and group
         self.makeChecks(items, 'root_group_user', [0, 1])
 
-        print '-GROUP FILTERS PASS'
+        print('-GROUP FILTERS PASS')
 
 class FormTests(TestCase):
 
@@ -545,7 +545,7 @@ class FormTests(TestCase):
         return form
 
     def test_reserve_form(self):
-        print '-TESTING RESERVE FORM'
+        print('-TESTING RESERVE FORM')
         self.create_preset()
         responsable = User.objects.get(username='responsable')
         permission_user = User.objects.get(username='permission_user')
@@ -560,10 +560,10 @@ class FormTests(TestCase):
         self.model_clean_tests(no_permission_user, responsable, physical_space, equipment, service, unit)
         self.unit_form_test(unit, no_permission_user)
 
-        print '-RESERVE FORM TEST PASSED'
+        print('-RESERVE FORM TEST PASSED')
 
     def status_test(self, responsable, permission_user, no_permission_user, physical_space, equipment, service):
-        print '--TESTING AUTO APPROVE'
+        print('--TESTING AUTO APPROVE')
         # Test responsable making reserve
         form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, responsable)
         form.save()
@@ -644,11 +644,11 @@ class FormTests(TestCase):
         service.permissaoNecessaria = False
         service.save()
 
-        print '--AUTO APPROVE TEST PASSED'
+        print('--AUTO APPROVE TEST PASSED')
 
     def recurrent_reserve_test(self, responsable, permission_user, no_permission_user, physical_space, equipment, service):
         # create a recurrent reserve
-        print '--TESTING CREATE RECURRENT RESERVE'
+        print('--TESTING CREATE RECURRENT RESERVE')
         form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'E', '01/06/9999', True, '22/06/9999', '00:01', '00:02', physical_space, no_permission_user)
         form.save()
         query = ReservaEspacoFisico.objects.all()
@@ -673,10 +673,10 @@ class FormTests(TestCase):
         for reserve in query:
             self.assertEqual(reserve.data, current_date)
             current_date = current_date + timedelta(days=7)
-        print '--CREATE RECURRENT RESERVE TEST PASSED'
+        print('--CREATE RECURRENT RESERVE TEST PASSED')
 
         # edit one reserve must aplly to all
-        print '--TESTING EDIT RECURRENT RESERVE'
+        print('--TESTING EDIT RECURRENT RESERVE')
         instance = ReservaEspacoFisico.objects.all()[0]
         form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '01/06/9999', True, '22/06/9999', '00:01', '00:02', physical_space, no_permission_user, instance)
         form.is_valid()
@@ -698,10 +698,10 @@ class FormTests(TestCase):
         query = ReservaServico.objects.all()
         for reserve in query:
             self.assertEqual(reserve.estado, 'A')
-        print '--EDIT RECURRENT RESERVE TEST PASSED'
+        print('--EDIT RECURRENT RESERVE TEST PASSED')
 
         #  Ending date must be necessary only if recurrent
-        print '--TESTING ENDING DATE NECESSARY WHEN RECURRENT'
+        print('--TESTING ENDING DATE NECESSARY WHEN RECURRENT')
         form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '24/09/9999', True, None, '00:01', '00:02', physical_space, no_permission_user)
         self.assertIs(form.is_valid(), False)
         form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '24/09/9999', True, None, '00:01', '00:02', equipment, no_permission_user)
@@ -714,30 +714,30 @@ class FormTests(TestCase):
         self.assertIs(form.is_valid(), True)
         form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'A', '24/09/9999', False, None, '00:01', '00:02', service, no_permission_user)
         self.assertIs(form.is_valid(), True)
-        print '--ENDING DATE NECESSARY WHEN RECURRENT TEST PASSED'
+        print('--ENDING DATE NECESSARY WHEN RECURRENT TEST PASSED')
 
         #  If starting date is bigger than ending, form is invalid
-        print '--TESTING ENDING AFTER STARTING DATE'
+        print('--TESTING ENDING AFTER STARTING DATE')
         form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '24/06/9999', True, '23/06/9999', '00:01', '00:02', physical_space, no_permission_user)
         self.assertIs(form.is_valid(), False)
         form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '24/06/9999', True, '23/06/9999', '00:01', '00:02', equipment, no_permission_user)
         self.assertIs(form.is_valid(), False)
         form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'A', '24/06/9999', True, '23/06/9999', '00:01', '00:02', service, no_permission_user)
         self.assertIs(form.is_valid(), False)
-        print '--ENDING AFTER STARTING TEST PASSED'
+        print('--ENDING AFTER STARTING TEST PASSED')
 
         #  If recurrent reserve causes time conflict, form is invalid
-        print '--TESTING DATETIME CONFLICT IN RECURRENT RESERVES'
+        print('--TESTING DATETIME CONFLICT IN RECURRENT RESERVES')
         form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '25/05/9999', True, '22/06/9999', '00:01', '00:02', physical_space, no_permission_user)
         self.assertIs(form.is_valid(), False)
         form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '25/05/9999', True, '22/06/9999', '00:01', '00:02', equipment, no_permission_user)
         self.assertIs(form.is_valid(), False)
         form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'A', '25/05/9999', True, '22/06/9999', '00:01', '00:02', service, no_permission_user)
         self.assertIs(form.is_valid(), False)
-        print '--DATETIME CONFLICT IN RECURRENT RESERVES TEST PASSED'
+        print('--DATETIME CONFLICT IN RECURRENT RESERVES TEST PASSED')
 
         # ending date can't pass max advance
-        print '--TESTING MAX ADVANCE RESERVE IN RECURRENT'
+        print('--TESTING MAX ADVANCE RESERVE IN RECURRENT')
         physical_space.antecedenciaMaxima = 1
         physical_space.save()
         form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '15/07/9999', True, '22/07/9999', '00:01', '00:02', physical_space, no_permission_user)
@@ -756,7 +756,7 @@ class FormTests(TestCase):
         self.assertIs(form.is_valid(), False)
         service.antecedenciaMaxima = 0
         service.save()
-        print '--MAX ADVANCE RESERVE IN RECURRENT TEST PASSED'
+        print('--MAX ADVANCE RESERVE IN RECURRENT TEST PASSED')
 
         #clean database for next tests
         ReservaEquipamento.objects.all().delete()
@@ -771,7 +771,7 @@ class FormTests(TestCase):
 
     def reservable_clean_test(self, unit):
         # fotoLink must be an image
-        print '--TESTING RESERVABLE IMAGELINK'
+        print('--TESTING RESERVABLE IMAGELINK')
         physical_space = EspacoFisico.objects.create(nome='b', descricao='d', unidade=unit, localizacao='a', capacidade=1, fotoLink='http://www.pudim.com.br/pudim.jpg')
         try:
             physical_space.clean()
@@ -801,18 +801,18 @@ class FormTests(TestCase):
         service = Equipamento.objects.create(nome='b', descricao='d', unidade=unit, localizacao='a', patrimonio=1, fotoLink='http://www.pudim.com.br/')
         self.assertRaises(ValidationError, lambda: service.clean())
         service.delete()
-        print '--RESERVABLE IMAGELINK TEST PASSED'
+        print('--RESERVABLE IMAGELINK TEST PASSED')
 
     def unit_clean_test(self):
         # unit cannot have space in initials
-        print '--TESTING UNIT WITH SPACE IN INITIALS'
+        print('--TESTING UNIT WITH SPACE IN INITIALS')
         unit = Unidade.objects.create(sigla='initials with space', nome='a', descricao='d')
         self.assertRaises(ValidationError, lambda: unit.clean())
         unit.delete()
-        print '--UNIT WITH SPACE IN INITIALS TEST PASSED'
+        print('--UNIT WITH SPACE IN INITIALS TEST PASSED')
 
         # logoLink must be an image
-        print '--TESTING UNIT LOGOLINK'
+        print('--TESTING UNIT LOGOLINK')
         unit = Unidade.objects.create(sigla='a', nome='a', descricao='d', logoLink='http://www.pudim.com.br/pudim.jpg')
         try:
             unit.clean()
@@ -822,11 +822,11 @@ class FormTests(TestCase):
         unit = Unidade.objects.create(sigla='initials with space', nome='a', descricao='d', logoLink='http://www.pudim.com.br/')
         self.assertRaises(ValidationError, lambda: unit.clean())
         unit.delete()
-        print '--UNIT LOGOLINK TEST PASSED'
+        print('--UNIT LOGOLINK TEST PASSED')
 
     def unit_form_test(self, unit, no_permission_user):
         # while editing a form, user must be able to see parent unit even if he doesnt have permission
-        print '--TESTING EDIT UNIT FORM'
+        print('--TESTING EDIT UNIT FORM')
         temp_unit = Unidade.objects.create(sigla='tem_pru', nome='temp_unit', unidadePai=unit, descricao='test')
         temp_unit.responsavel.add(no_permission_user)
         temp_unit.save()
@@ -842,7 +842,7 @@ class FormTests(TestCase):
         father_unit_query = form.fields['unidadePai'].queryset
         self.assertEqual(2, len(father_unit_query))
         temp_unit.delete()
-        print '--EDITING UNIT FORM TEST PASSED'
+        print('--EDITING UNIT FORM TEST PASSED')
 
     def reserve_clean_test(self, user, responsable, physical_space, equipment, service):
         default_date = datetime.strptime('01/01/9999', '%d/%m/%Y').date()
@@ -851,7 +851,7 @@ class FormTests(TestCase):
         activitie = Atividade.objects.all()[0]
 
         # cannot make reserve in past days
-        print '--TESTING RESERVE IN PAST DAYS'
+        print('--TESTING RESERVE IN PAST DAYS')
         past_date = datetime.strptime('01/01/0001', '%d/%m/%Y').date()
         reserve = ReservaEspacoFisico.objects.create(data=past_date, horaInicio=default_starting_time, horaFim=default_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=physical_space)
         self.assertRaises(ValidationError, lambda: reserve.clean())
@@ -862,10 +862,10 @@ class FormTests(TestCase):
         reserve = ReservaServico.objects.create(data=past_date, horaInicio=default_starting_time, horaFim=default_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=service)
         self.assertRaises(ValidationError, lambda: reserve.clean())
         reserve.delete()
-        print '--RESERVE IN PAST DAYS TEST PASSED'
+        print('--RESERVE IN PAST DAYS TEST PASSED')
 
         # ending time has to be after starting time
-        print '--TESTING ENDING TIME AFTER STARTING TIME'
+        print('--TESTING ENDING TIME AFTER STARTING TIME')
         error_ending_time = datetime.strptime('00:00', '%H:%M').time()
         reserve = ReservaEspacoFisico.objects.create(data=default_date, horaInicio=default_starting_time, horaFim=error_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=physical_space)
         self.assertRaises(ValidationError, lambda: reserve.clean())
@@ -876,10 +876,10 @@ class FormTests(TestCase):
         reserve = ReservaServico.objects.create(data=default_date, horaInicio=default_starting_time, horaFim=error_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=service)
         self.assertRaises(ValidationError, lambda: reserve.clean())
         reserve.delete()
-        print '--ENDING TIME AFTER STARTING TIME TEST PASSED'
+        print('--ENDING TIME AFTER STARTING TIME TEST PASSED')
 
         # Test blocked reservable, user cannot reserve
-        print '--TESTING BLOCKED RESERVABLE RESERVE TEST'
+        print('--TESTING BLOCKED RESERVABLE RESERVE TEST')
         physical_space.bloqueado = True
         equipment.bloqueado = True
         service.bloqueado = True
@@ -914,10 +914,10 @@ class FormTests(TestCase):
         equipment.bloqueado = False
         physical_space.bloqueado = False
         service.bloqueado = False
-        print '--BLOCKED RESERVABLE RESERVE TEST PASSED'
+        print('--BLOCKED RESERVABLE RESERVE TEST PASSED')
 
         # Test advance max reserves
-        print '--TESTING MAX ADVANCE'
+        print('--TESTING MAX ADVANCE')
         distant_date = default_date
         physical_space.antecedenciaMaxima = 1
         equipment. antecedenciaMaxima = 1
@@ -952,10 +952,10 @@ class FormTests(TestCase):
         physical_space.antecedenciaMaxima = 0
         equipment.antecedenciaMaxima = 0
         service.antecedenciaMaxima = 0
-        print '--MAX ADVANCE TEST PASSED'
+        print('--MAX ADVANCE TEST PASSED')
 
         # Test min advance reserves
-        print '--TESTING MIN ADVANCE'
+        print('--TESTING MIN ADVANCE')
         physical_space.antecedenciaMinima = 1
         equipment.antecedenciaMinima = 1
         service.antecedenciaMinima = 1
@@ -990,10 +990,10 @@ class FormTests(TestCase):
         physical_space.antecedenciaMinima = 0
         equipment.antecedenciaMinima = 0
         service.antecedenciaMinima = 0
-        print '--MIN ADVANCE TEST PASSED'
+        print('--MIN ADVANCE TEST PASSED')
 
         # Test for datetime conflict, 5 cases
-        print '--TESTING DATETIME CONFLICT'
+        print('--TESTING DATETIME CONFLICT')
         conflict_starting_time = datetime.strptime('08:00', '%H:%M').time()
         conflict_ending_time = datetime.strptime('10:00', '%H:%M').time()
         conflict_physical_space_reserve = ReservaEspacoFisico.objects.create(estado='A', data=default_date, horaInicio=conflict_starting_time, horaFim=conflict_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=physical_space)
@@ -1059,4 +1059,4 @@ class FormTests(TestCase):
         reserve = ReservaServico.objects.create(data=default_date, horaInicio=error_starting_time, horaFim=error_ending_time, atividade=activitie, usuario=user, ramal=0, finalidade='w', locavel=service)
         self.assertRaises(ValidationError, lambda: reserve.clean())
         reserve.delete()
-        print '--DATETIME CONFLICT TEST PASSED'
+        print('--DATETIME CONFLICT TEST PASSED')
