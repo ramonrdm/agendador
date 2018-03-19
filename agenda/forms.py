@@ -566,12 +566,8 @@ class UnidadeAdminForm(forms.ModelForm):
             self.fields['unidadePai'].queryset = unidadePai | queryset
 
     def init_many_to_many_fields(self):
-        self.fields['grupos'].widget = FilteredSelectMultipleJs(verbose_name="Grupos", is_stacked=False)
         self.fields['grupos'].queryset = Group.objects.all()
-        self.fields['grupos'].help_text = ''
-        self.fields['responsavel'].widget = FilteredSelectMultipleJs(verbose_name="Responsáveis", is_stacked=False)
         self.fields['responsavel'].queryset = User.objects.all()
-        self.fields['responsavel'].help_text = ''
 
     def remove_add_and_edit_icons(self):
         self.fields['unidadePai'].widget.can_add_related = False  # remove add button
@@ -652,13 +648,10 @@ class LocavelAdminForm(forms.ModelForm):
             self.initial_responsables = User.objects.none()
 
     def init_many_to_many_fields(self):
-        self.fields['grupos'].widget = FilteredSelectMultipleJs(verbose_name="Grupos", is_stacked=False)
         self.fields['grupos'].queryset = Group.objects.all()
         self.fields['grupos'].help_text = ''
-        self.fields['responsavel'].widget = FilteredSelectMultipleJs(verbose_name="Responsáveis", is_stacked=False)
         self.fields['responsavel'].queryset = User.objects.all()
         self.fields['responsavel'].help_text = ''
-        self.fields['atividadesPermitidas'].widget = FilteredSelectMultipleJs(verbose_name="Atividades permitidas", is_stacked=False)
         self.fields['atividadesPermitidas'].queryset = Atividade.objects.all()
         self.fields['atividadesPermitidas'].help_text = ''
 
@@ -725,9 +718,7 @@ class ServicoAdminForm(LocavelAdminForm):
     def __init__(self, *args, **kwargs):
         kwargs['reservable_type'] = Servico
         super(ServicoAdminForm, self).__init__(*args, **kwargs)
-        self.fields['profissionais'].widget = FilteredSelectMultipleJs(verbose_name="Profissionais", is_stacked=False)
         self.fields['profissionais'].queryset = User.objects.all()
-        self.fields['profissionais'].help_text = ''
 
     def save(self, *args, **kwargs):
         return super(ServicoAdminForm, self).save(*args, **kwargs)
@@ -752,8 +743,7 @@ class UserAdminForm(UserChangeForm):
         self.fields['user_permissions'].queryset = Permission.objects.all()
 
     def init_groups_field(self):
-        self.fields['groups'].widget = FilteredSelectMultipleJs(verbose_name="Grupos", is_stacked=False)
-        self.fields['groups'].help_text = ''
+        self.fields['groups'].widget.can_add_related = False  # remove add button
         self.fields['groups'].label = 'Grupos'
         self.fields['groups'].queryset = Group.objects.all()
 

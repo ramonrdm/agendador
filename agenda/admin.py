@@ -7,8 +7,9 @@ from django.contrib.admin.sites import AdminSite
 from django.contrib.auth.admin import UserAdmin
 from agenda import forms
 from django.contrib.admin.models import LogEntry
+from django.forms import TextInput, Textarea
+from django.db import models
 
-admin.site.register(Atividade)
 
 @admin.register(Unidade)
 
@@ -16,6 +17,11 @@ class UnidadeAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">account_balance</i>'
     form = forms.UnidadeAdminForm
     list_display = ('sigla','unidadePai', 'get_responsavel')
+    autocomplete_fields = ('responsavel', 'grupos')
+    formfield_overrides = {
+        models.TextField: {'widget': Textarea(attrs={'rows':1, 'cols':45})},
+    }
+
     def get_responsavel(self, obj):
         return ", ".join(responsavel.username for responsavel in obj.responsavel.all())
 
@@ -59,6 +65,9 @@ class UnidadeAdmin(admin.ModelAdmin):
 class ReservaAdmin(admin.ModelAdmin):
     list_display = ('usuario', 'locavel', 'data', 'ramal', 'finalidade', 'estado')
     search_fields = ['finalidade', 'usuario__username', 'estado']
+    formfield_overrides = {
+        models.TextField: {'widget': Textarea(attrs={'rows':1, 'cols':45})},
+    }
 
     def get_search_results(self, request, queryset, search_term):
         result_queryset, use_distinct = super(ReservaAdmin, self).get_search_results(request, queryset, search_term)
@@ -172,6 +181,11 @@ admin.site.register(ReservaServico, ReservaServicoAdmin)
 
 class LocavelAdmin(admin.ModelAdmin):
     list_display = ('nome','unidade','get_responsavel')
+    autocomplete_fields = ('responsavel', 'atividadesPermitidas', 'grupos')
+    formfield_overrides = {
+        models.TextField: {'widget': Textarea(attrs={'rows':1, 'cols':45})},
+    }
+
     def get_responsavel(self, obj):
         return ", ".join(responsavel.username for responsavel in obj.responsavel.all())
     get_responsavel.short_description = 'responsavel'
@@ -290,6 +304,7 @@ admin.site.register(EspacoFisico, EspacoFisicoAdmin)
 class ServicoAdmin(LocavelAdmin):
     form = forms.ServicoAdminForm
     icon = '<i class="material-icons">accessibility</i>'
+    autocomplete_fields = ('responsavel', 'atividadesPermitidas', 'grupos','profissionais')
 
     def get_queryset(self, request):
         groups = request.user.groups.all()
@@ -311,13 +326,21 @@ admin.site.register(Servico, ServicoAdmin)
 
 class UserAdmin(UserAdmin):
     form = forms.UserAdminForm
+    autocomplete_fields = ('groups',)
 
     def get_form(self, request, *args, **kwargs):
         form = super(UserAdmin, self).get_form(request, *args, **kwargs)
         form.request = request
         return form
 
+    def has_add_permission(self, request):
+      return False
+
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.register(LogEntry)
+class AtividadeAdmin(admin.ModelAdmin):
+    search_fields = ['nome']
+
+admin.site.register(Atividade, AtividadeAdmin)
