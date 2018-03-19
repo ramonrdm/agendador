@@ -19,8 +19,6 @@ from datetime import date
 from agenda import admin
 from agenda.forms import *
 
-from material.frontend.views import ModelViewSet
-
 from django.contrib.admin.models import LogEntry
 
 month_names = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
@@ -296,14 +294,14 @@ def get_atividade_set(request):
     if request.method == 'POST':
         tipo = request.POST['title']
         locavel = request.POST['locavel']
-        if unicode('espaço físico', 'utf-8') in tipo:
-            locavel = EspacoFisico.objects.get(nome=locavel)
+        if str('espaço físico') in tipo:
+            locavel = EspacoFisico.objects.get(id=locavel)
             ma = admin.EspacoFisicoAdmin(EspacoFisico, AdminSite())
         elif 'equipamento' in tipo:
-            locavel = Equipamento.objects.get(nome=locavel)
+            locavel = Equipamento.objects.get(id=locavel)
             ma = admin.EquipamentoAdmin(Equipamento, AdminSite())
-        elif unicode('serviço', 'utf-8') in tipo:
-            locavel = Servico.objects.get(nome=locavel)
+        elif str('serviço') in tipo:
+            locavel = Servico.objects.get(id=locavel)
             ma = admin.ServicoAdmin(Servico, AdminSite())
         query = ma.get_queryset(request)
         if locavel in query:

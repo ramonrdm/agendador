@@ -24,7 +24,7 @@ translated_week_names = dict(Sunday='domingo', Monday='segunda-feira', Tuesday='
 class ReservaAdminForm(forms.ModelForm):
     recorrente = forms.BooleanField(required=False)
     dataInicio = forms.DateField(required=False)
-    dataFim = forms.DateField(required=False)
+    dataFim = forms.DateField(required=False, widget=SelectDateWidget())
 
     class Meta:
         model = Reserva
@@ -66,15 +66,23 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['dataInicio'].widget = forms.HiddenInput()
             self.fields['dataInicio'].label = ''
             self.fields['dataFim'].label = 'Data Fim'
-        elif kwargs['instance'].recorrencia:
-            instance = kwargs['instance']
-            self.fields['dataInicio'].initial = instance.recorrencia.dataInicio
-            self.fields['dataInicio'].widget = ReadOnlyWidget(attrs=dict(label='Data início'))
-            self.fields['dataInicio'].disabled = True
-            self.fields['dataFim'].widget = ReadOnlyWidget(attrs=dict(label='Data fim'))
-            self.fields['dataFim'].disabled = True
-            self.fields['dataFim'].initial = instance.recorrencia.dataFim
-            self.fields['recorrente'].initial = True
+        else:
+            if kwargs['instance'].recorrencia:
+                instance = kwargs['instance']
+                self.fields['dataInicio'].initial = instance.recorrencia.dataInicio
+                self.fields['dataInicio'].widget = ReadOnlyWidget(attrs=dict(label='Data início'))
+                self.fields['dataInicio'].disabled = True
+                self.fields['dataFim'].widget = ReadOnlyWidget(attrs=dict(label='Data fim'))
+                self.fields['dataFim'].disabled = True
+                self.fields['dataFim'].initial = instance.recorrencia.dataFim
+                self.fields['recorrente'].initial = True
+            else:
+                self.fields['dataInicio'].widget = forms.HiddenInput()
+                self.fields['dataInicio'].disabled = True
+                self.fields['dataFim'].widget = forms.HiddenInput()
+                self.fields['dataFim'].disabled = True
+                self.fields['recorrente'].widget = ReadOnlyWidget(check_box=True, check_box_value=False)
+
 
     def init_read_only(self, kwargs):
         # For all fields, put the readonly widget and makes sure the data can't be tempered
@@ -96,7 +104,6 @@ class ReservaAdminForm(forms.ModelForm):
 
         if kwargs['instance'].recorrencia:
             self.fields['dataInicio'].initial = kwargs['instance'].recorrencia.dataInicio
-            self.fields['dataInicio'].widget = ReadOnlyWidget()
             self.fields['dataInicio'].label = 'Data início'
             self.fields['dataInicio'].disabled = True
             self.fields['dataFim'].initial = kwargs['instance'].recorrencia.dataFim
@@ -158,7 +165,7 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['atividade'].queryset = reservable.atividadesPermitidas
 
         # Initialize the widget that dynamically change activities according to the selected reservable
-        rel = Reserva._meta.get_field('atividade').rel
+        rel = Reserva._meta.get_field('atividade').remote_field
         self.fields['atividade'].widget = DynamicAtividadeWidget(Select(choices=models.ModelChoiceIterator(self.fields['atividade'])), rel, admin.admin.site)
         self.fields['atividade'].widget.can_add_related = False  # remove add button
         self.fields['atividade'].widget.can_change_related = False  # remove edit button
@@ -232,6 +239,7 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['data'].initial = self.request.session['data']
         except:
             pass
+        self.fields['data'].widget = SelectDateWidget()
         self.request.session['data'] = ''
 
     def send_mail(self, status, instance):
@@ -402,7 +410,8 @@ class ReservaAdminForm(forms.ModelForm):
         instance = super(ReservaAdminForm, self).save(commit=False)
         # Check if the user has permission in this reservable
         # If it is, the reserve is automatically accepted
-        if (reservable in user_query) and (not reservable.permissaoNecessaria) or (user in reservable.responsavel.all()):
+        # Only in add, so responsables can edit the status of their own reserves
+        if ((reservable in user_query) and (not reservable.permissaoNecessaria) or (user in reservable.responsavel.all())) and self.is_new_object:
             status = 'A'
         instance.estado = status
 

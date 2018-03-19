@@ -22,9 +22,9 @@ class SelectTimeWidget(Widget):
 
     class Media():
         css = {
-            'all': ('agenda/css/select_time.css',),
+            'all': ('agenda/css/select_time.css', 'agenda/css/jquery.datetimepicker.css'),
         }
-        js = ('material/js/jquery.datetimepicker.full.js', 'agenda/js/time_options.js',)
+        js = ('agenda/js/jquery.datetimepicker.full.js', 'agenda/js/time_options.js',)
 
     def render(self, name, value, attrs=None):
         initial = None
@@ -44,7 +44,10 @@ class SelectDateWidget(Widget):
         self.attrs = attrs or {}
 
     class Media():
-        js = ('material/js/jquery.datetimepicker.full.js', 'agenda/js/date.js',)
+        css = {
+            'all': ('agenda/css/jquery.datetimepicker.css',),
+        }
+        js = ('agenda/js/jquery.datetimepicker.full.js', 'agenda/js/date.js',)
 
     def render(self, name, value, attrs=None):
         if value:
@@ -54,8 +57,7 @@ class SelectDateWidget(Widget):
                 inp='<input class="date_picker validate" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text" value="'+datetime.strptime(value, '%d/%m/%Y').strftime('%d/%m/%Y')+'">'
         else:
             inp='<input class="date_picker validate" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text">'
-        label='<label for="id_'+name+'">'+name.title()+'</label>'
-        output = '<div class="input-field">' + inp + label + '</div>'
+        output = '<div class="input-field">' + inp + '</div>'
         return output
 
 class DynamicAtividadeWidget(widgets.RelatedFieldWidgetWrapper):
@@ -72,7 +74,7 @@ class AutocompleteWidget(Widget):
         css = {
             'all': ('agenda/css/autocomplete.css',),
         }
-        js = ('material/js/materialize.js', 'agenda/js/autocomplete.js',)
+        js = ('agenda/js/materialize.js', 'agenda/js/autocomplete.js',)
 
     def render(self, name, value, attrs=None):
         label = name
@@ -115,4 +117,7 @@ class ReadOnlyWidget(Widget):
 class RecurrentReserveWidget(CheckboxInput):
 
     class Media():
-        js = ('agenda/js/recurrent_reserve.js',)
+        css = {
+            'all': ('agenda/css/jquery-ui.css',),
+        }
+        js = ('agenda/js/recurrent_reserve.js', 'agenda/js/jquery-ui.min.js')

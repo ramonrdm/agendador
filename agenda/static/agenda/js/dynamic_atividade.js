@@ -1,42 +1,32 @@
 $(function(){
-    checkEmpty();
-    update();
+    $(document).ready(function(){
+        addListener();
+        checkEmpty();
+    });
 });
 
 function checkEmpty() {
-    var locavel = $('#id_locavel').parent().children('.select-dropdown').attr('value');
+    var locavel = $('#id_locavel').val();
     var data_id = $('#id_atividade').attr('data-select-id');
-    if (locavel === '---------') {
+    if (!locavel) {
         $('#id_atividade').html('<option value="">---------</option>');
-        $('#select-options-'+data_id).html('<li class=""><span>---------</span></li>');
     } else {
-        var atividade = $('#id_atividade').parent().children('.select-dropdown').attr('value');
+        var atividade = $('#id_atividade').val();
         sendData(locavel, atividade);
     }
 }
 
 function setStarting(atividade) {
-    $('#id_atividade').parent().children('.select-dropdown').attr('value', atividade);
     $('#id_atividade option').each(function() {
-        if ($(this).text() === atividade) {
+        if ($(this).val() === atividade) {
             $(this).attr('selected', 'selected');
         }
     });
 }
 
-function update() {
-    setTimeout( function() {
-        var data_id = $('#id_locavel').attr('data-select-id');
-        $('#select-options-'+data_id+' li').on('click', function() {
-            sendData($(this).text(), null);
-            update();
-        });
-    }, 10);
-}
-
 function sendData(locavel, atividade){
     var csrftoken = getCookie('csrftoken');
-    var title = $('.page-title').text();
+    var title = $('#content').children('h1').text();
     $.ajax({
         type: 'POST',
         url: '/get_atividade_set/',
@@ -54,30 +44,23 @@ function sendData(locavel, atividade){
 }
 
 function updateOptions(data) {
-    var data_id = $('#id_atividade').attr('data-select-id');
     var options = '<option value="">---------</option>';
-    var lelements = '<li class=""><span>---------</span></li>';
     for (i = 0; i < data.atividades.length; i++) {
         options += '<option value="'+data.ids[i]+'">'+data.atividades[i]+'</option>';
-        lelements += '<li class=""><span>'+data.atividades[i]+'</span></li>';
     }
     $('#id_atividade').html(options);
-    $('#select-options-'+data_id).html(lelements);
-    $('#select-options-'+data_id).parent().children('.select-dropdown').attr('value', '---------');
-    addListener(data_id);
+    addListener();
 }
 
-function addListener(data_id) {
-    $('#select-options-'+data_id+' li').on('click', function() {
-        var text = $(this).text();
-        $(this).parent().parent().children('.select-dropdown').attr('value', text);
-        $($(this).parent().parent().find('option')).each(function() {
-            if ($(this).text() === text) {
-                $(this).attr('selected', 'selected');
-            } else {
-                $(this).removeAttr('selected');
-            }
-        });
+function addListener() {
+    $('#id_locavel option').on('click', function() {
+        var id = $(this).attr('value');
+        if (id) {
+            sendData(id, null);
+        } else {
+            var options = '<option value="">---------</option>';
+            $('#id_atividade').html(options);
+        }
     });
 }
 

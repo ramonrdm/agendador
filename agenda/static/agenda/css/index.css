@@ -58,3 +58,15 @@
 .month {
 	text-align: center;
 }
+
+.tabs .tab a {
+	color: rgba(1,87,155,.7);
+}
+
+.tabs .tab a:hover, .tabs .tab a.active {
+	color: #01579b;
+}
+
+.tabs .indicator {
+	background-color: #0182e7;
+}

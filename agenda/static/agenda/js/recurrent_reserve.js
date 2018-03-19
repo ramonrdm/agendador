@@ -8,18 +8,35 @@ $(function()
         var question_mark = create_and_return_questionmark();
         add_tooltip(question_mark);
         add_listeners_to_option();
-        create_confirmation_modal();
     });
 });
 
 function prevent_default_submit() {
-    var submit_button = $(".right-align").find('button:first');
+    var submit_button = $(".submit-row input");
     submit_button.on("click", function( event ) {
         if (!hidden)
         {
             event.preventDefault();
+            create_confirmation_modal();
             update_modal_dates();
-            $("#recurrent-modal").modal('open');
+            open_modal();
+        }
+    });
+}
+
+function open_modal() {
+    $( "#dialog-confirm" ).dialog({
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        buttons: {
+        "Concordar": function() {
+            $('form').submit();
+        },
+        "Cancelar": function() {
+            $( this ).dialog( "close" );
+        }
         }
     });
 }
@@ -36,8 +53,8 @@ function add_listeners_to_option()
     $('#id_recorrente').on("click", function() {
         if (hidden)
         {
-            $('#id_dataInicio_container').css('display', '');
-            $('#id_dataFim_container').css('display', '');
+            $('.field-dataInicio').css('display', '');
+            $('.field-dataFim').css('display', '');
             hidden = false;
         }
         else
@@ -49,8 +66,8 @@ function add_listeners_to_option()
 
 function hide_date_inputs()
 {
-    $('#id_dataInicio_container').css('display', 'none');
-    $('#id_dataFim_container').css('display', 'none');
+    $('.field-dataInicio').css('display', 'none');
+    $('.field-dataFim').css('display', 'none');
     hidden = true;
 }
 
@@ -103,21 +120,10 @@ function create_confirmation_modal()
 
     var ending_date = $('#id_dataFim').val();
     var modal_html = `
-        <div id="recurrent-modal" class="modal">
-            <div class="modal-content">
-                <h4>Reserva Recorrente</h4>
-                <p>Essa é uma reserva recorrente, alterações aqui feitas terão efeito nas reservas recorrentes do dia <span id="starting_date"></span> ao dia <span id="ending_date"></span>.<p>
-                Caso deseje editar apenas essa reserva, certifique-se de que a opção "Recorrente" está desmarcada.
-            </div>
-            <div class="modal-footer">
-                <a id="submit_button" type="submit" class="modal-action modal-close waves-effect waves-green btn-flat">Concordar</a>
-                <a id="close-modal" class="modal-action modal-close waves-effect waves-green btn-flat">Retornar</a>
-            </div>
+        <div id="dialog-confirm" title="Reserva Recorrente">
+            <p>Essa é uma reserva recorrente, alterações aqui feitas terão efeito nas reservas recorrentes do dia <span id="starting_date"></span> ao dia <span id="ending_date"></span>.<p>
+                Caso deseje editar apenas essa reserva, certifique-se de que a opção "Recorrente" está desmarcada.</p>
         </div>
     `
     $('form').append(modal_html);
-    $('#recurrent-modal').modal({endingTop: '30%'});
-    $("#submit_button").on("click", function() {
-        $('form').submit();
-    });
 }

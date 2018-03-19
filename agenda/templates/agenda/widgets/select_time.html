@@ -13,7 +13,6 @@ $(document).ready(function() {
 		{% else %}
 		<input class="ufsc_time validate" data-lang="pt-br" id="id_{{ name }}" name="{{ name }}" type="text">
 		{% endif %}
-		<label for="id_{{ name }}">{{ label|title }}</label>
 	{% if attrs.error %}
 		<small class='select-time-error'>{{ attrs.error }}</small>
 	{% endif %}

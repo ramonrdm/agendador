@@ -7,12 +7,13 @@
 {% endblock %}
 {% block css %}
     {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/index.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/topbar.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/materialize.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/index.css' %}" />
+
 {% endblock %}
 {% block js %}
-    <script src="{% static 'agenda/js/jquery.js' %}"></script>
-    <script src="{% static 'agenda/js/materialize.js' %}"></script>
+    {{ block.super }}
     <script>
         $(document).ready(function(){
             $(".button-collapse").sideNav();

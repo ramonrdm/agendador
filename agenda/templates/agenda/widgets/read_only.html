@@ -7,12 +7,10 @@
                 {% else %}
                     <input id="id_{{ name }}" class="filled-in" name="{{ name }}" type="checkbox" disabled="disabled">
                 {% endif %}
-                <label for="id_{{ name }}">{{ label|title }}</label>
             </div>
         {% else %}
             <div class="input-field">
                 <input data-lang="pt-br" id="id_{{ name }}" name="{{ name }}" type="text" value="{{ initial }}" readonly>
-                <label for="id_{{ name }}">{{ label|title }}</label>
             </div>
             {% if model_field %}
             <div hidden class='options'>
