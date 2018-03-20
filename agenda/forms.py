@@ -4,6 +4,7 @@ from agenda.models import *
 from django.contrib import messages
 from django.conf import settings
 from django.contrib.auth.forms import UserChangeForm
+from django.core.exceptions import PermissionDenied
 from django import forms
 from django.contrib.admin import widgets
 import datetime
@@ -49,6 +50,9 @@ class ReservaAdminForm(forms.ModelForm):
                 if self.request.user not in reservable.responsavel.all():
                     readOnly = True
 
+        if self.request.session['id_reservable']:
+            self.check_group_only()
+
         if readOnly and not self.request.user.is_superuser:
             self.init_read_only(kwargs)
         else:
@@ -59,6 +63,19 @@ class ReservaAdminForm(forms.ModelForm):
             self.init_activity_field()
             self.init_user_field()
             self.init_recurrent_field(kwargs)
+
+    def check_group_only(self):
+        reservable = self.reservable_type.objects.get(id=self.request.session['id_reservable'])
+        if reservable.somenteGrupo:
+            groups = reservable.grupos.all()
+            has_permission = False
+            for group in groups:
+                if self.request.user in group:
+                    has_permission = True
+            if not has_permission:
+                self.request.session['id_reservable'] = None
+                groups = ", ".join(group.name for group in groups)
+                raise PermissionDenied('Apenas usuarios no(s) grupo(s) '+groups+' podem pedir reserva em ' + reservable.nome +'.')
 
     def init_recurrent_field(self, kwargs):
         self.fields['recorrente'].widget = RecurrentReserveWidget()

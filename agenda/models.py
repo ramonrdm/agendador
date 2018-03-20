@@ -60,6 +60,7 @@ class Locavel(models.Model):
     responsavel = models.ManyToManyField(User, verbose_name='Responsáveis')
     unidade = models.ForeignKey(Unidade)
     grupos = models.ManyToManyField(Group, blank=True, verbose_name='Grupos que podem reservar automaticamente')
+    somenteGrupo = models.BooleanField(default=False, verbose_name='Apenas membros do grupo podem pedir reserva')
     bloqueado = models.BooleanField(default=False)
     invisivel = models.BooleanField(default=False, verbose_name='Invisível')
     permissaoNecessaria = models.BooleanField(default=False, verbose_name='Reservar somente com autorização de um responsável')

@@ -1,0 +1,32 @@
+{% extends "material/frontend/base_lockscreen.html" %}
+{% load i18n %}
+
+{% block title %}403 {% trans 'Access Forbidden' %} - Agendador{% endblock %}
+{% block page_title %}Agendador{% endblock %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col s12">
+        {% trans 'Access Forbidden' %}
+    </div>
+    <div class="col s12">
+        {% if request.user.is_anonymous %}
+        {% trans 'You are not logged in' %}
+        {% else %}
+            {% if exception %}
+            <p>{{ exception }}</p>
+            {% else %}
+            {% blocktrans with user=request.user|default:"You" %}{{ user }} não tem permissão para acessar essa página.{% endblocktrans %}
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+<div class="row">
+    <div class="col s12">
+        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary white-text">{% trans 'Log in' %}</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block icon %}lock{% endblock %}
