@@ -70,3 +70,11 @@
 .tabs .indicator {
 	background-color: #0182e7;
 }
+
+.collapsible-header .col {
+	display: inherit;
+}
+
+.collapsible-header .col .material-icons {
+	padding-top: 13px;
+}

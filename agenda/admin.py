@@ -65,6 +65,7 @@ class UnidadeAdmin(admin.ModelAdmin):
 class ReservaAdmin(admin.ModelAdmin):
     list_display = ('usuario', 'locavel', 'data', 'ramal', 'finalidade', 'estado')
     search_fields = ['finalidade', 'usuario__username', 'estado']
+    autocomplete_fields = ('usuario',)
     formfield_overrides = {
         models.TextField: {'widget': Textarea(attrs={'rows':1, 'cols':45})},
     }

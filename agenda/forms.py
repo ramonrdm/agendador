@@ -153,10 +153,7 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['usuario'].widget = forms.HiddenInput()
             self.fields['usuario'].label = ''
         else:
-            attrs = {}
-            if 'usuario' in self.errors:
-                attrs['error'] = self.errors['usuario']
-            self.fields['usuario'].widget = AutocompleteWidget(attrs=attrs, query=User.objects.all(), model=User)
+            self.fields['usuario'].widget.can_change_related = False  # remove edit button
 
     def init_activity_field(self):
         # If there's a initial reservable get activities that belong to it

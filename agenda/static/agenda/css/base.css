@@ -5,3 +5,7 @@
 .topbar {
 	background-color: #01579b;
 }
+
+.circle {
+	border-radius: 0px;
+}
