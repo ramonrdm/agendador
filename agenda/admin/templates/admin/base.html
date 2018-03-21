@@ -22,3 +22,8 @@
     <li><a href="{% url 'admin:login' %}" data-turbolinks="false"><i class="material-icons right">lock_open</i>{% trans "Log in" %}</a></li>
     {% endif %}
 {% endblock %}
+
+{% block sidenav_items %}
+{{ block.super }}
+<li class="no-padding"><a class="collapsible-header" href="{% url 'logout' %}">Logout<i class="material-icons">exit_to_app</i></a></li>
+{% endblock sidenav_items %}
