@@ -10,8 +10,13 @@
     <link rel='stylesheet' href="{% static 'agenda/fullcalendar/fullcalendar.css' %}" />
     <script src="{% static 'agenda/fullcalendar/lib/moment.min.js' %}"></script>
     <script src="{% static 'agenda/fullcalendar/fullcalendar.js' %}"></script>
+{% endblock %}
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/base.css' %}" />
 
 {% endblock %}
+
 
 <!-- bloco sidenav_items sobrescrito do arquivo /material/frontend/templates/material/frontend/base.html -->
 
