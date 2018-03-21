@@ -50,8 +50,9 @@ class ReservaAdminForm(forms.ModelForm):
                 if self.request.user not in reservable.responsavel.all():
                     readOnly = True
 
-        if self.request.session['id_reservable']:
-            self.check_group_only()
+        if self.request.session:
+            if self.request.session['id_reservable']:
+                self.check_group_only()
 
         if readOnly and not self.request.user.is_superuser:
             self.init_read_only(kwargs)
@@ -70,9 +71,9 @@ class ReservaAdminForm(forms.ModelForm):
             groups = reservable.grupos.all()
             has_permission = False
             for group in groups:
-                if self.request.user in group:
+                if self.request.user in group.user_set.all():
                     has_permission = True
-            if not has_permission:
+            if not has_permission and not self.request.user.is_superuser and not (self.request.user in reservable.responsavel.all()):
                 self.request.session['id_reservable'] = None
                 groups = ", ".join(group.name for group in groups)
                 raise PermissionDenied('Apenas usuarios no(s) grupo(s) '+groups+' podem pedir reserva em ' + reservable.nome +'.')

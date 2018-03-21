@@ -515,7 +515,7 @@ class FormTests(TestCase):
         unit.save()
         group.save()
 
-    def create_form(self, reserve_type, form_type, status, date, recurrent, ending_date, starting_time, ending_time, reservable, user, instance=None):
+    def create_form(self, reserve_type, form_type, status, date, recurrent, ending_date, starting_time, ending_time, reservable, user, instance=None, starting_reservable=False):
         date = datetime.strptime(date, '%d/%m/%Y').date()
         if ending_date:
             ending_date = datetime.strptime(ending_date, '%d/%m/%Y').date()
@@ -526,6 +526,8 @@ class FormTests(TestCase):
         reason = 'test'
         request.user = user
         request.session = dict()
+        if starting_reservable:
+            request.session['id_reservable'] = reservable.id
         def a(a):
             return ''
         request.build_absolute_uri = a
@@ -559,6 +561,7 @@ class FormTests(TestCase):
         self.recurrent_reserve_test(responsable, permission_user, no_permission_user, physical_space, equipment, service)
         self.model_clean_tests(no_permission_user, responsable, physical_space, equipment, service, unit)
         self.unit_form_test(unit, no_permission_user)
+        self.group_only_test(responsable, permission_user, no_permission_user, physical_space, equipment, service)
 
         print '-RESERVE FORM TEST PASSED'
 
@@ -843,6 +846,58 @@ class FormTests(TestCase):
         self.assertEqual(2, len(father_unit_query))
         temp_unit.delete()
         print '--EDITING UNIT FORM TEST PASSED'
+
+    def group_only_test(self, responsable, permission_user, no_permission_user, physical_space, equipment, service):
+        print '--TESTING GROUP ONLY'
+        physical_space.somenteGrupo = True
+        group = Group.objects.get(name='group')
+        physical_space.grupos.add(group)
+        physical_space.save()
+        try:
+            self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, responsable, starting_reservable=True)
+        except:
+            self.fail('somenteGrupo flag raising error unexpectedly!')
+        try:
+            self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, permission_user, starting_reservable=True)
+        except:
+            self.fail('somenteGrupo flag raising error unexpectedly!')
+        self.assertRaises(PermissionDenied, lambda: self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, no_permission_user, starting_reservable=True))
+        physical_space.somenteGrupo = False
+        physical_space.grupos.remove(group)
+        physical_space.save()
+
+        equipment.somenteGrupo = True
+        equipment.grupos.add(group)
+        equipment.save()
+        try:
+            form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', equipment, responsable, starting_reservable=True)
+        except:
+            self.fail('somenteGrupo flag raising error unexpectedly!')
+        try:
+            form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', equipment, permission_user, starting_reservable=True)
+        except:
+            self.fail('somenteGrupo flag raising error unexpectedly!')
+        self.assertRaises(PermissionDenied, lambda: self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', equipment, no_permission_user, starting_reservable=True))
+        equipment.somenteGrupo = False
+        equipment.grupos.remove(group)
+        equipment.save()
+
+        service.somenteGrupo = True
+        service.grupos.add(group)
+        service.save()
+        try:
+            form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', service, responsable, starting_reservable=True)
+        except:
+            self.fail('somenteGrupo flag raising error unexpectedly!')
+        try:
+            form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', service, permission_user, starting_reservable=True)
+        except:
+            self.fail('somenteGrupo flag raising error unexpectedly!')
+        self.assertRaises(PermissionDenied, lambda: self.create_form(ReservaServico, ReservaServicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', service, no_permission_user, starting_reservable=True))
+        service.somenteGrupo = False
+        service.grupos.remove(group)
+        service.save()
+
 
     def reserve_clean_test(self, user, responsable, physical_space, equipment, service):
         default_date = datetime.strptime('01/01/9999', '%d/%m/%Y').date()
