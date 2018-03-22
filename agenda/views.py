@@ -28,9 +28,6 @@ unidade_default = 'ufsc'
 
 def index(request, unidade=None):
 
-    logs = LogEntry.objects.all()
-    for l in logs:
-        print(l)
     # get unit
     try:  # try to get given unit
         unidade = Unidade.objects.get(sigla__iexact=unidade)
