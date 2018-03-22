@@ -50,9 +50,13 @@ class ReservaAdminForm(forms.ModelForm):
                 if self.request.user not in reservable.responsavel.all():
                     readOnly = True
 
-        if self.request.session:
-            if self.request.session['id_reservable']:
-                self.check_group_only()
+        try:
+            starting_reservable = self.request.session['id_reservable']
+        except:
+            starting_reservable = None
+
+        if starting_reservable:
+            self.check_group_only()
 
         if readOnly and not self.request.user.is_superuser:
             self.init_read_only(kwargs)
