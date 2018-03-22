@@ -1,3 +1,13 @@
 img {
 	image-orientation: from-image;
 }
+
+.side-nav .userView .circle {
+	width: auto;
+	height: 90px;
+	max-width: inherit;
+}
+
+.side-nav .userView .email {
+	display: none;
+}

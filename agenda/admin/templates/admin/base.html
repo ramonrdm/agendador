@@ -1,6 +1,11 @@
 {% extends 'admin/base.html' %}
 {% load static %}
 {% load i18n %}
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/base.css' %}" />
+{% endblock %}
+
 {% block head %}
     {{ block.super }}
     <link rel='shortcut icon' type='image/x-icon' href="{% static 'agenda/img/favico.ico' %}" />
