@@ -11,6 +11,7 @@ from .models import *
 from .admin import *
 
 class MockRequest:
+    GET = list()
     def build_absolute_uri(self, pru):
         return '/pru/'
 request = MockRequest()
@@ -317,6 +318,30 @@ class AdminViewPermissionsTests(TestCase):
 
         print '-SEARCHING IN RESERVE ADMIN TEST PASSED'
 
+    def check_delete_permission(self, admin_type, reserve_type, users, superuser):
+        request.user = superuser
+        ma = admin_type(reserve_type, AdminSite())
+        self.assertTrue(ma.has_delete_permission(request))
+        if 'delete_selected' not in ma.get_actions(request):
+            self.fail("Superuser doesn't have delete permission!")
+
+        for user in users:
+            request.user = user
+            ma = admin_type(reserve_type, AdminSite())
+            self.assertFalse(ma.has_delete_permission(request))
+            if 'delete_selected' in ma.get_actions(request):
+                self.fail("Non superuser have delete permission!")
+
+    def test_delete_permission(self):
+        print '-TESTING DELETE PERMISSION'
+        self.create_preset()
+        superuser = User.objects.get(username='superuser')
+        users = list(User.objects.all().exclude(username='superuser'))
+        self.check_delete_permission(ReservaEspacoFisicoAdmin, ReservaEspacoFisico, users, superuser)
+        self.check_delete_permission(ReservaEquipamentoAdmin, ReservaEquipamento, users, superuser)
+        self.check_delete_permission(ReservaServicoAdmin, ReservaServico, users, superuser)
+        print '-DELETE PERMISSION TEST PASSED'
+
 class UserFilterTests(TestCase):
     def createPreset(self):
         # Create one superuser to be responsable for everything
@@ -557,15 +582,16 @@ class FormTests(TestCase):
         service = Servico.objects.get(nome='service')
         unit = Unidade.objects.get(nome='unit')
 
-        self.status_test(responsable, permission_user, no_permission_user, physical_space, equipment, service)
+        self.auto_approve_test(responsable, permission_user, no_permission_user, physical_space, equipment, service)
         self.recurrent_reserve_test(responsable, permission_user, no_permission_user, physical_space, equipment, service)
         self.model_clean_tests(no_permission_user, responsable, physical_space, equipment, service, unit)
         self.unit_form_test(unit, no_permission_user)
         self.group_only_test(responsable, permission_user, no_permission_user, physical_space, equipment, service)
+        self.status_options_test(responsable, permission_user, no_permission_user, physical_space, equipment, service)
 
         print '-RESERVE FORM TEST PASSED'
 
-    def status_test(self, responsable, permission_user, no_permission_user, physical_space, equipment, service):
+    def auto_approve_test(self, responsable, permission_user, no_permission_user, physical_space, equipment, service):
         print '--TESTING AUTO APPROVE'
         # Test responsable making reserve
         form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, responsable)
@@ -681,21 +707,21 @@ class FormTests(TestCase):
         # edit one reserve must aplly to all
         print '--TESTING EDIT RECURRENT RESERVE'
         instance = ReservaEspacoFisico.objects.all()[0]
-        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '01/06/9999', True, '22/06/9999', '00:01', '00:02', physical_space, no_permission_user, instance)
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '01/06/9999', True, '22/06/9999', '00:01', '00:02', physical_space, responsable, instance)
         form.is_valid()
         form.save()
         query = ReservaEspacoFisico.objects.all()
         for reserve in query:
             self.assertEqual(reserve.estado, 'A')
         instance = ReservaEquipamento.objects.all()[0]
-        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '01/06/9999', True, '22/06/9999', '00:01', '00:02', equipment, no_permission_user, instance)
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '01/06/9999', True, '22/06/9999', '00:01', '00:02', equipment, responsable, instance)
         form.is_valid()
         form.save()
         query = ReservaEquipamento.objects.all()
         for reserve in query:
             self.assertEqual(reserve.estado, 'A')
         instance = ReservaServico.objects.all()[0]
-        form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'A', '01/06/9999', True, '22/06/9999', '00:01', '00:02', service, no_permission_user, instance)
+        form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'A', '01/06/9999', True, '22/06/9999', '00:01', '00:02', service, responsable, instance)
         form.is_valid()
         form.save()
         query = ReservaServico.objects.all()
@@ -750,6 +776,7 @@ class FormTests(TestCase):
         equipment.antecedenciaMaxima = 1
         equipment.save()
         form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '15/07/9999', True, '22/07/9999', '00:01', '00:02', equipment, no_permission_user)
+
         self.assertIs(form.is_valid(), False)
         equipment.antecedenciaMaxima = 0
         equipment.save()
@@ -898,6 +925,58 @@ class FormTests(TestCase):
         service.grupos.remove(group)
         service.save()
 
+    def status_options_test(self, responsable, permission_user, no_permission_user, physical_space, equipment, service):
+        print '-- TESTING STATUS OPTION ON FORM'
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, no_permission_user)
+        reserve = form.save()
+        editting_form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, responsable, instance=reserve)
+        self.assertEqual(4, len(editting_form.fields['estado'].choices))
+        editting_form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, no_permission_user, instance=reserve)
+        self.assertEqual(2, len(editting_form.fields['estado'].choices))
+        editting_form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, permission_user, instance=reserve)
+        self.assertEqual(2, len(editting_form.fields['estado'].choices))
+        editting_form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'C', '18/06/9999', False, None, '00:01', '00:02', physical_space, responsable, instance=reserve)
+        reserve = editting_form.save()
+        editting_form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'C', '18/06/9999', False, None, '00:01', '00:02', physical_space, no_permission_user, instance=reserve)
+        self.assertEqual(1, len(editting_form.fields['estado'].choices))
+        editting_form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'C', '18/06/9999', False, None, '00:01', '00:02', physical_space, permission_user, instance=reserve)
+        self.assertEqual(1, len(editting_form.fields['estado'].choices))
+
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', equipment, no_permission_user)
+        reserve = form.save()
+        editting_form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', equipment, responsable, instance=reserve)
+        self.assertEqual(4, len(editting_form.fields['estado'].choices))
+        editting_form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', equipment, no_permission_user, instance=reserve)
+        self.assertEqual(2, len(editting_form.fields['estado'].choices))
+        editting_form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', equipment, permission_user, instance=reserve)
+        self.assertEqual(2, len(editting_form.fields['estado'].choices))
+        editting_form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'C', '18/06/9999', False, None, '00:01', '00:02', equipment, responsable, instance=reserve)
+        reserve = editting_form.save()
+        editting_form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'C', '18/06/9999', False, None, '00:01', '00:02', equipment, no_permission_user, instance=reserve)
+        self.assertEqual(1, len(editting_form.fields['estado'].choices))
+        editting_form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'C', '18/06/9999', False, None, '00:01', '00:02', equipment, permission_user, instance=reserve)
+        self.assertEqual(1, len(editting_form.fields['estado'].choices))
+
+        form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', service, no_permission_user)
+        reserve = form.save()
+        editting_form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', service, responsable, instance=reserve)
+        self.assertEqual(4, len(editting_form.fields['estado'].choices))
+        editting_form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', service, no_permission_user, instance=reserve)
+        self.assertEqual(2, len(editting_form.fields['estado'].choices))
+        editting_form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', service, permission_user, instance=reserve)
+        self.assertEqual(2, len(editting_form.fields['estado'].choices))
+        editting_form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'C', '18/06/9999', False, None, '00:01', '00:02', service, responsable, instance=reserve)
+        reserve = editting_form.save()
+        editting_form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'C', '18/06/9999', False, None, '00:01', '00:02', service, no_permission_user, instance=reserve)
+        self.assertEqual(1, len(editting_form.fields['estado'].choices))
+        editting_form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'C', '18/06/9999', False, None, '00:01', '00:02', service, permission_user, instance=reserve)
+        self.assertEqual(1, len(editting_form.fields['estado'].choices))
+
+        ReservaEspacoFisico.objects.all().delete()
+        ReservaEquipamento.objects.all().delete()
+        ReservaServico.objects.all().delete()
+
+        print '--STATUS OPTION ON FORM TEST PASSED'
 
     def reserve_clean_test(self, user, responsable, physical_space, equipment, service):
         default_date = datetime.strptime('01/01/9999', '%d/%m/%Y').date()

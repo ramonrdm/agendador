@@ -144,7 +144,7 @@ class Reserva(models.Model):
     class Meta:
         abstract = True
 
-    estados = (('A','Aprovado'),('D','Desaprovado'),('E','Esperando'))
+    estados = (('A','Aprovado'),('D','Desaprovado'),('E','Esperando'), ('C', 'Cancelado'))
     estado = models.CharField(max_length=1, choices=estados, default='E')
     recorrencia = models.ForeignKey(ReservaRecorrente, blank=True, null=True, default=None)
     data = models.DateField()
@@ -159,7 +159,7 @@ class Reserva(models.Model):
     def clean(self):
         errors = {}
         try:
-            if self.estado!='D':
+            if self.estado!='D' and self.estado!='C':
                 self.verificaChoque(errors)
             self.verificaBloqueado(errors)
             self.verificaCoerencia(errors)

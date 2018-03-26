@@ -59,7 +59,7 @@ class ReservaAdminForm(forms.ModelForm):
             self.check_group_only()
 
         if readOnly and not self.request.user.is_superuser:
-            self.init_read_only(kwargs)
+            self.init_common_user_editting(kwargs)
         else:
             self.init_status_field(kwargs)
             self.init_date_field()
@@ -68,6 +68,20 @@ class ReservaAdminForm(forms.ModelForm):
             self.init_activity_field()
             self.init_user_field()
             self.init_recurrent_field(kwargs)
+
+    def init_common_user_editting(self, kwargs):
+        self.init_user_editting_status()
+        self.init_read_only(kwargs)
+
+    def init_user_editting_status(self):
+        initial = None
+        for choice in self.fields['estado'].choices:
+            if choice[0] == self.instance.estado and choice[0] != 'C':
+                initial = choice
+        if initial:
+            self.fields['estado'].choices = (initial, ('C', 'Cancelado'))
+        else:
+            self.fields['estado'].choices = (('C', 'Cancelado'),)
 
     def check_group_only(self):
         reservable = self.reservable_type.objects.get(id=self.request.session['id_reservable'])
@@ -131,8 +145,6 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['dataFim'].label = ''
 
         # The hidden fields are hidded
-        self.fields['estado'].label = ''
-        self.fields['estado'].widget = forms.HiddenInput()
         self.fields['usuario'].widget = forms.HiddenInput()
         self.fields['usuario'].label = ''
 
@@ -307,6 +319,15 @@ class ReservaAdminForm(forms.ModelForm):
                 -------
                 E-mail automático, por favor não responda.
             ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'))
+        elif status == 'C':
+            email_title = 'Reserva de %s canceada.' % reservable.nome.encode("utf-8")
+            email_text = '''
+                Olá, %s,
+                Sua reserva de %s para o dia %s%s, das %s às %s, foi cancelada.
+
+                -------
+                E-mail automático, por favor não responda.
+            ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'))
         try:
             send_mail(email_title, email_text, settings.EMAIL_HOST_USER, [user.email])
         except:
@@ -346,8 +367,6 @@ class ReservaAdminForm(forms.ModelForm):
         if recurrent and self.is_valid():
             # check if starting and ending date was selected
             errors = dict()
-            if (not cleaned_data['dataInicio']) and (not self.is_new_object):
-                errors['dataInicio'] = 'Este campo é obrigatório.'
             if not cleaned_data['dataFim']:
                 errors['dataFim'] = 'Este campo é obrigatório.'
             if bool(errors):
@@ -419,12 +438,13 @@ class ReservaAdminForm(forms.ModelForm):
         user_query = kwargs.pop('query', None)
         reservable = self.cleaned_data['locavel']
         status = self.cleaned_data['estado']
-        user = self.cleaned_data['usuario']
+        user = self.request.user
 
         instance = super(ReservaAdminForm, self).save(commit=False)
         # Check if the user has permission in this reservable
         # If it is, the reserve is automatically accepted
-        if (reservable in user_query) and (not reservable.permissaoNecessaria) or (user in reservable.responsavel.all()):
+        have_user_permission = (reservable in user_query) and (not reservable.permissaoNecessaria) or (user in reservable.responsavel.all())
+        if have_user_permission and self.is_new_object:
             status = 'A'
         instance.estado = status
 

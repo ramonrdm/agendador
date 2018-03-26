@@ -249,7 +249,6 @@ def intermediaria(request):
         horaFim = None
     request.session['id_reservable'] = id_reservable
     data_string = str(data_numero)
-    print data_numero
     data = data_string[0]+data_string[1]+'/'+data_string[2]+data_string[3]+'/'+data_string[4]+data_string[5]+data_string[6]+data_string[7]
     request.session['data'] = data
     if horaInicio and horaFim:
@@ -294,7 +293,6 @@ def get_atividade_set(request):
     if request.method == 'POST':
         tipo = request.POST['title']
         locavel = request.POST['locavel']
-        print tipo
         if unicode('espaço físico', 'utf-8') in tipo:
             locavel = EspacoFisico.objects.get(nome=locavel)
             ma = admin.EspacoFisicoAdmin(EspacoFisico, AdminSite())
