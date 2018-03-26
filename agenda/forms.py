@@ -728,7 +728,13 @@ class LocavelAdminForm(forms.ModelForm):
         self.init_many_to_many_fields()
         ma = admin.UnidadeAdmin(Unidade, AdminSite())
         queryset = ma.get_queryset(self.request)
+        # get current parent so reservable can be edited
+        try:
+            queryset = queryset | Unidade.objects.filter(id=kwargs['instance'].unidade.id).distinct()
+        except:
+            pass  # new reservable, no unit yet
         self.fields['unidade'].queryset = queryset
+
         # get the old responsables for future comparissons
         try:
             self.initial_responsables = kwargs['instance'].responsavel
