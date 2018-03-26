@@ -21,11 +21,19 @@ from django.db.models.fields.related import ManyToOneRel
 import admin
 
 translated_week_names = dict(Sunday='domingo', Monday='segunda-feira', Tuesday='terça-feira', Wednesday='quarta-feira', Thursday='quinta-feira', Friday='sexta-feira', Saturday='sábado')
+shortened_week_names = ('seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom')
 
 class ReservaAdminForm(forms.ModelForm):
     recorrente = forms.BooleanField(required=False)
     dataInicio = forms.DateField(required=False)
     dataFim = forms.DateField(required=False)
+    seg = forms.BooleanField(required=False)
+    ter = forms.BooleanField(required=False)
+    qua = forms.BooleanField(required=False)
+    qui = forms.BooleanField(required=False)
+    sex = forms.BooleanField(required=False)
+    sab = forms.BooleanField(required=False)
+    dom = forms.BooleanField(required=False)
 
     class Meta:
         model = Reserva
@@ -111,6 +119,14 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['dataFim'].disabled = True
             self.fields['dataFim'].initial = instance.recorrencia.dataFim
             self.fields['recorrente'].initial = True
+
+            # here we check the value of the week day field
+            week_days = instance.recorrencia.get_days()
+            for number, day in enumerate(shortened_week_names):
+                if number in week_days:
+                    self.fields[day].widget = ReadOnlyWidget(check_box=True, check_box_value=True)
+                else:
+                    self.fields[day].widget = ReadOnlyWidget(check_box=True, check_box_value=False)
 
     def init_read_only(self, kwargs):
         # For all fields, put the readonly widget and makes sure the data can't be tempered
@@ -407,6 +423,23 @@ class ReservaAdminForm(forms.ModelForm):
         ending_time = cleaned_data['horaFim']
         dummy_activitie = Atividade.objects.create(nome='dummy', descricao='dummy')
 
+        # Set reserve dates
+        reserve_days = list()
+        if self.cleaned_data['seg']:
+            reserve_days.append(0)
+        if self.cleaned_data['ter']:
+            reserve_days.append(1)
+        if self.cleaned_data['qua']:
+            reserve_days.append(2)
+        if self.cleaned_data['qui']:
+            reserve_days.append(3)
+        if self.cleaned_data['sex']:
+            reserve_days.append(4)
+        if self.cleaned_data['sab']:
+            reserve_days.append(5)
+        if self.cleaned_data['dom']:
+            reserve_days.append(6)
+
         # Don't need to check self reserves in case of an update
         try:
             query = self.instance.recorrencia.get_reserves()
@@ -423,13 +456,14 @@ class ReservaAdminForm(forms.ModelForm):
         current_date = starting_date
         error = ''
         while current_date <= ending_date:
-            dummy_reserve = self.reserve_type.objects.create(data=current_date, horaInicio=starting_time, horaFim=ending_time, atividade=dummy_activitie, usuario=self.request.user, ramal=1, finalidade='1', locavel=reservable)
-            error = dict()
-            dummy_reserve.verificaChoque(error, query)
-            dummy_reserve.delete()
-            if bool(error):
-                error =  'Reservas nesse período causarão choque de horário.'
-            current_date = current_date + timedelta(days=7)
+            if current_date in reserve_days:
+                dummy_reserve = self.reserve_type.objects.create(data=current_date, horaInicio=starting_time, horaFim=ending_time, atividade=dummy_activitie, usuario=self.request.user, ramal=1, finalidade='1', locavel=reservable)
+                error = dict()
+                dummy_reserve.verificaChoque(error, query)
+                dummy_reserve.delete()
+                if bool(error):
+                    error =  'Reservas nesse período causarão choque de horário.'
+            current_date = current_date + timedelta(days=1)
 
         dummy_activitie.delete()
         return error
@@ -495,20 +529,38 @@ class ReservaAdminForm(forms.ModelForm):
         recurrent_chain = ReservaRecorrente.objects.create(dataInicio=date, dataFim=ending_date)  # create the recurrent object that will chain the reserves
         recurrent_chain.save()
 
+        # Set reserve dates
+        reserve_days = list()
+        if self.cleaned_data['seg']:
+            reserve_days.append(0)
+        if self.cleaned_data['ter']:
+            reserve_days.append(1)
+        if self.cleaned_data['qua']:
+            reserve_days.append(2)
+        if self.cleaned_data['qui']:
+            reserve_days.append(3)
+        if self.cleaned_data['sex']:
+            reserve_days.append(4)
+        if self.cleaned_data['sab']:
+            reserve_days.append(5)
+        if self.cleaned_data['dom']:
+            reserve_days.append(6)
+
         # Create reserves
         instance.recorrencia = recurrent_chain  # add the recurrent_chain to the original reserve
-        current_date = date + timedelta(days=7) # the starting will aready be created by the form
+        current_date = date + timedelta(days=1) # the starting will aready be created by the form
         while current_date <= ending_date:
-            recurrent_reserve = self.reserve_type.objects.create(estado=instance.estado, data=current_date, recorrencia=recurrent_chain, horaInicio=starting_time, horaFim=ending_time, atividade=activity, usuario=user, ramal=ramal, finalidade=reason, locavel=reservable)
-            recurrent_reserve.save()
-            current_date = current_date + timedelta(days=7)
+            if current_date.weekday() in reserve_days:
+                recurrent_reserve = self.reserve_type.objects.create(estado=instance.estado, data=current_date, recorrencia=recurrent_chain, horaInicio=starting_time, horaFim=ending_time, atividade=activity, usuario=user, ramal=ramal, finalidade=reason, locavel=reservable)
+                recurrent_reserve.save()
+            current_date = current_date + timedelta(days=1)
         instance.save()
 
 
 class ReservaEquipamentoAdminForm(ReservaAdminForm):
     class Meta:
         model = ReservaEquipamento
-        fields = ('estado', 'data', 'recorrente', 'dataInicio', 'dataFim', 'horaInicio', 'horaFim', 'locavel', 'atividade', 'usuario', 'ramal', 'finalidade')
+        fields = '__all__'
     def __init__(self, *args, **kwargs):
         kwargs['admin_type'] = admin.EquipamentoAdmin
         kwargs['reservable_type'] = Equipamento
@@ -526,7 +578,7 @@ class ReservaEquipamentoAdminForm(ReservaAdminForm):
 class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
     class Meta:
         model = ReservaEspacoFisico
-        fields = ('estado', 'data', 'recorrente', 'dataInicio', 'dataFim', 'horaInicio', 'horaFim', 'locavel', 'atividade', 'usuario', 'ramal', 'finalidade')
+        fields = '__all__'
     def __init__(self, *args, **kwargs):
         kwargs['admin_type'] = admin.EspacoFisicoAdmin
         kwargs['reservable_type'] = EspacoFisico
@@ -544,7 +596,7 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
 class ReservaServicoAdminForm(ReservaAdminForm):
     class Meta:
         model = ReservaServico
-        fields = ('estado', 'data', 'recorrente', 'dataInicio', 'dataFim', 'horaInicio', 'horaFim', 'locavel', 'atividade', 'usuario', 'ramal', 'finalidade')
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         kwargs['admin_type'] = admin.ServicoAdmin

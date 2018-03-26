@@ -26,8 +26,8 @@ function prevent_default_submit() {
 
 function initialize_date_inputs()
 {
-    if (!$("#id_recorrente").attr('checked')) {
-        hide_date_inputs();
+    if ($("#id_recorrente").attr('checked')) {
+        show_inputs();
     }
 }
 
@@ -36,9 +36,7 @@ function add_listeners_to_option()
     $('#id_recorrente').on("click", function() {
         if (hidden)
         {
-            $('#id_dataInicio_container').css('display', '');
-            $('#id_dataFim_container').css('display', '');
-            hidden = false;
+            show_inputs();
         }
         else
         {  
@@ -47,10 +45,31 @@ function add_listeners_to_option()
     });
 }
 
+function show_inputs()
+{
+    $('#id_dataInicio_container').css('display', 'initial');
+    $('#id_dataFim_container').css('display', 'initial');
+    $('#id_seg_container').css('display', 'initial');
+    $('#id_ter_container').css('display', 'initial');
+    $('#id_qua_container').css('display', 'initial');
+    $('#id_qui_container').css('display', 'initial');
+    $('#id_sex_container').css('display', 'initial');
+    $('#id_sab_container').css('display', 'initial');
+    $('#id_dom_container').css('display', 'initial');
+    hidden = false;
+}
+
 function hide_date_inputs()
 {
     $('#id_dataInicio_container').css('display', 'none');
     $('#id_dataFim_container').css('display', 'none');
+    $('#id_seg_container').css('display', 'none');
+    $('#id_ter_container').css('display', 'none');
+    $('#id_qua_container').css('display', 'none');
+    $('#id_qui_container').css('display', 'none');
+    $('#id_sex_container').css('display', 'none');
+    $('#id_sab_container').css('display', 'none');
+    $('#id_dom_container').css('display', 'none');
     hidden = true;
 }
 
@@ -60,7 +79,7 @@ function add_tooltip(question_mark)
         Reserva recorrente cria reservas em todos os dias da semana<br>
         iguais à data selecionada entre certo período.<br>
         <br>
-        Ex: Todas as segundas, das 10:00 às 11:00, de 23/01/18 até 23/06/18.
+        Ex: Todas as segundas, terças e quartas, das 10:00 às 11:00, de 23/01/18 até 23/06/18.
     `;
     question_mark.attr('data-tooltip', tooltip_text);
     question_mark.tooltip({delay: 50, html: true});

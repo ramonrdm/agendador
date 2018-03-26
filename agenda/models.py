@@ -140,6 +140,16 @@ class ReservaRecorrente(models.Model):
             query = self.reservaservico_set.all()
         return query
 
+    def get_days(self):
+        week_days = list()
+        reserves = self.get_reserves()
+        for reserve in reserves:
+            reserve_week_day = reserve.data.weekday()
+            if reserve_week_day not in week_days:
+                week_days.append(reserve_week_day)
+        return week_days
+
+
 class Reserva(models.Model):
     class Meta:
         abstract = True

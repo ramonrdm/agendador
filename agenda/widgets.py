@@ -117,3 +117,6 @@ class RecurrentReserveWidget(CheckboxInput):
 
     class Media():
         js = ('agenda/js/recurrent_reserve.js',)
+        css = {
+            'all': ('agenda/css/recurrent_reserve.css',),
+        }
