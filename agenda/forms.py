@@ -407,14 +407,16 @@ class ReservaAdminForm(forms.ModelForm):
             if not (cleaned_data['seg'] or cleaned_data['ter'] or cleaned_data['qua'] or cleaned_data['qui'] or cleaned_data['sex'] or cleaned_data['sab'] or cleaned_data['dom']):
                 raise ValidationError({'recorrente': 'Escolha os dias da semana da recorrência.'})
 
+            # check if ending date is bigger than starting
+            if (self.is_new_object) and (cleaned_data['dataFim'] < cleaned_data['data']):
+                raise ValidationError({'dataFim': 'Data final deve ser maior que a inicial.'})
             # if dataInicio is not in the day of the week of the reserve, dataInicio is changed so it is the next one
             reserve_days = self.recurrent_week_days()
             while not (cleaned_data['data'].weekday() in reserve_days):
                 cleaned_data['data'] = cleaned_data['data'] + timedelta(days=1)
-
-            # check if ending date is bigger than starting
+            # Do the same check again
             if (self.is_new_object) and (cleaned_data['dataFim'] < cleaned_data['data']):
-                raise ValidationError({'dataFim': 'Data final deve ser maior que a inicial.'})
+                raise ValidationError({'dataFim': 'Esse período não inclui o dia da semana selecionado.'})
 
             # If fisical aspects of the reserve have been changed we need to check for conflict, otherwise not
             check_conflict = False
