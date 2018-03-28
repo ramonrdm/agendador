@@ -125,8 +125,11 @@ class ReservaAdminForm(forms.ModelForm):
             for number, day in enumerate(shortened_week_names):
                 if number in week_days:
                     self.fields[day].widget = ReadOnlyWidget(check_box=True, check_box_value=True)
+                    self.fields[day].initial = True
                 else:
                     self.fields[day].widget = ReadOnlyWidget(check_box=True, check_box_value=False)
+                    self.fields[day].initial = False
+                self.fields[day].disabled = True
 
     def init_read_only(self, kwargs):
         # For all fields, put the readonly widget and makes sure the data can't be tempered
@@ -143,8 +146,9 @@ class ReservaAdminForm(forms.ModelForm):
         self.fields['ramal'].disabled = True
         self.fields['finalidade'].widget = ReadOnlyWidget()
         self.fields['finalidade'].disabled = True
-        self.fields['recorrente'].widget = ReadOnlyWidget(check_box=True, check_box_value=kwargs['instance'].recorrencia)
-        self.fields['recorrente'].disabled = True
+        # recurrent is not read only so users can cancel all reserves in one go
+        self.fields['recorrente'].initial = self.instance.recorrencia
+        self.fields['recorrente'].widget = RecurrentReserveWidget()
 
         if kwargs['instance'].recorrencia:
             self.fields['dataInicio'].initial = kwargs['instance'].recorrencia.dataInicio
@@ -154,6 +158,17 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['dataFim'].initial = kwargs['instance'].recorrencia.dataFim
             self.fields['dataFim'].widget = ReadOnlyWidget()
             self.fields['dataFim'].disabled= True
+
+            #  init week days
+            week_days = self.instance.recorrencia.get_days()
+            for number, day in enumerate(shortened_week_names):
+                if number in week_days:
+                    self.fields[day].widget = ReadOnlyWidget(check_box=True, check_box_value=True)
+                    self.fields[day].initial = True
+                else:
+                    self.fields[day].widget = ReadOnlyWidget(check_box=True, check_box_value=False)
+                    self.fields[day].initial = False
+                self.fields[day].disabled = True
         else:
             self.fields['dataInicio'].widget = forms.HiddenInput()
             self.fields['dataInicio'].label = ''
@@ -380,13 +395,22 @@ class ReservaAdminForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(ReservaAdminForm, self).clean()
         recurrent = cleaned_data['recorrente']
+        errors = dict()
         if recurrent and self.is_valid():
             # check if starting and ending date was selected
-            errors = dict()
             if not cleaned_data['dataFim']:
                 errors['dataFim'] = 'Este campo é obrigatório.'
             if bool(errors):
                 raise ValidationError(errors)
+
+            # check if a day of the week was selected
+            if not (cleaned_data['seg'] or cleaned_data['ter'] or cleaned_data['qua'] or cleaned_data['qui'] or cleaned_data['sex'] or cleaned_data['sab'] or cleaned_data['dom']):
+                raise ValidationError({'recorrente': 'Escolha os dias da semana da recorrência.'})
+
+            # if dataInicio is not in the day of the week of the reserve, dataInicio is changed so it is the next one
+            reserve_days = self.recurrent_week_days()
+            while not (cleaned_data['data'].weekday() in reserve_days):
+                cleaned_data['data'] = cleaned_data['data'] + timedelta(days=1)
 
             # check if ending date is bigger than starting
             if (self.is_new_object) and (cleaned_data['dataFim'] < cleaned_data['data']):
@@ -413,16 +437,7 @@ class ReservaAdminForm(forms.ModelForm):
 
         return cleaned_data
 
-    # Maybe this function has to be in the model, but that wouldn't allow correct error feedback for the user
-    def recurrent_option_possible(self,cleaned_data):
-        # get necessary variables
-        reservable = cleaned_data['locavel']
-        starting_date = cleaned_data['data']
-        ending_date = cleaned_data['dataFim']
-        starting_time = cleaned_data['horaInicio']
-        ending_time = cleaned_data['horaFim']
-        dummy_activitie = Atividade.objects.create(nome='dummy', descricao='dummy')
-
+    def recurrent_week_days(self):
         # Set reserve dates
         reserve_days = list()
         if self.cleaned_data['seg']:
@@ -439,6 +454,19 @@ class ReservaAdminForm(forms.ModelForm):
             reserve_days.append(5)
         if self.cleaned_data['dom']:
             reserve_days.append(6)
+        return reserve_days
+
+    # Maybe this function has to be in the model, but that wouldn't allow correct error feedback for the user
+    def recurrent_option_possible(self,cleaned_data):
+        # get necessary variables
+        reservable = cleaned_data['locavel']
+        starting_date = cleaned_data['data']
+        ending_date = cleaned_data['dataFim']
+        starting_time = cleaned_data['horaInicio']
+        ending_time = cleaned_data['horaFim']
+        dummy_activitie = Atividade.objects.create(nome='dummy', descricao='dummy')
+
+        reserve_days = self.recurrent_week_days()
 
         # Don't need to check self reserves in case of an update
         try:
@@ -456,7 +484,7 @@ class ReservaAdminForm(forms.ModelForm):
         current_date = starting_date
         error = ''
         while current_date <= ending_date:
-            if current_date in reserve_days:
+            if current_date.weekday() in reserve_days:
                 dummy_reserve = self.reserve_type.objects.create(data=current_date, horaInicio=starting_time, horaFim=ending_time, atividade=dummy_activitie, usuario=self.request.user, ramal=1, finalidade='1', locavel=reservable)
                 error = dict()
                 dummy_reserve.verificaChoque(error, query)
@@ -530,21 +558,7 @@ class ReservaAdminForm(forms.ModelForm):
         recurrent_chain.save()
 
         # Set reserve dates
-        reserve_days = list()
-        if self.cleaned_data['seg']:
-            reserve_days.append(0)
-        if self.cleaned_data['ter']:
-            reserve_days.append(1)
-        if self.cleaned_data['qua']:
-            reserve_days.append(2)
-        if self.cleaned_data['qui']:
-            reserve_days.append(3)
-        if self.cleaned_data['sex']:
-            reserve_days.append(4)
-        if self.cleaned_data['sab']:
-            reserve_days.append(5)
-        if self.cleaned_data['dom']:
-            reserve_days.append(6)
+        reserve_days = self.recurrent_week_days()
 
         # Create reserves
         instance.recorrencia = recurrent_chain  # add the recurrent_chain to the original reserve

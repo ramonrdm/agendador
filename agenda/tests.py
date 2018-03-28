@@ -10,6 +10,9 @@ from .forms import *
 from .models import *
 from .admin import *
 
+# This is a really slow test that covers all combinations of recurrence, turn it false to skip it for a faster test
+TEST_CREATE_EDIT_CONFLIC_RECURRENT = True
+
 class MockRequest:
     GET = list()
     def build_absolute_uri(self, pru):
@@ -540,7 +543,8 @@ class FormTests(TestCase):
         unit.save()
         group.save()
 
-    def create_form(self, reserve_type, form_type, status, date, recurrent, ending_date, starting_time, ending_time, reservable, user, instance=None, starting_reservable=False):
+    def create_form(self, reserve_type, form_type, status, date, recurrent, ending_date, starting_time, ending_time, reservable, user, instance=None
+        , starting_reservable=False, mon=False, tue=False, wed=False, thu=False, fri=False, sat=False, sun=False):
         date = datetime.strptime(date, '%d/%m/%Y').date()
         if ending_date:
             ending_date = datetime.strptime(ending_date, '%d/%m/%Y').date()
@@ -560,6 +564,13 @@ class FormTests(TestCase):
             'estado': status,
             'data': date,
             'recorrente': recurrent,
+            'seg': mon,
+            'ter': tue,
+            'qua': wed,
+            'qui': thu,
+            'sex': fri,
+            'sab': sat,
+            'dom': sun,
             'dataFim': ending_date,
             'horaInicio': starting_time,
             'horaFim': ending_time,
@@ -675,118 +686,210 @@ class FormTests(TestCase):
 
         print '--AUTO APPROVE TEST PASSED'
 
-    def recurrent_reserve_test(self, responsable, permission_user, no_permission_user, physical_space, equipment, service):
-        # create a recurrent reserve
-        print '--TESTING CREATE RECURRENT RESERVE'
-        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'E', '01/06/9999', True, '22/06/9999', '00:01', '00:02', physical_space, no_permission_user)
-        form.save()
-        query = ReservaEspacoFisico.objects.all()
-        self.assertEqual(len(query), 4)
-        current_date = datetime.strptime('01/06/9999', '%d/%m/%Y').date()
-        for reserve in query:
-            self.assertEqual(reserve.data, current_date)
-            current_date = current_date + timedelta(days=7)
-        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'E', '01/06/9999', True, '22/06/9999', '00:01', '00:02', equipment, no_permission_user)
-        form.save()
-        query = ReservaEquipamento.objects.all()
-        self.assertEqual(len(query), 4)
-        current_date = datetime.strptime('01/06/9999', '%d/%m/%Y').date()
-        for reserve in query:
-            self.assertEqual(reserve.data, current_date)
-            current_date = current_date + timedelta(days=7)
-        form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'E', '01/06/9999', True, '22/06/9999', '00:01', '00:02', service, no_permission_user)
-        form.save()
-        query = ReservaServico.objects.all()
-        self.assertEqual(len(query), 4)
-        current_date = datetime.strptime('01/06/9999', '%d/%m/%Y').date()
-        for reserve in query:
-            self.assertEqual(reserve.data, current_date)
-            current_date = current_date + timedelta(days=7)
-        print '--CREATE RECURRENT RESERVE TEST PASSED'
+    def create_edit_conflict_recurrent_test(self, responsable, permission_user, no_permission_user, physical_space, equipment, service):
+        possibilitie = 1
+        possibilitie_b = "{0:07b}".format(possibilitie)
+        while possibilitie_b != '1111111':
+            self.create_recurrent_reserve_test(possibilitie_b, responsable, permission_user, no_permission_user, physical_space, equipment, service)
+            possibilitie = possibilitie + 1
+            possibilitie_b = "{0:07b}".format(possibilitie)
 
-        # edit one reserve must aplly to all
-        print '--TESTING EDIT RECURRENT RESERVE'
+    def recurrent_week_days_boolean(self, possibilitie_b):
+        week_days = list()
+        if possibilitie_b[-1] == '1':
+            week_days.append(True)
+        else:
+            week_days.append(False)
+        if possibilitie_b[-2] == '1':
+            week_days.append(True)
+        else:
+            week_days.append(False)
+        if possibilitie_b[-3] == '1':
+            week_days.append(True)
+        else:
+            week_days.append(False)
+        if possibilitie_b[-4] == '1':
+            week_days.append(True)
+        else:
+            week_days.append(False)
+        if possibilitie_b[-5] == '1':
+            week_days.append(True)
+        else:
+            week_days.append(False)
+        if possibilitie_b[-6] == '1':
+            week_days.append(True)
+        else:
+            week_days.append(False)
+        if possibilitie_b[-7] == '1':
+            week_days.append(True)
+        else:
+            week_days.append(False)
+        return week_days
+
+    def recurrent_week_days_number(self, possibilitie_b):
+        week_days = list()
+        if possibilitie_b[-1] == '1':
+            week_days.append(0)
+
+        if possibilitie_b[-2] == '1':
+            week_days.append(1)
+
+        if possibilitie_b[-3] == '1':
+            week_days.append(2)
+
+        if possibilitie_b[-4] == '1':
+            week_days.append(3)
+
+        if possibilitie_b[-5] == '1':
+            week_days.append(4)
+
+        if possibilitie_b[-6] == '1':
+            week_days.append(5)
+
+        if possibilitie_b[-7] == '1':
+            week_days.append(6)
+        return week_days
+
+    def create_recurrent_reserve_test(self, possibilitie_b, responsable, permission_user, no_permission_user, physical_space, equipment, service):
+        N_WEEKS = 4  # test are done from 01/06/9999 to 22/06/9999, 4 weeks
+        STARTING_DAY = '31/05/9999'
+        ENDING_DAY = '27/06/9999'
+        expected_reserves = 0
+        week_days_boolean = self.recurrent_week_days_boolean(possibilitie_b)
+        week_days_number = self.recurrent_week_days_number(possibilitie_b)
+        for recurrent_day in week_days_boolean:
+            if recurrent_day:
+                expected_reserves = expected_reserves + N_WEEKS
+
+        # Create reserve
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'E', STARTING_DAY, True, ENDING_DAY, '00:01', '00:02', physical_space, no_permission_user,
+            mon=week_days_boolean[0], tue=week_days_boolean[1], wed=week_days_boolean[2], thu=week_days_boolean[3], fri=week_days_boolean[4], sat=week_days_boolean[5], sun=week_days_boolean[6])
+        form.save()
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'E', STARTING_DAY, True, ENDING_DAY, '00:01', '00:02', equipment, no_permission_user,
+            mon=week_days_boolean[0], tue=week_days_boolean[1], wed=week_days_boolean[2], thu=week_days_boolean[3], fri=week_days_boolean[4], sat=week_days_boolean[5], sun=week_days_boolean[6])
+        form.save()
+        form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'E', STARTING_DAY, True, ENDING_DAY, '00:01', '00:02', service, no_permission_user,
+            mon=week_days_boolean[0], tue=week_days_boolean[1], wed=week_days_boolean[2], thu=week_days_boolean[3], fri=week_days_boolean[4], sat=week_days_boolean[5], sun=week_days_boolean[6])
+        form.save()
+
+        # Test reserve info
+        all_querys = (ReservaEspacoFisico.objects.all(), ReservaEquipamento.objects.all(), ReservaServico.objects.all())
+        for query in all_querys:
+            self.assertEqual(len(query), expected_reserves)
+            current_date = datetime.strptime(STARTING_DAY, '%d/%m/%Y').date()
+            expected_dates = list()
+            while current_date <= datetime.strptime(ENDING_DAY, '%d/%m/%Y').date():
+                if current_date.weekday() in week_days_number:
+                    expected_dates.append(current_date)
+                current_date = current_date + timedelta(days=1)
+            for reserve in query:
+                self.assertEqual(reserve.data, expected_dates.pop(0))
+
+        # Testing edit recurrent reserve
         instance = ReservaEspacoFisico.objects.all()[0]
-        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '01/06/9999', True, '22/06/9999', '00:01', '00:02', physical_space, responsable, instance)
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', STARTING_DAY, True, ENDING_DAY, '00:01', '00:02', physical_space, responsable, instance,
+            mon=week_days_boolean[0], tue=week_days_boolean[1], wed=week_days_boolean[2], thu=week_days_boolean[3], fri=week_days_boolean[4], sat=week_days_boolean[5], sun=week_days_boolean[6])
         form.is_valid()
         form.save()
         query = ReservaEspacoFisico.objects.all()
         for reserve in query:
             self.assertEqual(reserve.estado, 'A')
         instance = ReservaEquipamento.objects.all()[0]
-        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '01/06/9999', True, '22/06/9999', '00:01', '00:02', equipment, responsable, instance)
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', STARTING_DAY, True, ENDING_DAY, '00:01', '00:02', equipment, responsable, instance,
+            mon=week_days_boolean[0], tue=week_days_boolean[1], wed=week_days_boolean[2], thu=week_days_boolean[3], fri=week_days_boolean[4], sat=week_days_boolean[5], sun=week_days_boolean[6])
         form.is_valid()
         form.save()
         query = ReservaEquipamento.objects.all()
         for reserve in query:
             self.assertEqual(reserve.estado, 'A')
         instance = ReservaServico.objects.all()[0]
-        form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'A', '01/06/9999', True, '22/06/9999', '00:01', '00:02', service, responsable, instance)
+        form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'A', STARTING_DAY, True, ENDING_DAY, '00:01', '00:02', service, responsable, instance,
+            mon=week_days_boolean[0], tue=week_days_boolean[1], wed=week_days_boolean[2], thu=week_days_boolean[3], fri=week_days_boolean[4], sat=week_days_boolean[5], sun=week_days_boolean[6])
         form.is_valid()
         form.save()
         query = ReservaServico.objects.all()
         for reserve in query:
             self.assertEqual(reserve.estado, 'A')
-        print '--EDIT RECURRENT RESERVE TEST PASSED'
+
+        # Test datetime conflict
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', STARTING_DAY, True, ENDING_DAY, '00:01', '00:02', physical_space, no_permission_user,
+            mon=week_days_boolean[0], tue=week_days_boolean[1], wed=week_days_boolean[2], thu=week_days_boolean[3], fri=week_days_boolean[4], sat=week_days_boolean[5], sun=week_days_boolean[6])
+        self.assertIs(form.is_valid(), False)
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', STARTING_DAY, True, ENDING_DAY, '00:01', '00:02', equipment, no_permission_user,
+            mon=week_days_boolean[0], tue=week_days_boolean[1], wed=week_days_boolean[2], thu=week_days_boolean[3], fri=week_days_boolean[4], sat=week_days_boolean[5], sun=week_days_boolean[6])
+        self.assertIs(form.is_valid(), False)
+        form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'A', STARTING_DAY, True, ENDING_DAY, '00:01', '00:02', service, no_permission_user,
+            mon=week_days_boolean[0], tue=week_days_boolean[1], wed=week_days_boolean[2], thu=week_days_boolean[3], fri=week_days_boolean[4], sat=week_days_boolean[5], sun=week_days_boolean[6])
+        self.assertIs(form.is_valid(), False)
+
+        ReservaEspacoFisico.objects.all().delete()
+        ReservaEquipamento.objects.all().delete()
+        ReservaServico.objects.all().delete()
+
+    def recurrent_reserve_test(self, responsable, permission_user, no_permission_user, physical_space, equipment, service):
+        if TEST_CREATE_EDIT_CONFLIC_RECURRENT:
+            print '--TESTING CREATE RECURRENT RESERVE'
+            self.create_edit_conflict_recurrent_test(responsable, permission_user, no_permission_user, physical_space, equipment, service)
+            print '--CREATE RECURRENT RESERVE TEST PASSED'
 
         #  Ending date must be necessary only if recurrent
         print '--TESTING ENDING DATE NECESSARY WHEN RECURRENT'
-        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '24/09/9999', True, None, '00:01', '00:02', physical_space, no_permission_user)
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '24/09/9999', True, None, '00:01', '00:02', physical_space, no_permission_user, mon=True)
         self.assertIs(form.is_valid(), False)
-        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '24/09/9999', True, None, '00:01', '00:02', equipment, no_permission_user)
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '24/09/9999', True, None, '00:01', '00:02', equipment, no_permission_user, mon=True)
         self.assertIs(form.is_valid(), False)
-        form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'A', '24/09/9999', True, None, '00:01', '00:02', service, no_permission_user)
+        form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'A', '24/09/9999', True, None, '00:01', '00:02', service, no_permission_user, mon=True)
         self.assertIs(form.is_valid(), False)
-        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '24/09/9999', False, None, '00:01', '00:02', physical_space, no_permission_user)
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '24/09/9999', False, None, '00:01', '00:02', physical_space, no_permission_user, mon=True)
         self.assertIs(form.is_valid(), True)
-        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '24/09/9999', False, None, '00:01', '00:02', equipment, no_permission_user)
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '24/09/9999', False, None, '00:01', '00:02', equipment, no_permission_user, mon=True)
         self.assertIs(form.is_valid(), True)
-        form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'A', '24/09/9999', False, None, '00:01', '00:02', service, no_permission_user)
+        form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'A', '24/09/9999', False, None, '00:01', '00:02', service, no_permission_user, mon=True)
         self.assertIs(form.is_valid(), True)
         print '--ENDING DATE NECESSARY WHEN RECURRENT TEST PASSED'
 
         #  If starting date is bigger than ending, form is invalid
         print '--TESTING ENDING AFTER STARTING DATE'
-        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '24/06/9999', True, '23/06/9999', '00:01', '00:02', physical_space, no_permission_user)
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '24/06/9999', True, '23/06/9999', '00:01', '00:02', physical_space, no_permission_user, mon=True)
         self.assertIs(form.is_valid(), False)
-        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '24/06/9999', True, '23/06/9999', '00:01', '00:02', equipment, no_permission_user)
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '24/06/9999', True, '23/06/9999', '00:01', '00:02', equipment, no_permission_user, mon=True)
         self.assertIs(form.is_valid(), False)
-        form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'A', '24/06/9999', True, '23/06/9999', '00:01', '00:02', service, no_permission_user)
+        form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'A', '24/06/9999', True, '23/06/9999', '00:01', '00:02', service, no_permission_user, mon=True)
         self.assertIs(form.is_valid(), False)
         print '--ENDING AFTER STARTING TEST PASSED'
-
-        #  If recurrent reserve causes time conflict, form is invalid
-        print '--TESTING DATETIME CONFLICT IN RECURRENT RESERVES'
-        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '25/05/9999', True, '22/06/9999', '00:01', '00:02', physical_space, no_permission_user)
-        self.assertIs(form.is_valid(), False)
-        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '25/05/9999', True, '22/06/9999', '00:01', '00:02', equipment, no_permission_user)
-        self.assertIs(form.is_valid(), False)
-        form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'A', '25/05/9999', True, '22/06/9999', '00:01', '00:02', service, no_permission_user)
-        self.assertIs(form.is_valid(), False)
-        print '--DATETIME CONFLICT IN RECURRENT RESERVES TEST PASSED'
 
         # ending date can't pass max advance
         print '--TESTING MAX ADVANCE RESERVE IN RECURRENT'
         physical_space.antecedenciaMaxima = 1
         physical_space.save()
-        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '15/07/9999', True, '22/07/9999', '00:01', '00:02', physical_space, no_permission_user)
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '15/07/9999', True, '22/07/9999', '00:01', '00:02', physical_space, no_permission_user, mon=True)
         self.assertIs(form.is_valid(), False)
         physical_space.antecedenciaMaxima = 0
         physical_space.save()
         equipment.antecedenciaMaxima = 1
         equipment.save()
-        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '15/07/9999', True, '22/07/9999', '00:01', '00:02', equipment, no_permission_user)
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '15/07/9999', True, '22/07/9999', '00:01', '00:02', equipment, no_permission_user, mon=True)
 
         self.assertIs(form.is_valid(), False)
         equipment.antecedenciaMaxima = 0
         equipment.save()
         service.antecedenciaMaxima = 1
         service.save()
-        form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'A', '15/07/9999', True, '22/07/9999', '00:01', '00:02', service, no_permission_user)
+        form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'A', '15/07/9999', True, '22/07/9999', '00:01', '00:02', service, no_permission_user, mon=True)
         self.assertIs(form.is_valid(), False)
         service.antecedenciaMaxima = 0
         service.save()
         print '--MAX ADVANCE RESERVE IN RECURRENT TEST PASSED'
+
+        print '--TESTING RECURRENT WITH NO WEEK DAY SELECTED'
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '24/06/9999', True, '23/06/9999', '00:01', '00:02', physical_space, no_permission_user)
+        self.assertIs(form.is_valid(), False)
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '24/06/9999', True, '23/06/9999', '00:01', '00:02', equipment, no_permission_user)
+        self.assertIs(form.is_valid(), False)
+        form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'A', '24/06/9999', True, '23/06/9999', '00:01', '00:02', service, no_permission_user)
+        self.assertIs(form.is_valid(), False)
+        print '--RECURRENT WITH NO WEEK DAY SELECTED TEST PASSED'
+
 
         #clean database for next tests
         ReservaEquipamento.objects.all().delete()

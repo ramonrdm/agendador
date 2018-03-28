@@ -1,4 +1,4 @@
-var hidden = false;
+var hidden = true;
 
 $(function()
 {
@@ -28,6 +28,7 @@ function initialize_date_inputs()
 {
     if ($("#id_recorrente").attr('checked')) {
         show_inputs();
+        hidden = false;
     }
 }
 
