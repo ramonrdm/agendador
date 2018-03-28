@@ -1,3 +1,14 @@
+img {
+	image-orientation: from-image;
+}
+
+.side-nav .userView .circle {
+	border-radius: 0px;
+	width: auto;
+	height: 90px;
+	max-width: inherit;
+}
+
 .userView {
 	height: 175px;
 }
@@ -6,6 +17,6 @@
 	background-color: #01579b;
 }
 
-.circle {
-	border-radius: 0px;
+.side-nav .userView .email {
+	display: none;
 }

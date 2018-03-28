@@ -3,39 +3,153 @@
 <head>
 <title>Page Title</title>
 {% load static %}
+
 {% block css %}
+	<link href="/static/material/fonts/material-design-icons/material-icons.css"  rel="stylesheet">
+
+	<link href="/static/material/css/materialize.css" rel="stylesheet">
+	<link href="/static/material/css/materialize.forms.css" rel="stylesheet">
+	<link href="/static/material/css/materialize.frontend.css" rel="stylesheet">
+	<link href="/static/material/css/jquery.datetimepicker.css" rel="stylesheet">
+	<link href="/static/material/css/responsive.dataTables.css" rel="stylesheet">
+	<link href="/static/material/css/fixedHeader.dataTables.css" rel="stylesheet">
+	<link href="/static/material/css/perfect-scrollbar.css" rel="stylesheet">
+
+
     <link rel='stylesheet' href="{% static 'agenda/css/mes.css' %}" type='text/css' />
     <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/topbar.css' %}" />
     <link rel='stylesheet' href="{% static 'agenda/fullcalendar/fullcalendar.css' %}" />
 
 {% endblock %}
+
 {% block js %}
     <script src="{% static 'material/js/jquery.js' %}"></script>
     <script src="{% static 'material/js/materialize.js' %}"></script>
     <script src="{% static 'agenda/fullcalendar/lib/moment.min.js' %}"></script>
     <script src="{% static 'agenda/fullcalendar/fullcalendar.js' %}"></script>
-    <script src="{% static 'agenda/fullcalendar/locale/pt-br.js' %}"></script>
 {% endblock %}
 <script type="text/javascript">
-	$(document).ready(function(){
-		var month = "{{ month }}";
-		alert(month);
-		$('#calendar').fullCalendar({
-			header: {
-				left: 'prev, next today',
-				center:'title',
-				right:'month, agendaWeek,agendaDay,listWeek'
-			},
-			defaultDate: moment('2014-09-01'),
-		});
-	});
+jQuery(document).ready(function() {
+   jQuery('#calendar').fullCalendar({
+        monthNames:["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
+        dayNamesShort:["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+        firstDay: 1,
+
+        events: [
+        {% for week in month_days %}
+            {% for day, entries, current in week %}
+                {% if day != 0 %}
+                        {% for entry in entries %}
+                            {
+                                title: "{{ entry.horaInicio|date:"H:i" }}- {{entry.usuario}} - {{ entry.horaFim|date:"H:i" }}",
+                                start: "{{ entry.data|date:"Y-m-d" }}",
+                                description: `
+                                    <p><b>Usuário:</b> {{ entry.usuario.first_name }}</p>
+                                    <p><b>Unidades do usuário:</b> {% for item in entry.usuario.groups.all %}{% if item.name != 'pode reservar' %}{{item}}{% if forloop.last %}{% else %}, {% endif %}{% endif %}{% endfor %}</p>
+                                    <p><b>Data:</b> {{ entry.data }}</p>
+                                    <p><b>Inicio:</b> {{ entry.horaInicio }}</p>
+                                    <p><b>Fim:</b> {{ entry.horaFim }}</p>
+                                    <p><b>Atividade:</b> {{ entry.atividade }}</p>
+                                    <p><b>Ramal: </b> {{ entry.ramal }}</p>
+                                    <p><b>Finalidade: </b> {{ entry.finalidade }}</p>
+                                `
+                            },
+                        {% endfor %}
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+        ],
+        eventAfterAllRender: function() {
+            $(".fc-day-top").each(function(index,value) {       
+                if(value.className.indexOf("fc-other-month") === -1) {
+                    var a = $(value).children().text();
+                    var x = ("0"+a).slice(-2);
+                    $(value).append("<a href='#'><i class=material-icons>add_circle</i></a>");
+                    $(value).css('text-align', 'center');
+
+                }
+           });
+        },
+        eventClick: function(event, jsEvent, view) {
+            $('#description').html(event.description);
+            $('#modalTitle').html(event.title);
+            $('#fullCalModal').modal('open');
+        }
+
+    });     
+    setMonth();
+    var m = jQuery(".fc-left").text();
+    jQuery(".fc-header-toolbar").html("<div class='row'><a class='btn right col s3' href='{%url 'mes' tipo espaco.id year month 'next' %}'><i class='material-icons medium arrow_right'>arrow_forward</i><span class='text'>próximo</span></a><a class='btn left col s3' href='{%url 'mes' tipo espaco.id year month 'prev' %}'><i class='material-icons medium arrow_left'>arrow_back</i><span class='text'>anterior</span></a><div class='col s6'><h2>" + m + "</h2><a href='{% url 'locavel' tipo espaco.id %}' class='flow-text'>Detalhes do locável</a></div></div>");
+
+    // Add listener to buttons
+    $('.fc-day-top i').on('click', function(event) {
+        event.preventDefault();
+        var data = $(this).parent().parent().children('.fc-day-number').text();
+        if (data.length == 1) data = '0'+data;
+        var month = '{{ month }}';
+        if (month.length == 1) month = '0'+month;
+        data += month+'{{ year }}';
+        sendRequest(data);
+    });
+    $(".button-collapse").sideNav();
+    $('#fullCalModal').modal();
+    $('#close-modal').on('click', function() {
+        $('#fullCalModal').modal('close');
+    });
+
+    $('#calendar').fullCalendar('option', 'height', $('main').height() - $('.topbar').height());
+});
+
+function setMonth() {
+    if({{month}}>9) {
+        var date = $.fullCalendar.moment("{{year}}-{{month}}-01");
+            $("#calendar").fullCalendar('gotoDate', date);
+    } else {
+        var date = $.fullCalendar.moment("{{year}}-0{{month}}-01");
+            $("#calendar").fullCalendar('gotoDate', date);
+        }
+}
+// Give required data to session and redirect
+function sendRequest(data) {
+    $.ajax({
+        type: 'GET',
+        url: '/reservar/',
+        data: {
+            data: data,
+            id: {{ espaco.id }}
+        },
+        dataType: 'json',
+        success: function(data) {
+            if (data.success) {
+                if ('{{ tipo }}' === 'f') {
+                    location.href = '/admin/agenda/reservaespacofisico/add/';
+                } else if ('{{ tipo }}' === 'e') {
+                    location.href = '/admin/agenda/reservaequipamento/add/';
+                } else if ('{{ tipo }}' === 's') {
+                    location.href = '/admin/agenda/reservaservico/add/'
+                }
+            }
+        }
+    });
+}
 
 </script>
 </head>
 
 <body>
-	<div id="calendar">
-		
+	<div class="row">
+	    <div id="calendar"> </div>  
 	</div>
+
+<div id="fullCalModal" class="modal fade">
+        <div class="modal-content">
+            <h5 id='modalTitle'></h5>
+            <p id='description'></p>
+        </div>
+        <div class="modal-footer">
+            <button id='close-modal' class="light-blue darken-4 btn waves-effect waves-light"><i class='material-icons'>close</i>
+            </button>
+        </div>
+</div>
 </body>
 </html> 

@@ -60,6 +60,7 @@ class Locavel(models.Model):
     responsavel = models.ManyToManyField(User, verbose_name='Responsáveis')
     unidade = models.ForeignKey(Unidade, on_delete=models.CASCADE)
     grupos = models.ManyToManyField(Group, blank=True, verbose_name='Grupos que podem reservar automaticamente')
+    somenteGrupo = models.BooleanField(default=False, verbose_name='Apenas membros do grupo podem pedir reserva')
     bloqueado = models.BooleanField(default=False)
     invisivel = models.BooleanField(default=False, verbose_name='Invisível')
     permissaoNecessaria = models.BooleanField(default=False, verbose_name='Reservar somente com autorização de um responsável')
@@ -139,11 +140,21 @@ class ReservaRecorrente(models.Model):
             query = self.reservaservico_set.all()
         return query
 
+    def get_days(self):
+        week_days = list()
+        reserves = self.get_reserves()
+        for reserve in reserves:
+            reserve_week_day = reserve.data.weekday()
+            if reserve_week_day not in week_days:
+                week_days.append(reserve_week_day)
+        return week_days
+
+
 class Reserva(models.Model):
     class Meta:
         abstract = True
 
-    estados = (('A','Aprovado'),('D','Desaprovado'),('E','Esperando'))
+    estados = (('A','Aprovado'),('D','Desaprovado'),('E','Esperando'), ('C', 'Cancelado'))
     estado = models.CharField(max_length=1, choices=estados, default='E')
     recorrencia = models.ForeignKey(ReservaRecorrente, blank=True, null=True, default=None, on_delete=models.CASCADE)
     data = models.DateField()
@@ -158,7 +169,7 @@ class Reserva(models.Model):
     def clean(self):
         errors = {}
         try:
-            if self.estado!='D':
+            if self.estado!='D' and self.estado!='C':
                 self.verificaChoque(errors)
             self.verificaBloqueado(errors)
             self.verificaCoerencia(errors)

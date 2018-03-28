@@ -1,4 +1,4 @@
-var hidden = false;
+var hidden = true;
 
 $(function()
 {
@@ -43,8 +43,9 @@ function open_modal() {
 
 function initialize_date_inputs()
 {
-    if (!$("#id_recorrente").attr('checked')) {
-        hide_date_inputs();
+    if ($("#id_recorrente").attr('checked')) {
+        show_inputs();
+        hidden = false;
     }
 }
 
@@ -53,9 +54,7 @@ function add_listeners_to_option()
     $('#id_recorrente').on("click", function() {
         if (hidden)
         {
-            $('.field-dataInicio').css('display', '');
-            $('.field-dataFim').css('display', '');
-            hidden = false;
+            show_inputs();
         }
         else
         {  
@@ -64,10 +63,31 @@ function add_listeners_to_option()
     });
 }
 
+function show_inputs()
+{
+    $('.field-dataInicio').css('display', 'initial');
+    $('.field-dataFim').css('display', 'initial');
+    $('.field-seg').css('display', 'initial');
+    $('.field-ter').css('display', 'initial');
+    $('.field-qua').css('display', 'initial');
+    $('.field-qui').css('display', 'initial');
+    $('.field-sex').css('display', 'initial');
+    $('.field-sab').css('display', 'initial');
+    $('.field-dom').css('display', 'initial');
+    hidden = false;
+}
+
 function hide_date_inputs()
 {
     $('.field-dataInicio').css('display', 'none');
     $('.field-dataFim').css('display', 'none');
+    $('.field-seg').css('display', 'none');
+    $('.field-ter').css('display', 'none');
+    $('.field-qua').css('display', 'none');
+    $('.field-qui').css('display', 'none');
+    $('.field-sex').css('display', 'none');
+    $('.field-sab').css('display', 'none');
+    $('.field-dom').css('display', 'none');
     hidden = true;
 }
 
@@ -77,7 +97,7 @@ function add_tooltip(question_mark)
         Reserva recorrente cria reservas em todos os dias da semana<br>
         iguais à data selecionada entre certo período.<br>
         <br>
-        Ex: Todas as segundas, das 10:00 às 11:00, de 23/01/18 até 23/06/18.
+        Ex: Todas as segundas, terças e quartas, das 10:00 às 11:00, de 23/01/18 até 23/06/18.
     `;
     question_mark.attr('data-tooltip', tooltip_text);
     question_mark.tooltip({delay: 50, html: true});

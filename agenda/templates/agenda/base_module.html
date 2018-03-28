@@ -4,6 +4,12 @@
     {{ block.super }}
     <link rel='shortcut icon' type='image/x-icon' href='{% static "agenda/img/favico.ico" %}' />
 {% endblock %}
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/base.css' %}" />
+
+{% endblock %}
+
 
 <!-- bloco sidenav_items sobrescrito do arquivo /material/frontend/templates/material/frontend/base.html -->
 
@@ -13,7 +19,11 @@
     <li><a href="{% url 'index' %}">Site Principal<i class="material-icons">home</i></a></li>
     <li><a href="{% url 'faq' %}">FAQ/Instruções<i class="material-icons">help</i></a></li>
     <li><a href="{% url 'sobre' %}">Sobre<i class="material-icons">info</i></a></li>
-    {% if request.user.is_staff %}<li><a href="/admin/">Administração<i class="material-icons">build</i></a></li>{% endif %}
+    {% if request.user.is_anonymous %}
+    <li><a href="{% url 'login' %}">Login<i class="material-icons">exit_to_app</i></a></li>
+    {% else %}
+    <li><a href="{% url 'logout' %}">Logout<i class="material-icons">exit_to_app</i></a></li>
+    {% endif %}
     {% for module in modules %}
 
         {% if module.verbose_name == 'Administração' %}

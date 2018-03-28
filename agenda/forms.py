@@ -4,6 +4,7 @@ from agenda.models import *
 from django.contrib import messages
 from django.conf import settings
 from django.contrib.auth.forms import UserChangeForm
+from django.core.exceptions import PermissionDenied
 from django import forms
 from django.contrib.admin import widgets
 import datetime
@@ -20,11 +21,19 @@ from django.db.models.fields.related import ManyToOneRel
 from agenda import admin
 
 translated_week_names = dict(Sunday='domingo', Monday='segunda-feira', Tuesday='terça-feira', Wednesday='quarta-feira', Thursday='quinta-feira', Friday='sexta-feira', Saturday='sábado')
+shortened_week_names = ('seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom')
 
 class ReservaAdminForm(forms.ModelForm):
     recorrente = forms.BooleanField(required=False)
     dataInicio = forms.DateField(required=False)
     dataFim = forms.DateField(required=False, widget=SelectDateWidget())
+    seg = forms.BooleanField(required=False)
+    ter = forms.BooleanField(required=False)
+    qua = forms.BooleanField(required=False)
+    qui = forms.BooleanField(required=False)
+    sex = forms.BooleanField(required=False)
+    sab = forms.BooleanField(required=False)
+    dom = forms.BooleanField(required=False)
 
     class Meta:
         model = Reserva
@@ -49,8 +58,16 @@ class ReservaAdminForm(forms.ModelForm):
                 if self.request.user not in reservable.responsavel.all():
                     readOnly = True
 
+        try:
+            starting_reservable = self.request.session['id_reservable']
+        except:
+            starting_reservable = None
+
+        if starting_reservable:
+            self.check_group_only()
+
         if readOnly and not self.request.user.is_superuser:
-            self.init_read_only(kwargs)
+            self.init_common_user_editting(kwargs)
         else:
             self.init_status_field(kwargs)
             self.init_date_field()
@@ -59,6 +76,33 @@ class ReservaAdminForm(forms.ModelForm):
             self.init_activity_field()
             self.init_user_field()
             self.init_recurrent_field(kwargs)
+
+    def init_common_user_editting(self, kwargs):
+        self.init_user_editting_status()
+        self.init_read_only(kwargs)
+
+    def init_user_editting_status(self):
+        initial = None
+        for choice in self.fields['estado'].choices:
+            if choice[0] == self.instance.estado and choice[0] != 'C':
+                initial = choice
+        if initial:
+            self.fields['estado'].choices = (initial, ('C', 'Cancelado'))
+        else:
+            self.fields['estado'].choices = (('C', 'Cancelado'),)
+
+    def check_group_only(self):
+        reservable = self.reservable_type.objects.get(id=self.request.session['id_reservable'])
+        if reservable.somenteGrupo:
+            groups = reservable.grupos.all()
+            has_permission = False
+            for group in groups:
+                if self.request.user in group.user_set.all():
+                    has_permission = True
+            if not has_permission and not self.request.user.is_superuser and not (self.request.user in reservable.responsavel.all()):
+                self.request.session['id_reservable'] = None
+                groups = ", ".join(group.name for group in groups)
+                raise PermissionDenied('Apenas usuarios no(s) grupo(s) '+groups+' podem pedir reserva em ' + reservable.nome +'.')
 
     def init_recurrent_field(self, kwargs):
         self.fields['recorrente'].widget = RecurrentReserveWidget()
@@ -84,6 +128,17 @@ class ReservaAdminForm(forms.ModelForm):
                 self.fields['recorrente'].widget = ReadOnlyWidget(check_box=True, check_box_value=False)
 
 
+            # here we check the value of the week day field
+            week_days = instance.recorrencia.get_days()
+            for number, day in enumerate(shortened_week_names):
+                if number in week_days:
+                    self.fields[day].widget = ReadOnlyWidget(check_box=True, check_box_value=True)
+                    self.fields[day].initial = True
+                else:
+                    self.fields[day].widget = ReadOnlyWidget(check_box=True, check_box_value=False)
+                    self.fields[day].initial = False
+                self.fields[day].disabled = True
+
     def init_read_only(self, kwargs):
         # For all fields, put the readonly widget and makes sure the data can't be tempered
         self.fields['data'].widget = ReadOnlyWidget()
@@ -99,8 +154,9 @@ class ReservaAdminForm(forms.ModelForm):
         self.fields['ramal'].disabled = True
         self.fields['finalidade'].widget = ReadOnlyWidget()
         self.fields['finalidade'].disabled = True
-        self.fields['recorrente'].widget = ReadOnlyWidget(check_box=True, check_box_value=kwargs['instance'].recorrencia)
-        self.fields['recorrente'].disabled = True
+        # recurrent is not read only so users can cancel all reserves in one go
+        self.fields['recorrente'].initial = self.instance.recorrencia
+        self.fields['recorrente'].widget = RecurrentReserveWidget()
 
         if kwargs['instance'].recorrencia:
             self.fields['dataInicio'].initial = kwargs['instance'].recorrencia.dataInicio
@@ -109,6 +165,17 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['dataFim'].initial = kwargs['instance'].recorrencia.dataFim
             self.fields['dataFim'].widget = ReadOnlyWidget()
             self.fields['dataFim'].disabled= True
+
+            #  init week days
+            week_days = self.instance.recorrencia.get_days()
+            for number, day in enumerate(shortened_week_names):
+                if number in week_days:
+                    self.fields[day].widget = ReadOnlyWidget(check_box=True, check_box_value=True)
+                    self.fields[day].initial = True
+                else:
+                    self.fields[day].widget = ReadOnlyWidget(check_box=True, check_box_value=False)
+                    self.fields[day].initial = False
+                self.fields[day].disabled = True
         else:
             self.fields['dataInicio'].widget = forms.HiddenInput()
             self.fields['dataInicio'].label = ''
@@ -116,8 +183,6 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['dataFim'].label = ''
 
         # The hidden fields are hidded
-        self.fields['estado'].label = ''
-        self.fields['estado'].widget = forms.HiddenInput()
         self.fields['usuario'].widget = forms.HiddenInput()
         self.fields['usuario'].label = ''
 
@@ -290,6 +355,15 @@ class ReservaAdminForm(forms.ModelForm):
                 -------
                 E-mail automático, por favor não responda.
             ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'))
+        elif status == 'C':
+            email_title = 'Reserva de %s canceada.' % reservable.nome.encode("utf-8")
+            email_text = '''
+                Olá, %s,
+                Sua reserva de %s para o dia %s%s, das %s às %s, foi cancelada.
+
+                -------
+                E-mail automático, por favor não responda.
+            ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'))
         try:
             send_mail(email_title, email_text, settings.EMAIL_HOST_USER, [user.email])
         except:
@@ -326,15 +400,22 @@ class ReservaAdminForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(ReservaAdminForm, self).clean()
         recurrent = cleaned_data['recorrente']
+        errors = dict()
         if recurrent and self.is_valid():
             # check if starting and ending date was selected
-            errors = dict()
-            if (not cleaned_data['dataInicio']) and (not self.is_new_object):
-                errors['dataInicio'] = 'Este campo é obrigatório.'
             if not cleaned_data['dataFim']:
                 errors['dataFim'] = 'Este campo é obrigatório.'
             if bool(errors):
                 raise ValidationError(errors)
+
+            # check if a day of the week was selected
+            if not (cleaned_data['seg'] or cleaned_data['ter'] or cleaned_data['qua'] or cleaned_data['qui'] or cleaned_data['sex'] or cleaned_data['sab'] or cleaned_data['dom']):
+                raise ValidationError({'recorrente': 'Escolha os dias da semana da recorrência.'})
+
+            # if dataInicio is not in the day of the week of the reserve, dataInicio is changed so it is the next one
+            reserve_days = self.recurrent_week_days()
+            while not (cleaned_data['data'].weekday() in reserve_days):
+                cleaned_data['data'] = cleaned_data['data'] + timedelta(days=1)
 
             # check if ending date is bigger than starting
             if (self.is_new_object) and (cleaned_data['dataFim'] < cleaned_data['data']):
@@ -361,6 +442,25 @@ class ReservaAdminForm(forms.ModelForm):
 
         return cleaned_data
 
+    def recurrent_week_days(self):
+        # Set reserve dates
+        reserve_days = list()
+        if self.cleaned_data['seg']:
+            reserve_days.append(0)
+        if self.cleaned_data['ter']:
+            reserve_days.append(1)
+        if self.cleaned_data['qua']:
+            reserve_days.append(2)
+        if self.cleaned_data['qui']:
+            reserve_days.append(3)
+        if self.cleaned_data['sex']:
+            reserve_days.append(4)
+        if self.cleaned_data['sab']:
+            reserve_days.append(5)
+        if self.cleaned_data['dom']:
+            reserve_days.append(6)
+        return reserve_days
+
     # Maybe this function has to be in the model, but that wouldn't allow correct error feedback for the user
     def recurrent_option_possible(self,cleaned_data):
         # get necessary variables
@@ -370,6 +470,8 @@ class ReservaAdminForm(forms.ModelForm):
         starting_time = cleaned_data['horaInicio']
         ending_time = cleaned_data['horaFim']
         dummy_activitie = Atividade.objects.create(nome='dummy', descricao='dummy')
+
+        reserve_days = self.recurrent_week_days()
 
         # Don't need to check self reserves in case of an update
         try:
@@ -387,13 +489,14 @@ class ReservaAdminForm(forms.ModelForm):
         current_date = starting_date
         error = ''
         while current_date <= ending_date:
-            dummy_reserve = self.reserve_type.objects.create(data=current_date, horaInicio=starting_time, horaFim=ending_time, atividade=dummy_activitie, usuario=self.request.user, ramal=1, finalidade='1', locavel=reservable)
-            error = dict()
-            dummy_reserve.verificaChoque(error, query)
-            dummy_reserve.delete()
-            if bool(error):
-                error =  'Reservas nesse período causarão choque de horário.'
-            current_date = current_date + timedelta(days=7)
+            if current_date.weekday() in reserve_days:
+                dummy_reserve = self.reserve_type.objects.create(data=current_date, horaInicio=starting_time, horaFim=ending_time, atividade=dummy_activitie, usuario=self.request.user, ramal=1, finalidade='1', locavel=reservable)
+                error = dict()
+                dummy_reserve.verificaChoque(error, query)
+                dummy_reserve.delete()
+                if bool(error):
+                    error =  'Reservas nesse período causarão choque de horário.'
+            current_date = current_date + timedelta(days=1)
 
         dummy_activitie.delete()
         return error
@@ -402,13 +505,13 @@ class ReservaAdminForm(forms.ModelForm):
         user_query = kwargs.pop('query', None)
         reservable = self.cleaned_data['locavel']
         status = self.cleaned_data['estado']
-        user = self.cleaned_data['usuario']
+        user = self.request.user
 
         instance = super(ReservaAdminForm, self).save(commit=False)
         # Check if the user has permission in this reservable
         # If it is, the reserve is automatically accepted
-        # Only in add, so responsables can edit the status of their own reserves
-        if ((reservable in user_query) and (not reservable.permissaoNecessaria) or (user in reservable.responsavel.all())) and self.is_new_object:
+        have_user_permission = (reservable in user_query) and (not reservable.permissaoNecessaria) or (user in reservable.responsavel.all())
+        if have_user_permission and self.is_new_object:
             status = 'A'
         instance.estado = status
 
@@ -459,20 +562,24 @@ class ReservaAdminForm(forms.ModelForm):
         recurrent_chain = ReservaRecorrente.objects.create(dataInicio=date, dataFim=ending_date)  # create the recurrent object that will chain the reserves
         recurrent_chain.save()
 
+        # Set reserve dates
+        reserve_days = self.recurrent_week_days()
+
         # Create reserves
         instance.recorrencia = recurrent_chain  # add the recurrent_chain to the original reserve
-        current_date = date + timedelta(days=7) # the starting will aready be created by the form
+        current_date = date + timedelta(days=1) # the starting will aready be created by the form
         while current_date <= ending_date:
-            recurrent_reserve = self.reserve_type.objects.create(estado=instance.estado, data=current_date, recorrencia=recurrent_chain, horaInicio=starting_time, horaFim=ending_time, atividade=activity, usuario=user, ramal=ramal, finalidade=reason, locavel=reservable)
-            recurrent_reserve.save()
-            current_date = current_date + timedelta(days=7)
+            if current_date.weekday() in reserve_days:
+                recurrent_reserve = self.reserve_type.objects.create(estado=instance.estado, data=current_date, recorrencia=recurrent_chain, horaInicio=starting_time, horaFim=ending_time, atividade=activity, usuario=user, ramal=ramal, finalidade=reason, locavel=reservable)
+                recurrent_reserve.save()
+            current_date = current_date + timedelta(days=1)
         instance.save()
 
 
 class ReservaEquipamentoAdminForm(ReservaAdminForm):
     class Meta:
         model = ReservaEquipamento
-        fields = ('estado', 'data', 'recorrente', 'dataInicio', 'dataFim', 'horaInicio', 'horaFim', 'locavel', 'atividade', 'usuario', 'ramal', 'finalidade')
+        fields = '__all__'
     def __init__(self, *args, **kwargs):
         kwargs['admin_type'] = admin.EquipamentoAdmin
         kwargs['reservable_type'] = Equipamento
@@ -490,7 +597,7 @@ class ReservaEquipamentoAdminForm(ReservaAdminForm):
 class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
     class Meta:
         model = ReservaEspacoFisico
-        fields = ('estado', 'data', 'recorrente', 'dataInicio', 'dataFim', 'horaInicio', 'horaFim', 'locavel', 'atividade', 'usuario', 'ramal', 'finalidade')
+        fields = '__all__'
     def __init__(self, *args, **kwargs):
         kwargs['admin_type'] = admin.EspacoFisicoAdmin
         kwargs['reservable_type'] = EspacoFisico
@@ -508,7 +615,7 @@ class ReservaEspacoFisicoAdminForm(ReservaAdminForm):
 class ReservaServicoAdminForm(ReservaAdminForm):
     class Meta:
         model = ReservaServico
-        fields = ('estado', 'data', 'recorrente', 'dataInicio', 'dataFim', 'horaInicio', 'horaFim', 'locavel', 'atividade', 'usuario', 'ramal', 'finalidade')
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         kwargs['admin_type'] = admin.ServicoAdmin
@@ -636,7 +743,13 @@ class LocavelAdminForm(forms.ModelForm):
         self.init_many_to_many_fields()
         ma = admin.UnidadeAdmin(Unidade, AdminSite())
         queryset = ma.get_queryset(self.request)
+        # get current parent so reservable can be edited
+        try:
+            queryset = queryset | Unidade.objects.filter(id=kwargs['instance'].unidade.id).distinct()
+        except:
+            pass  # new reservable, no unit yet
         self.fields['unidade'].queryset = queryset
+
         # get the old responsables for future comparissons
         try:
             self.initial_responsables = kwargs['instance'].responsavel

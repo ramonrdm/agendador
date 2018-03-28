@@ -126,9 +126,23 @@ class ReservaAdmin(admin.ModelAdmin):
             reserves = reserves | reserveModel.objects.filter(locavel=reservable)
         return reserves
 
+    def has_delete_permission(self, request, obj=None):
+        if not request.user.is_superuser:
+            return False
+        else:
+            return True
+
+    def get_actions(self, request):
+        actions = super(ReservaAdmin, self).get_actions(request)
+        if 'delete_selected' in actions and not request.user.is_superuser:
+            del actions['delete_selected']
+        return actions
+
 class ReservaEquipamentoAdmin(ReservaAdmin):
     form = forms.ReservaEquipamentoAdminForm
     icon = '<i class="material-icons">power</i>'
+    fields = ('estado', 'data', 'recorrente', ('seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'), 'dataInicio', 'dataFim', 'horaInicio', 'horaFim', 'locavel', 'atividade', 'usuario', 'ramal', 'finalidade')
+
 
     def get_form(self, request, obj=None, **kwargs):
         AdminForm =  super(ReservaEquipamentoAdmin, self).get_form(request, obj, **kwargs)
@@ -147,6 +161,7 @@ admin.site.register(ReservaEquipamento, ReservaEquipamentoAdmin)
 class ReservaEspacoFisicoAdmin(ReservaAdmin):
     form = forms.ReservaEspacoFisicoAdminForm
     icon = '<i class="material-icons">room</i>'
+    fields = ('estado', 'data', 'recorrente', ('seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'), 'dataInicio', 'dataFim', 'horaInicio', 'horaFim', 'locavel', 'atividade', 'usuario', 'ramal', 'finalidade')
 
     def get_form(self, request, obj=None, **kwargs):
         AdminForm =  super(ReservaEspacoFisicoAdmin, self).get_form(request, obj, **kwargs)
@@ -165,6 +180,7 @@ admin.site.register(ReservaEspacoFisico, ReservaEspacoFisicoAdmin)
 class ReservaServicoAdmin(ReservaAdmin):
     form = forms.ReservaServicoAdminForm
     icon = '<i class="material-icons">accessibility</i>'
+    fields = ('estado', 'data', 'recorrente', ('seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'), 'dataInicio', 'dataFim', 'horaInicio', 'horaFim', 'locavel', 'atividade', 'usuario', 'ramal', 'finalidade')
 
     def get_form(self, request, obj=None, **kwargs):
         AdminForm =  super(ReservaServicoAdmin, self).get_form(request, obj, **kwargs)
