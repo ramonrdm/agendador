@@ -1,29 +1,28 @@
 {% extends 'admin/base.html' %}
 {% load static %}
 {% load i18n %}
+{% block extrahead %}
+    <script src="{% static 'agenda/js/jquery.js' %}"></script>
+    <link rel='shortcut icon' type='image/x-icon' href="{% static 'agenda/img/favico.ico' %}" />
+    <script src="{% static 'agenda/js/materialize.js' %}"></script>
+{% endblock %}
 {% block css %}
     {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{% static 'agenda/css/base.css' %}" />
 {% endblock %}
 
-{% block head %}
-    {{ block.super }}
-    <link rel='shortcut icon' type='image/x-icon' href="{% static 'agenda/img/favico.ico' %}" />
-    <script src="{% static 'agenda/js/jquery.js' %}"></script>
-{% endblock %}
 
 {% block userlinks %}
-{% if user.is_active and user.is_staff %}
-    {% url 'django-admindocs-docroot' as docsroot %}
-    {% if docsroot %}
-    <li><a href="{{ docsroot }}">{% trans 'Documentation' %}</a></li>
+    {% if site_url %}
+        <a href="{{ site_url }}">{% trans 'View site' %}</a> /
     {% endif %}
+    {% if user.is_active and user.is_staff %}
+        {% url 'django-admindocs-docroot' as docsroot %}
+        {% if docsroot %}
+            <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
+        {% endif %}
     {% endif %}
-    {% if user.is_authenticated %}
-    <li><a href="{% url 'admin:logout' %}" data-turbolinks="false"><i class="material-icons right">exit_to_app</i>{% trans "Log out" %}</a></li>
-    {% else %}
-    <li><a href="{% url 'admin:login' %}" data-turbolinks="false"><i class="material-icons right">lock_open</i>{% trans "Log in" %}</a></li>
-    {% endif %}
+    <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
 {% endblock %}
 
 {% block sidenav_items %}

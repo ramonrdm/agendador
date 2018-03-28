@@ -23,6 +23,7 @@
     <li><a href="{% url 'login' %}">Login<i class="material-icons">exit_to_app</i></a></li>
     {% else %}
     <li><a href="{% url 'logout' %}">Logout<i class="material-icons">exit_to_app</i></a></li>
+    {% if request.user.is_staff %}<li><a href="/admin/">Administração<i class="material-icons">build</i></a></li>{% endif %}
     {% endif %}
     {% for module in modules %}
 

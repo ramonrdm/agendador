@@ -36,6 +36,8 @@ class SelectTimeWidget(Widget):
                 initial = value.strftime('%H:%M')
             except:
                 initial = datetime.strptime(value, '%H:%M').strftime('%H:%M')
+        print('---------')
+        print(label)
         return render_to_string('agenda/widgets/select_time.html', dict(name=name, attrs=self.attrs, initial=initial, label=label))
 
 class SelectDateWidget(Widget):

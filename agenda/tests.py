@@ -336,14 +336,14 @@ class AdminViewPermissionsTests(TestCase):
                 self.fail("Non superuser have delete permission!")
 
     def test_delete_permission(self):
-        print '-TESTING DELETE PERMISSION'
+        print('-TESTING DELETE PERMISSION')
         self.create_preset()
         superuser = User.objects.get(username='superuser')
         users = list(User.objects.all().exclude(username='superuser'))
         self.check_delete_permission(ReservaEspacoFisicoAdmin, ReservaEspacoFisico, users, superuser)
         self.check_delete_permission(ReservaEquipamentoAdmin, ReservaEquipamento, users, superuser)
         self.check_delete_permission(ReservaServicoAdmin, ReservaServico, users, superuser)
-        print '-DELETE PERMISSION TEST PASSED'
+        print('-DELETE PERMISSION TEST PASSED')
 
 class UserFilterTests(TestCase):
     def createPreset(self):
@@ -882,14 +882,14 @@ class FormTests(TestCase):
         service.save()
         print('--MAX ADVANCE RESERVE IN RECURRENT TEST PASSED')
 
-        print '--TESTING RECURRENT WITH NO WEEK DAY SELECTED'
+        print('--TESTING RECURRENT WITH NO WEEK DAY SELECTED')
         form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', '24/06/9999', True, '23/06/9999', '00:01', '00:02', physical_space, no_permission_user)
         self.assertIs(form.is_valid(), False)
         form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', '24/06/9999', True, '23/06/9999', '00:01', '00:02', equipment, no_permission_user)
         self.assertIs(form.is_valid(), False)
         form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'A', '24/06/9999', True, '23/06/9999', '00:01', '00:02', service, no_permission_user)
         self.assertIs(form.is_valid(), False)
-        print '--RECURRENT WITH NO WEEK DAY SELECTED TEST PASSED'
+        print('--RECURRENT WITH NO WEEK DAY SELECTED TEST PASSED')
 
 
         #clean database for next tests
@@ -979,7 +979,7 @@ class FormTests(TestCase):
         print('--EDITING UNIT FORM TEST PASSED')
 
     def group_only_test(self, responsable, permission_user, no_permission_user, physical_space, equipment, service):
-        print '--TESTING GROUP ONLY'
+        print('--TESTING GROUP ONLY')
         physical_space.somenteGrupo = True
         group = Group.objects.get(name='group')
         physical_space.grupos.add(group)
@@ -1030,7 +1030,7 @@ class FormTests(TestCase):
         service.save()
 
     def status_options_test(self, responsable, permission_user, no_permission_user, physical_space, equipment, service):
-        print '-- TESTING STATUS OPTION ON FORM'
+        print('-- TESTING STATUS OPTION ON FORM')
         form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, no_permission_user)
         reserve = form.save()
         editting_form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'E', '18/06/9999', False, None, '00:01', '00:02', physical_space, responsable, instance=reserve)
@@ -1080,7 +1080,7 @@ class FormTests(TestCase):
         ReservaEquipamento.objects.all().delete()
         ReservaServico.objects.all().delete()
 
-        print '--STATUS OPTION ON FORM TEST PASSED'
+        print('--STATUS OPTION ON FORM TEST PASSED')
 
     def reserve_clean_test(self, user, responsable, physical_space, equipment, service):
         default_date = datetime.strptime('01/01/9999', '%d/%m/%Y').date()

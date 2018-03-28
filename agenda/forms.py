@@ -110,23 +110,15 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['dataInicio'].widget = forms.HiddenInput()
             self.fields['dataInicio'].label = ''
             self.fields['dataFim'].label = 'Data Fim'
-        else:
-            if kwargs['instance'].recorrencia:
-                instance = kwargs['instance']
-                self.fields['dataInicio'].initial = instance.recorrencia.dataInicio
-                self.fields['dataInicio'].widget = ReadOnlyWidget(attrs=dict(label='Data início'))
-                self.fields['dataInicio'].disabled = True
-                self.fields['dataFim'].widget = ReadOnlyWidget(attrs=dict(label='Data fim'))
-                self.fields['dataFim'].disabled = True
-                self.fields['dataFim'].initial = instance.recorrencia.dataFim
-                self.fields['recorrente'].initial = True
-            else:
-                self.fields['dataInicio'].widget = forms.HiddenInput()
-                self.fields['dataInicio'].disabled = True
-                self.fields['dataFim'].widget = forms.HiddenInput()
-                self.fields['dataFim'].disabled = True
-                self.fields['recorrente'].widget = ReadOnlyWidget(check_box=True, check_box_value=False)
-
+        elif kwargs['instance'].recorrencia:
+            instance = kwargs['instance']
+            self.fields['dataInicio'].initial = instance.recorrencia.dataInicio
+            self.fields['dataInicio'].widget = ReadOnlyWidget(attrs=dict(label='Data início'))
+            self.fields['dataInicio'].disabled = True
+            self.fields['dataFim'].widget = ReadOnlyWidget(attrs=dict(label='Data fim'))
+            self.fields['dataFim'].disabled = True
+            self.fields['dataFim'].initial = instance.recorrencia.dataFim
+            self.fields['recorrente'].initial = True
 
             # here we check the value of the week day field
             week_days = instance.recorrencia.get_days()
@@ -533,7 +525,6 @@ class ReservaAdminForm(forms.ModelForm):
 
         # Get queryset
         reserve_query = current_reserve_chain.get_reserves()
-
         # Change it's fields to match the new version, except for the data
         for reserve in reserve_query:
             today = datetime.now().date()
@@ -712,6 +703,11 @@ class UnidadeAdminForm(forms.ModelForm):
         return cleaned_data
 
 class SearchFilterForm(forms.Form):
+    data = forms.DateField(input_formats=['%d/%m/%Y'], widget=SelectDateWidget())
+    horaInicio = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
+    horaFim = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
+    tipo = forms.CharField(widget = forms.HiddenInput())
+
     def __init__(self, *args, **kwargs):
         try:
             self.tipo_init = kwargs.pop('tipo')
@@ -720,13 +716,6 @@ class SearchFilterForm(forms.Form):
         except:
             super(SearchFilterForm,self).__init__(*args,**kwargs)
 
-    data = forms.DateField(input_formats=['%d/%m/%Y'], widget=SelectDateWidget())
-    data.label = ''
-    horaInicio = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
-    horaInicio.label = ''
-    horaFim = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
-    horaFim.label = ''
-    tipo = forms.CharField(widget = forms.HiddenInput())
 
     def clean(self):
         cleaned_data = super(SearchFilterForm, self).clean()
