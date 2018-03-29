@@ -232,6 +232,9 @@ class Reserva(models.Model):
                 ):
                 errors['data'] = 'Já existem reservas para esse dia e hora'
 
+    def __str__(self):
+        return self.usuario.username+"/"+self.atividade.nome
+
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
 

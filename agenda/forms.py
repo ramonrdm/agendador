@@ -703,9 +703,9 @@ class UnidadeAdminForm(forms.ModelForm):
         return cleaned_data
 
 class SearchFilterForm(forms.Form):
-    data = forms.DateField(input_formats=['%d/%m/%Y'], widget=SelectDateWidget())
-    horaInicio = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
-    horaFim = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
+    data = forms.DateField(input_formats=['%d/%m/%Y'], widget=SelectDateWidget(attrs={'label': 'Data'}))
+    horaInicio = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget(attrs={'label': 'Hora início'}))
+    horaFim = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget(attrs={'label': 'Hora fim'}))
     tipo = forms.CharField(widget = forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):

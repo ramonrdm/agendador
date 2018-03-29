@@ -19,6 +19,10 @@ class SelectTimeWidget(Widget):
 
     def __init__(self, attrs=None):
         self.attrs = attrs or {}
+        try:
+            self.label = attrs['label']
+        except:
+            self.label = None
 
     class Media():
         css = {
@@ -28,22 +32,21 @@ class SelectTimeWidget(Widget):
 
     def render(self, name, value, attrs=None):
         initial = None
-        label = name
-        if 'label' in self.attrs:
-            label = self.attrs['label']
         if value:
             try:
                 initial = value.strftime('%H:%M')
             except:
                 initial = datetime.strptime(value, '%H:%M').strftime('%H:%M')
-        print('---------')
-        print(label)
-        return render_to_string('agenda/widgets/select_time.html', dict(name=name, attrs=self.attrs, initial=initial, label=label))
+        return render_to_string('agenda/widgets/select_time.html', dict(name=name, attrs=self.attrs, initial=initial, label=self.label))
 
 class SelectDateWidget(Widget):
 
     def __init__(self, attrs=None):
         self.attrs = attrs or {}
+        try:
+            self.label = attrs['label']
+        except:
+            self.label = None
 
     class Media():
         css = {
@@ -59,6 +62,8 @@ class SelectDateWidget(Widget):
                 inp='<input class="date_picker validate" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text" value="'+datetime.strptime(value, '%d/%m/%Y').strftime('%d/%m/%Y')+'">'
         else:
             inp='<input class="date_picker validate" data-lang="pt-br" id="id_'+name+'" name="'+name+'" type="text">'
+        if self.label:
+            inp = inp + '<label for="id_'+name+'">'+self.label+'</label>'
         output = '<div class="input-field">' + inp + '</div>'
         return output
 
