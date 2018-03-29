@@ -6,6 +6,7 @@ img {
 	width: auto;
 	height: 90px;
 	max-width: inherit;
+	text-align: inherit;
 }
 
 .side-nav .userView .email {
