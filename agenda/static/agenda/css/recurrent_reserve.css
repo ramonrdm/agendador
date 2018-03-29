@@ -1,9 +1,3 @@
-#id_seg_container, #id_ter_container, #id_qua_container, #id_qui_container, #id_sex_container, #id_sab_container, #id_dom_container, #id_dataInicio_container, #id_dataFim_container {
+.field-seg, .field-ter, .field-qua, .field-qui, .field-sex, .field-sab, .field-dom, .field-dataInicio, .field-dataFim {
 	display: none;
-}
-
-@media screen and (max-width: 1280px) {
-	.layout-row.row .col.s12{
-		width: 25%;
-	}
 }

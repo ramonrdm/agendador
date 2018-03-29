@@ -65,15 +65,17 @@ function add_listeners_to_option()
 
 function show_inputs()
 {
-    $('.field-dataInicio').css('display', 'initial');
-    $('.field-dataFim').css('display', 'initial');
-    $('.field-seg').css('display', 'initial');
-    $('.field-ter').css('display', 'initial');
-    $('.field-qua').css('display', 'initial');
-    $('.field-qui').css('display', 'initial');
-    $('.field-sex').css('display', 'initial');
-    $('.field-sab').css('display', 'initial');
-    $('.field-dom').css('display', 'initial');
+    if (!$('.field-dataInicio').hasClass('hidden')) {
+        $('.field-dataInicio').css('display', 'block');
+    }
+    $('.field-dataFim').css('display', 'block');
+    $('.field-seg').css('display', 'block');
+    $('.field-ter').css('display', 'block');
+    $('.field-qua').css('display', 'block');
+    $('.field-qui').css('display', 'block');
+    $('.field-sex').css('display', 'block');
+    $('.field-sab').css('display', 'block');
+    $('.field-dom').css('display', 'block');
     hidden = false;
 }
 

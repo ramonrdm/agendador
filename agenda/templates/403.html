@@ -1,16 +1,21 @@
-{% extends "material/frontend/base_lockscreen.html" %}
+{% extends 'agenda/base.html' %}
 {% load i18n %}
-{% block js %}{% endblock js %}
+{% block title %} 403 - Acesso negado{% endblock %}
+{% block userphoto %}
+    <a href="#"><i class="circle medium material-icons">cancel</i></a>
+{% endblock %}
 
-{% block title %}403 {% trans 'Access Forbidden' %} - Agendador{% endblock %}
-{% block page_title %}Agendador{% endblock %}
-
+{% block page_title %}
+    <strong>403 - Acesso negado</strong>
+{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col s12">
-        {% trans 'Access Forbidden' %}
-    </div>
+<div class='row'>
+    <div class='col s12'>
+        <div class='card'>
+            <div class='card-content'>
+                <div id='error'>
+                	<div class="row">
     <div class="col s12">
         {% if request.user.is_anonymous %}
         {% trans 'You are not logged in' %}
@@ -32,6 +37,9 @@
     {% endif %}
     </div>
 </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
-
-{% block icon %}lock{% endblock %}
