@@ -16,8 +16,5 @@ $(document).ready(function() {
 		{% if label %}
 		<label for="id_{{ name }}">{{ label }}</label>
 		{% endif %}
-	{% if attrs.error %}
-		<small class='select-time-error'>{{ attrs.error }}</small>
-	{% endif %}
 	</div>
 </div>
