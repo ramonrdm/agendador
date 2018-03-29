@@ -321,41 +321,41 @@ class ReservaAdminForm(forms.ModelForm):
 
         # First we send an email to the user who asked for the reserve
         if status == 'A':
-            email_title = 'Reserva de %s confirmada.' % reservable.nome.encode("utf-8")
+            email_title = 'Reserva de %s confirmada.' % str(reservable.nome)
             email_text = '''
                 Olá, %s,
                 Sua reserva de %s para o dia %s%s, das %s às %s, foi confirmada.
 
                 -------
                 E-mail automático, por favor não responda.
-            ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'))
+            ''' % (user, str(reservable.nome), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'))
         elif status == 'E':
-            email_title = 'Reserva de %s aguardando aprovação.' % reservable.nome.encode("utf-8")
+            email_title = 'Reserva de %s aguardando aprovação.' % str(reservable.nome)
             email_text = '''
                 Olá, %s,
                 Sua reserva de %s para o dia %s%s, das %s às %s, está aguardando aprovação. Você receberá uma notificação quando o estado da sua reserva for atualizado.
 
                 -------
                 E-mail automático, por favor não responda.
-            ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'))
+            ''' % (user, str(reservable.nome), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'))
         elif status == 'D':
-            email_title = 'Reserva de %s negada.' % reservable.nome.encode("utf-8")
+            email_title = 'Reserva de %s negada.' % str(reservable.nome)
             email_text = '''
                 Olá, %s,
                 Sua reserva de %s para o dia %s%s, das %s às %s, foi negada.
 
                 -------
                 E-mail automático, por favor não responda.
-            ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'))
+            ''' % (user, str(reservable.nome), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'))
         elif status == 'C':
-            email_title = 'Reserva de %s canceada.' % reservable.nome.encode("utf-8")
+            email_title = 'Reserva de %s canceada.' % str(reservable.nome)
             email_text = '''
                 Olá, %s,
                 Sua reserva de %s para o dia %s%s, das %s às %s, foi cancelada.
 
                 -------
                 E-mail automático, por favor não responda.
-            ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'))
+            ''' % (user, str(reservable.nome), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'))
         try:
             send_mail(email_title, email_text, settings.EMAIL_HOST_USER, [user.email])
         except:
@@ -375,7 +375,7 @@ class ReservaAdminForm(forms.ModelForm):
             url = "%sadmin/agenda/%s/%d/change/" % (base_url, reserve_type, instance.id)
 
             for responsable in responsables:
-                email_title = 'Pedido de reserva de %s' % reservable.nome.encode("utf-8")
+                email_title = 'Pedido de reserva de %s' % str(reservable.nome)
                 email_text = '''
                     Olá, %s,
                     %s fez um pedido de reserva em %s, para o dia %s%s, das %s às %s. Use o link abaixo para analisar o pedido.
@@ -383,7 +383,7 @@ class ReservaAdminForm(forms.ModelForm):
 
                     -------
                     E-mail automático, por favor não responda.
-                ''' % (responsable, user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'), url)
+                ''' % (responsable, user, str(reservable.nome), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'), url)
                 try:
                     send_mail(email_title, email_text, settings.EMAIL_HOST_USER, [responsable.email])
                 except:
