@@ -104,9 +104,15 @@ class EspacoFisico(Locavel):
 
 
 class Equipamento(Locavel):
-    patrimonio = models.PositiveIntegerField(verbose_name='Patrimônio')
+    patrimonio = models.CharField(max_length=100, verbose_name='Patrimônio')
 
     def clean(self):
+        for char in self.patrimonio:
+            if not char.isdigit():
+                if char != ' ' and char != ',':
+                    raise ValidationError({'patrimonio': 'Insira apenas caracteres válidos (numeros, espaços e vírgulas)'})
+
+
         super(Equipamento, self).clean()
 
 class Servico(Locavel):
