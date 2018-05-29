@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^locavel/(e|f|s)/(\d+)/$', views.locavel, name='locavel'),
     url(r'^filtro_locavel_disponivel/(\d+)/(e|f|s)/(\w+)/(\w+)/(\w+)/', views.filtroLocavelDisponivel, name='resultado'),
     url(r'^get_atividade_set/$', views.get_atividade_set, name='get_atividade_set'),
+    url(r'^get_pending_reserves/$', views.get_pending_reserves, name='get_pending_reserves'),
     url(r'^faq/$', views.faq, name='faq'),
     url(r'^calendar/(?P<year>[\d]+)/(?P<month>[\d]+)/(?P<day>[\d]+)/$', views._calendar,name='cute_calendar'),
     # IDK what this do, but name was conflicting with month calendar

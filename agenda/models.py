@@ -220,8 +220,8 @@ class Reserva(models.Model):
             errors['locavel'] = error
 
     # Ignore variables is for recurrent test, there's no need to check self conflict
-    def verificaChoque(self, errors, ignore=[]):
-        reservas = type(self).objects.filter(locavel=self.locavel, data=self.data, estado="A").exclude(id=self.id)
+    def verificaChoque(self, errors, ignore=[], compare_state="A"):
+        reservas = type(self).objects.filter(locavel=self.locavel, data=self.data, estado=compare_state).exclude(id=self.id)
         for reserve in ignore:
             try:
                 reservas = reservas.exclude(id=reserve.id)

@@ -314,6 +314,52 @@ def get_atividade_set(request):
             return JsonResponse(data)
     return HttpResponseNotFound()
 
+@login_required
+def get_pending_reserves(request):
+    if request.method != 'POST':
+        return HttpResponseNotFound()
+
+    reservable_type = request.POST['reservable_type']
+    reservable_name = request.POST['reservable_name']
+    current_reserve_id = request.POST['current_reserve_id']
+    date = request.POST['date']
+    date = datetime.strptime(date, '%d/%m/%Y').date()
+    starting_time = request.POST['starting_time']
+    starting_time = datetime.strptime(starting_time, '%H:%M').time()
+    ending_time = request.POST['ending_time']
+    ending_time = datetime.strptime(ending_time, '%H:%M').time()
+
+    if unicode('espaço físico', 'utf-8') in reservable_type:
+        reservable = EspacoFisico.objects.get(nome=reservable_name)
+        reserves = reservable.reservaespacofisico_set.filter(data=date)
+    elif 'equipamento' in reservable_type:
+        reservable = Equipamento.objects.get(nome=reservable_name)
+        reserves = reservable.reservaequipamento_set.filter(data=date)
+    elif unicode('serviço', 'utf-8') in reservable_type:
+        reservable = Servico.objects.filter(data=date)
+        reserves = reservable.reservaservico_set.filter(data=date)
+
+    reserves = reserves.exclude(id=current_reserve_id)
+    conflict_reserves_ids = list()
+    conflict_reserves_names = list()
+    for r in reserves:
+        if  (
+            (ending_time  > r.horaInicio and ending_time < r.horaFim) or
+            (starting_time > r.horaInicio and starting_time < r.horaFim ) or
+            (starting_time == r.horaInicio and ending_time == r.horaFim) or
+            (r.horaInicio > starting_time and r.horaInicio < ending_time) or
+            (starting_time < r.horaFim < ending_time)
+            ):
+            conflict_reserves_ids.append(r.id)
+            conflict_reserves_names.append(r.usuario.username)
+
+    if conflict_reserves_ids and conflict_reserves_names:
+        data = {'conflict_reserves': True, 'conflict_reserves_ids': conflict_reserves_ids, 'conflict_reserves_names': conflict_reserves_names}
+    else:
+        data = {'conflict_reserves': False}
+    print(data)
+    return JsonResponse(data)
+
 def faq(request):
     if request.method == 'GET':
         faq_pages = FlatPage.objects.filter(url__icontains='faq')
