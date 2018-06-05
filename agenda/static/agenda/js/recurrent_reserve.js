@@ -138,6 +138,87 @@ function create_confirmation_modal()
     $('form').append(modal_html);
     $('#recurrent-modal').modal({endingTop: '30%'});
     $("#submit_button").on("click", function() {
-        $('form').submit();
+        submit_form();
     });
+}
+
+function submit_form()
+{
+    var checked_week_days = get_selected_days();
+    var ending_date = $('#id_dataFim').val();
+    var reservable_type = $('.page-title').text();
+    var reservable_name = $('#id_locavel').parent().children('.select-dropdown').attr('value');
+    var date = $('#id_data').val();
+    var starting_time = $('#id_horaInicio').val();
+    var ending_time = $('#id_horaFim').val();
+    var other_reseres = check_other_reserves(reservable_type, reservable_name, date, starting_time, ending_time, ending_date, check_other_reserves);
+    $('form').submit();
+}
+
+function check_other_reserves(reservable_type, reservable_name, date, starting_time, ending_time, ending_date, checked_week_days)
+{
+    var csrftoken = getCookie('csrftoken');
+    var current_url = window.location.href;
+    var current_url = current_url.split("/");
+    var current_reserve_id = parseInt(current_url[current_url.length-3])
+    $.ajax({
+        async: false,
+        type: 'POST',
+        url: '/get_pending_reserves/',
+        data: {
+            reservable_type: reservable_type,
+            reservable_name: reservable_name,
+            date: date,
+            ending_date: ending_date,
+            starting_time: starting_time,
+            ending_time: ending_time,
+            current_reserve_id: current_reserve_id,
+            csrfmiddlewaretoken: csrftoken
+        },
+        dataType: 'json',
+        success: function(data) {
+            if (data.conflict_reserves) {
+                update_modal_dates();
+                update_modal(data.conflict_reserves_ids, data.conflict_reserves_names)
+                $("#confirmation-modal").modal('open');
+            } else {
+                //$('form').submit();
+            }
+        }
+    });
+}
+
+function get_selected_days()
+{
+    let week_days = [];
+    if ($("#id_seg").is(":checked"))
+        week_days.push(0);
+    if ($("#id_ter").is(":checked"))
+        week_days.push(1);
+    if ($("#id_qua").is(":checked"))
+        week_days.push(2);
+    if ($("#id_qui").is(":checked"))
+        week_days.push(3);
+    if ($("#id_sex").is(":checked"))
+        week_days.push(4);
+    if ($("#id_sab").is(":checked"))
+        week_days.push(5);
+    if ($("#id_dom").is(":checked"))
+        week_days.push(6);
+}
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }

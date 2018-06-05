@@ -331,13 +331,21 @@ def get_pending_reserves(request):
 
     if unicode('espaço físico', 'utf-8') in reservable_type:
         reservable = EspacoFisico.objects.get(nome=reservable_name)
-        reserves = reservable.reservaespacofisico_set.filter(data=date)
+        reserve_set = reservable.reservaespacofisico_set
     elif 'equipamento' in reservable_type:
         reservable = Equipamento.objects.get(nome=reservable_name)
-        reserves = reservable.reservaequipamento_set.filter(data=date)
+        reserve_set = reservable.reservaequipamento_set
     elif unicode('serviço', 'utf-8') in reservable_type:
         reservable = Servico.objects.filter(data=date)
-        reserves = reservable.reservaservico_set.filter(data=date)
+        reserve_set = reservable.reservaservico_set
+
+    try:  # get reserves if a recurrent reserve is being made
+        ending_date = request.POST['ending_date']
+        reserves = reserve_set.filter(data=date)
+        
+    except:  # get reserves if a non recurrent reserve is being made
+        reserves = reserve_set.filter(data=date)
+
 
     reserves = reserves.exclude(id=current_reserve_id)
     conflict_reserves_ids = list()
