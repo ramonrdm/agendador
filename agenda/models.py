@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User, Group
 from django.contrib import admin
 from django.core.exceptions import ValidationError
-from datetime import date
+from datetime import date, datetime
 
 class Unidade(models.Model):
     sigla = models.CharField(max_length=20, unique=True)
@@ -79,6 +79,15 @@ class ReservaRecorrente(models.Model):
         if not query:
             query = self.reservaequipamento_set.all()
         return query
+
+    def get_first_not_past_day(self):
+        reserves = self.get_reserves()
+        first_day = reserves[0].data
+        for reserve in reserves:
+            if reserve.data < first_day and reserve.data >= datetime.now().date():
+                first_day = reserve.data
+        return first_day
+
 
 class Reserva(models.Model):
     class Meta:

@@ -324,7 +324,7 @@ class ReservaAdminForm(forms.ModelForm):
 
             # If fisical aspects of the reserve have been changed we need to check for conflict, otherwise not
             check_conflict = False
-            dont_check_field = ['estado', 'atividade', 'ramal', 'finalidade', 'usuario', 'recorrente', 'dataInicio', 'dataFim']
+            dont_check_field = ['atividade', 'ramal', 'finalidade', 'usuario', 'recorrente', 'dataInicio', 'dataFim']
             # Check form variables
             for key in cleaned_data:
                 if (key in self.changed_data) and (key not in dont_check_field):
@@ -336,10 +336,10 @@ class ReservaAdminForm(forms.ModelForm):
                     check_conflict = True
 
             # check if there isn't datetime conflict in the selected timespan
-            if check_conflict:
+            if check_conflict and cleaned_data['estado'] != 'C' and cleaned_data['estado'] != 'D':
                 error = self.recurrent_option_possible(cleaned_data)
                 if error:
-                    raise ValidationError({'dataFim': error})
+                    raise ValidationError({'dataFim': error, 'recorrente': error})
 
         return cleaned_data
 
@@ -366,14 +366,17 @@ class ReservaAdminForm(forms.ModelForm):
                 return ('Este locável tem antecedência máxima de %d dias.' % (reservable.antecedenciaMaxima, ))
 
         # test if there's no conflict
-        current_date = starting_date
+        if self.is_new_object:
+            current_date = starting_date
+        else:
+            current_date = self.instance.recorrencia.get_first_not_past_day()
         error = ''
         while current_date <= ending_date:
             dummy_reserve = self.reserve_type.objects.create(data=current_date, horaInicio=starting_time, horaFim=ending_time, atividade=dummy_activitie, usuario=self.request.user, ramal=1, finalidade='1', locavel=reservable)
-            error = dict()
-            dummy_reserve.verificaChoque(error, query)
+            error_dict = dict()
+            dummy_reserve.verificaChoque(error_dict, query)
             dummy_reserve.delete()
-            if bool(error):
+            if bool(error_dict):
                 error =  'Reservas nesse período causarão choque de horário.'
             current_date = current_date + timedelta(days=7)
 
