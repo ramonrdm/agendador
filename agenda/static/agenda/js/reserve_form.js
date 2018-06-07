@@ -2,30 +2,12 @@ $(function(){
     $(document).ready(function() {
         var initial_status = $('#id_estado').val();
         var current_url = window.location.href;
-        if ((initial_status == 'E') && (current_url.search("change") != -1)) {
-		    create_modal();
-		    create_listener();
-        }
+		init_modal();
+		create_listener();
 	});
 });
 
-function create_modal()  {
-    var ending_date = $('#id_dataFim').val();
-    var modal_html = `
-        <div id="confirmation-modal" class="modal">
-            <div class="modal-content">
-                <h4>Deseja mesmo confirmar a reserva?</h4>
-                <p>Existem outras reservas pendentes para essa mesma hora:
-                	<ul><span id="other_reserves_list"></span><ul>
-                </p>
-            </div>
-            <div class="modal-footer">
-                <a id="submit_button_create_modal" type="submit" class="modal-action modal-close waves-effect waves-green btn-flat">Confirmar</a>
-                <a id="close-modal" class="modal-action modal-close waves-effect waves-green btn-flat">Retornar</a>
-            </div>
-        </div>
-    `
-    $('form').append(modal_html);
+function init_modal()  {
     $('#confirmation-modal').modal({endingTop: '30%'});
     $("#submit_button_create_modal").on("click", function() {
         $('form').submit();
@@ -87,7 +69,6 @@ function create_listener() {
             var date = $('#id_data').val();
             var starting_time = $('#id_horaInicio').val();
             var ending_time = $('#id_horaFim').val();
-
             check_reserves(reservable_type, reservable_name, date, starting_time, ending_time);
         }
 

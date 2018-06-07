@@ -1,0 +1,17 @@
+{% extends 'admin/change_form.html' %}
+
+{% block content %}
+	{{block.super}}
+	<div id="confirmation-modal" class="modal">
+        <div class="modal-content">
+            <h4>Deseja mesmo confirmar a reserva?</h4>
+            <p>Existem outras reservas pendentes que causarão choque com essa:
+            	<ul><span id="other_reserves_list"></span><ul>
+            </p>
+        </div>
+        <div class="modal-footer">
+            <a id="submit_button_create_modal" type="submit" class="modal-action modal-close waves-effect waves-green btn-flat">Confirmar</a>
+            <a id="close-modal" class="modal-action modal-close waves-effect waves-green btn-flat">Retornar</a>
+        </div>
+    </div>
+{% endblock %}

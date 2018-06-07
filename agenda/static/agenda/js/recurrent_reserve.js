@@ -138,25 +138,29 @@ function create_confirmation_modal()
     $('form').append(modal_html);
     $('#recurrent-modal').modal({endingTop: '30%'});
     $("#submit_button").on("click", function() {
-        submit_form();
+        try_submit_form();
     });
 }
 
-function submit_form()
+function try_submit_form()
 {
-    var checked_week_days = get_selected_days();
-    var ending_date = $('#id_dataFim').val();
-    var reservable_type = $('.page-title').text();
-    var reservable_name = $('#id_locavel').parent().children('.select-dropdown').attr('value');
-    var date = $('#id_data').val();
-    var starting_time = $('#id_horaInicio').val();
-    var ending_time = $('#id_horaFim').val();
-    var other_reseres = check_other_reserves(reservable_type, reservable_name, date, starting_time, ending_time, ending_date, check_other_reserves);
-    $('form').submit();
+    var status = $('#id_estado').val();
+    if (status == 'A') {
+        var checked_week_days = get_selected_days();
+        var ending_date = $('#id_dataFim').val();
+        var reservable_type = $('.page-title').text();
+        var reservable_name = $('#id_locavel').parent().children('.select-dropdown').attr('value');
+        var date = $('#id_data').val();
+        var starting_time = $('#id_horaInicio').val();
+        var ending_time = $('#id_horaFim').val();
+        check_other_reserves(reservable_type, reservable_name, date, starting_time, ending_time, ending_date, checked_week_days);
+    } else {
+        $('form').submit();
+    }
 }
 
 function check_other_reserves(reservable_type, reservable_name, date, starting_time, ending_time, ending_date, checked_week_days)
-{
+{    
     var csrftoken = getCookie('csrftoken');
     var current_url = window.location.href;
     var current_url = current_url.split("/");
@@ -172,25 +176,43 @@ function check_other_reserves(reservable_type, reservable_name, date, starting_t
             ending_date: ending_date,
             starting_time: starting_time,
             ending_time: ending_time,
+            checked_week_days: checked_week_days,
             current_reserve_id: current_reserve_id,
             csrfmiddlewaretoken: csrftoken
         },
         dataType: 'json',
         success: function(data) {
-            if (data.conflict_reserves) {
-                update_modal_dates();
-                update_modal(data.conflict_reserves_ids, data.conflict_reserves_names)
-                $("#confirmation-modal").modal('open');
-            } else {
-                //$('form').submit();
-            }
+            check_server_response(data);
         }
     });
 }
 
+function check_server_response(server_response) {
+    if (server_response.conflict_reserves) {
+        $("#recurrent-modal").modal('close');
+        update_confirmation_modal(server_response.conflict_reserves_names, server_response.conflict_reserves_ids);
+        $("#confirmation-modal").modal('open');
+    } else {
+        $("form").submit();
+    }
+}
+
+function update_confirmation_modal(reserves_names, reserves_ids) {
+    $('#other_reserves_list').html('');
+    var current_url = window.location.href;
+    current_url = current_url.split('/');
+    var html = '';
+    for (var i = 0; i < reserves_ids.length; i++) {
+        current_url[current_url.length-3] = reserves_ids[i];
+        var url = current_url.join('/');
+        html = html+'<li><a href="'+url+'"">'+reserves_names[i]+'</a></li>';
+    }
+    $('#other_reserves_list').html(html);
+}
+
 function get_selected_days()
 {
-    let week_days = [];
+    var week_days = [];
     if ($("#id_seg").is(":checked"))
         week_days.push(0);
     if ($("#id_ter").is(":checked"))
@@ -205,6 +227,7 @@ function get_selected_days()
         week_days.push(5);
     if ($("#id_dom").is(":checked"))
         week_days.push(6);
+    return week_days;
 }
 
 function getCookie(name) {

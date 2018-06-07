@@ -3,9 +3,9 @@
         {% if check_box %}
             <div class="checkbox-field">
                 {% if check_box_value %}
-                    <input id="id_{{ name }}" class="filled-in" name="{{ name }}" type="checkbox" checked="" disabled="disabled">
+                    <input id="id_{{ name }}" class="filled-in" name="{{ name }}" type="checkbox" checked="checked" readonly>
                 {% else %}
-                    <input id="id_{{ name }}" class="filled-in" name="{{ name }}" type="checkbox" disabled="disabled">
+                    <input id="id_{{ name }}" class="filled-in" name="{{ name }}" type="checkbox" disabled>
                 {% endif %}
                 <label for="id_{{ name }}">{{ label|title }}</label>
             </div>

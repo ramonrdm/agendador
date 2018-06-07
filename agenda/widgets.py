@@ -93,6 +93,7 @@ class ReadOnlyWidget(Widget):
         self.check_box_value = check_box_value
 
     class Media():
+        js = ('agenda/js/read_only.js',)
         css = {
             'all': ('agenda/css/read_only.css',),
         }

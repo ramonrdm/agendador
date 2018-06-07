@@ -316,9 +316,26 @@ def get_atividade_set(request):
 
 @login_required
 def get_pending_reserves(request):
+
+    def check_conflicts(reserves, starting_time, ending_time):
+        conflict_ids = list()
+        conflict_names = list()
+        for r in reserves:
+            if  (
+                (ending_time  > r.horaInicio and ending_time < r.horaFim) or
+                (starting_time > r.horaInicio and starting_time < r.horaFim ) or
+                (starting_time == r.horaInicio and ending_time == r.horaFim) or
+                (r.horaInicio > starting_time and r.horaInicio < ending_time) or
+                (starting_time < r.horaFim < ending_time)
+                ):
+                conflict_ids.append(r.id)
+                conflict_names.append(r.usuario.username)
+        return (conflict_ids,conflict_names)
+
     if request.method != 'POST':
         return HttpResponseNotFound()
 
+    #get request variables
     reservable_type = request.POST['reservable_type']
     reservable_name = request.POST['reservable_name']
     current_reserve_id = request.POST['current_reserve_id']
@@ -328,7 +345,6 @@ def get_pending_reserves(request):
     starting_time = datetime.strptime(starting_time, '%H:%M').time()
     ending_time = request.POST['ending_time']
     ending_time = datetime.strptime(ending_time, '%H:%M').time()
-
     if unicode('espaço físico', 'utf-8') in reservable_type:
         reservable = EspacoFisico.objects.get(nome=reservable_name)
         reserve_set = reservable.reservaespacofisico_set
@@ -339,33 +355,38 @@ def get_pending_reserves(request):
         reservable = Servico.objects.filter(data=date)
         reserve_set = reservable.reservaservico_set
 
-    try:  # get reserves if a recurrent reserve is being made
-        ending_date = request.POST['ending_date']
-        reserves = reserve_set.filter(data=date)
-        
-    except:  # get reserves if a non recurrent reserve is being made
-        reserves = reserve_set.filter(data=date)
-
-
-    reserves = reserves.exclude(id=current_reserve_id)
+    # get conflicting reserves
     conflict_reserves_ids = list()
     conflict_reserves_names = list()
-    for r in reserves:
-        if  (
-            (ending_time  > r.horaInicio and ending_time < r.horaFim) or
-            (starting_time > r.horaInicio and starting_time < r.horaFim ) or
-            (starting_time == r.horaInicio and ending_time == r.horaFim) or
-            (r.horaInicio > starting_time and r.horaInicio < ending_time) or
-            (starting_time < r.horaFim < ending_time)
-            ):
-            conflict_reserves_ids.append(r.id)
-            conflict_reserves_names.append(r.usuario.username)
+    
+    if 'ending_date' in request.POST:
+        ending_date = request.POST['ending_date']
+        ending_date = datetime.strptime(ending_date, '%d/%m/%Y').date()
+        checked_week_days = request.POST.getlist('checked_week_days[]')
+        checked_week_days = map(int, checked_week_days)
+        current_reserve = reserve_set.get(id=current_reserve_id)
+        
+        recurrent_reserve = current_reserve.recorrencia.get_reserves()
+        aux_date = recurrent_reserve[0].data
+        recurrent_reserve_ids = [x.id for x in recurrent_reserve]
+        while ending_date >= aux_date:
+            reserves = reserve_set.filter(data=aux_date).exclude(id=current_reserve_id)
+            for _id in recurrent_reserve_ids:
+                reserves = reserves.exclude(id=_id)
+            if aux_date.weekday() in checked_week_days:
+                conflict_reserves_ids_aux, conflict_reserves_names_aux = check_conflicts(reserves, starting_time, ending_time)
+                conflict_reserves_ids = conflict_reserves_ids + conflict_reserves_ids_aux
+                conflict_reserves_names = conflict_reserves_names + conflict_reserves_names_aux
+            aux_date += timedelta(days=1)
+    else:   # a non recurrent reserve is being made case
+            # no ending_date was passed as element of the request
+        reserves = reserve_set.filter(data=date).exclude(id=current_reserve_id)
+        conflict_reserves_ids, conflict_reserves_names = check_conflicts(reserves, starting_time, ending_time)
 
     if conflict_reserves_ids and conflict_reserves_names:
         data = {'conflict_reserves': True, 'conflict_reserves_ids': conflict_reserves_ids, 'conflict_reserves_names': conflict_reserves_names}
     else:
         data = {'conflict_reserves': False}
-    print(data)
     return JsonResponse(data)
 
 def faq(request):
