@@ -322,11 +322,14 @@ def get_pending_reserves(request):
         conflict_names = list()
         for r in reserves:
             if  (
+                (r.estado == 'E') and
+                (
                 (ending_time  > r.horaInicio and ending_time < r.horaFim) or
                 (starting_time > r.horaInicio and starting_time < r.horaFim ) or
                 (starting_time == r.horaInicio and ending_time == r.horaFim) or
                 (r.horaInicio > starting_time and r.horaInicio < ending_time) or
                 (starting_time < r.horaFim < ending_time)
+                )
                 ):
                 conflict_ids.append(r.id)
                 conflict_names.append(r.usuario.username)

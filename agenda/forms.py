@@ -483,7 +483,7 @@ class ReservaAdminForm(forms.ModelForm):
                 return ('Este locável tem antecedência máxima de %d dias.' % (reservable.antecedenciaMaxima, ))
 
         # test if there's no conflict
-        if self.is_new_object and cleaned_data['estado'] != 'A':
+        if self.is_new_object:
             current_date = starting_date
         else:
             current_date = self.instance.recorrencia.get_reserves()[0].data

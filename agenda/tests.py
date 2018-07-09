@@ -890,6 +890,31 @@ class FormTests(TestCase):
         self.assertIs(form.is_valid(), False)
         print '--RECURRENT WITH NO WEEK DAY SELECTED TEST PASSED'
 
+        print '--TESTING APPROVING RESERVE WITH CONFLIC'
+        date = datetime.strptime('31/05/9999', '%d/%m/%Y').date()
+        starting_time = datetime.strptime('00:00', '%H:%M').time()
+        ending_time = datetime.strptime('23:59', '%H:%M').time()
+        activitie = Atividade.objects.all()[0]
+        physical_space_instance = ReservaEspacoFisico.objects.create(estado='A',data=date, horaInicio=starting_time, horaFim=ending_time,
+                                            atividade=activitie, usuario=responsable, ramal=2, finalidade=2, locavel=physical_space)
+        equipment_instance = ReservaEquipamento.objects.create(estado='A',data=date, horaInicio=starting_time, horaFim=ending_time,
+                                            atividade=activitie, usuario=responsable, ramal=2, finalidade=2, locavel=equipment)
+        service_instance = ReservaServico.objects.create(estado='A',data=date, horaInicio=starting_time, horaFim=ending_time,
+                                            atividade=activitie, usuario=responsable, ramal=2, finalidade=2, locavel=service)
+        
+        STARTING_DAY = '31/05/9999'
+        ENDING_DAY = '27/06/9999'
+        week_days_boolean = (True, True, True, True, True, True, True)
+        form = self.create_form(ReservaEspacoFisico, ReservaEspacoFisicoAdminForm, 'A', STARTING_DAY, True, ENDING_DAY, '00:01', '00:02', physical_space, no_permission_user,
+            mon=week_days_boolean[0], tue=week_days_boolean[1], wed=week_days_boolean[2], thu=week_days_boolean[3], fri=week_days_boolean[4], sat=week_days_boolean[5], sun=week_days_boolean[6])
+        self.assertIs(form.is_valid(), False)
+        form = self.create_form(ReservaEquipamento, ReservaEquipamentoAdminForm, 'A', STARTING_DAY, True, ENDING_DAY, '00:01', '00:02', equipment, no_permission_user,
+            mon=week_days_boolean[0], tue=week_days_boolean[1], wed=week_days_boolean[2], thu=week_days_boolean[3], fri=week_days_boolean[4], sat=week_days_boolean[5], sun=week_days_boolean[6])
+        self.assertIs(form.is_valid(), False)
+        form = self.create_form(ReservaServico, ReservaServicoAdminForm, 'A', STARTING_DAY, True, ENDING_DAY, '00:01', '00:02', service, no_permission_user,
+            mon=week_days_boolean[0], tue=week_days_boolean[1], wed=week_days_boolean[2], thu=week_days_boolean[3], fri=week_days_boolean[4], sat=week_days_boolean[5], sun=week_days_boolean[6])
+        self.assertIs(form.is_valid(), False)
+        print '--APPROVING RESERVE WITH CONFLIC TEST PASSED'
 
         #clean database for next tests
         ReservaEquipamento.objects.all().delete()
