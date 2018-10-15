@@ -1,0 +1,8 @@
+.autocomplete-wrapper {
+	padding-bottom: 10px;
+}
+
+.autocomplete-error {
+	margin-top: 2px;
+	color: #F44336;
+}

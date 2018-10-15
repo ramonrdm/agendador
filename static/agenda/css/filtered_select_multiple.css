@@ -1,0 +1,34 @@
+.filtered-search {
+	display: flex;
+}
+
+.filtered-search input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #9e9e9e;
+    opacity: 1; /* Firefox */
+}
+
+.filtered-search input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: #9e9e9e;
+}
+
+.filtered-search input::-ms-input-placeholder { /* Microsoft Edge */
+    color: #9e9e9e;
+}
+
+.selector-chosen input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #9e9e9e;
+    opacity: 1; /* Firefox */
+}
+
+.selector-chosen input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: #9e9e9e;
+}
+
+.selector-chosen input::-ms-input-placeholder { /* Microsoft Edge */
+    color: #9e9e9e;
+}
+
+.filtered-search .material-icons {
+	margin-top: 15px;
+	color: #039be5;
+}
