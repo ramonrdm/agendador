@@ -1,5 +1,5 @@
 #index {
-	overflow-x: hidden;	
+	overflow-x: hidden;
 }
 
 #unidade {
@@ -7,7 +7,7 @@
 	margin-right: 1vw;
 }
 
-#espacosCard, #equipamentosCard {
+#espacosCard, #equipamentosCard, #servicosCard {
 	background-color: white;
 }
 
@@ -22,4 +22,39 @@
 
 .collection-item {
 	word-wrap: break-word;
+}
+
+.card .card-image img {
+	width: auto;
+}
+
+.card-image {
+	height: 100px;
+}
+
+.card-image i {
+	display: block;
+	margin: auto;
+}
+
+.form {
+	background-color: white;
+}
+
+.btn {
+	margin-top: 6px;
+}
+
+.material-icons {
+	height: 1rem;
+}
+
+.errorlist li {
+	margin-top: -20px;
+	color: #F44336;
+	font-size: 75%;
+}
+
+.month {
+	text-align: center;
 }

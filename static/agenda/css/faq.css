@@ -1,0 +1,15 @@
+#icon {
+    color: white;
+}
+
+#content {
+    width: 100%;
+}
+
+#content-filter-option {
+    margin-left: 20px;
+}
+
+#options {
+    display: -webkit-inline-box;
+}

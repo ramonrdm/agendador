@@ -8,6 +8,10 @@ nav.topbar .brand-logo {
 	width: calc(100% - 178px);
 }
 
+.collapsible-header {
+	max-width: 100%;
+}
+
 nav.breadcrumbs{
 	height: 0px;
 }
@@ -15,6 +19,10 @@ nav.breadcrumbs{
 .circle.material-icons{
 	border-radius: 0px;
 	color: white;
+}
+
+.circle {
+	border-radius: 0px;
 }
 
 .unit-default {

@@ -109,7 +109,14 @@ def index(request, unidade=None):
         )
 
 def sobre(request):
-	return render(request, "agenda/sobre.html")
+    total_espacos = EspacoFisico.objects.all()
+    reservas_fisico_mes = dict()
+    for i in range(12):
+        reservas_fisico_mes[i+1] = len(ReservaEspacoFisico.objects.filter(data__month=(i+1), estado='A'))
+
+    print(len(total_espacos))
+    print(reservas_fisico_mes)
+    return render(request, "agenda/sobre.html")
 
 def ano(request, unidade=None ,year=None):
     # prev / next years
@@ -361,14 +368,14 @@ def get_pending_reserves(request):
     # get conflicting reserves
     conflict_reserves_ids = list()
     conflict_reserves_names = list()
-    
+
     if 'ending_date' in request.POST:
         ending_date = request.POST['ending_date']
         ending_date = datetime.strptime(ending_date, '%d/%m/%Y').date()
         checked_week_days = request.POST.getlist('checked_week_days[]')
         checked_week_days = map(int, checked_week_days)
         current_reserve = reserve_set.get(id=current_reserve_id)
-        
+
         recurrent_reserve = current_reserve.recorrencia.get_reserves()
         aux_date = recurrent_reserve[0].data
         recurrent_reserve_ids = [x.id for x in recurrent_reserve]

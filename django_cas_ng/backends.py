@@ -220,7 +220,7 @@ def _verify_cas2_saml(ticket, service):
 
 def _verify_cas3_saml(ticket, service):
     """CAS3 + SAML"""
-    
+
     try:
         from xml.etree import ElementTree
     except ImportError:
@@ -242,7 +242,7 @@ def _verify_cas3_saml(ticket, service):
     )
     # teste
     #saml_validat_url = urllib_parse.urljoin(settings.CAS_SERVER_URL, 'proxyValidate',)
-    
+
     url = Request(
         saml_validat_url + '?' + urllib_parse.urlencode(params),
         '',
@@ -277,7 +277,7 @@ def _verify_cas3_saml(ticket, service):
                             attributes[at.attrib['AttributeName']] = values_array
                     else:
                         attributes[at.attrib['AttributeName']] = values[0].text
-                """                        
+                """
         return attributes['login'], attributes
     finally:
         page.close()
@@ -327,11 +327,7 @@ class CASBackend(object):
             created = True
 
             # add user to default permission group
-            group, group_created = Group.objects.get_or_create(name='pode reservar')
-            if group_created:
-                group = self.give_permissions(group)
-            group.user_set.add(user)
-            group.save()
+            
 
         # send the `cas_user_authenticated` signal
         cas_user_authenticated.send(
