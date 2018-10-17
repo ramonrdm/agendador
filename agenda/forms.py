@@ -135,11 +135,11 @@ class ReservaAdminForm(forms.ModelForm):
         # For all fields, put the readonly widget and makes sure the data can't be tempered
         self.fields['data'].widget = ReadOnlyWidget()
         self.fields['data'].disabled = True
-        self.fields['horaInicio'].widget = ReadOnlyWidget(attrs={})
+        self.fields['horaInicio'].widget = ReadOnlyWidget(attrs=dict(label='Hora início'))
         self.fields['horaInicio'].disabled = True
-        self.fields['horaFim'].widget = ReadOnlyWidget(attrs={})
+        self.fields['horaFim'].widget = ReadOnlyWidget(attrs=dict(label='Hora fim'))
         self.fields['horaFim'].disabled = True
-        self.fields['locavel'].widget = ReadOnlyWidget(attrs={}, search_model=type(kwargs['instance'].locavel))
+        self.fields['locavel'].widget = ReadOnlyWidget(attrs=dict(label='Locável'), search_model=type(kwargs['instance'].locavel))
         self.fields['locavel'].disabled = True
         self.fields['atividade'].widget = ReadOnlyWidget(type(kwargs['instance'].atividade))
         self.fields['ramal'].widget = ReadOnlyWidget()
@@ -211,7 +211,7 @@ class ReservaAdminForm(forms.ModelForm):
             self.fields['usuario'].widget = forms.HiddenInput()
             self.fields['usuario'].label = ''
         else:
-            attrs = {}
+            attrs = dict(label="Usuário")
             if 'usuario' in self.errors:
                 attrs['error'] = self.errors['usuario']
             self.fields['usuario'].widget = AutocompleteWidget(attrs=attrs, query=User.objects.all(), model=User)
@@ -267,16 +267,19 @@ class ReservaAdminForm(forms.ModelForm):
         self.request.session['id_reservable_backup'] = self.id_reservable
         self.request.session['id_reservable'] = None
 
+        #setlabel
+        self.fields['locavel'].label = "Locável"
+
         self.fields['locavel'].widget.can_add_related = False  # remove add button
         self.fields['locavel'].widget.can_change_related = False  # remove edit button
 
     def init_hour_fields(self):
         # Check fields for error and intialize Widgets
-        attrs = {}
+        attrs = dict(label="Hora Inicio")
         if 'horaInicio' in self.errors:
             attrs['error'] = self.errors['horaInicio']
         self.fields['horaInicio'] = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget(attrs=attrs))
-        attrs = {}
+        attrs = dict(label="Hora Fim")
         if 'horaFim' in self.errors:
             attrs['error'] = self.errors['horaFim']
         self.fields['horaFim'] = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget(attrs=attrs))

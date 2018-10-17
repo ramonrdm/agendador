@@ -4,7 +4,7 @@ from django.dispatch import receiver
 
 @receiver(post_save, sender=User)
 def set_new_user_group(sender,instance,**kwargs):
-
+    instance.is_staff = True
     group, group_created = Group.objects.get_or_create(name='pode reservar')
     if group_created:
         add_physical_space_reserve = Permission.objects.filter(codename='add_reservaespacofisico')
