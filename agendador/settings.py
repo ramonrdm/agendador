@@ -28,7 +28,7 @@ SECRET_KEY = '&vn=ld^l+t0bo3r_3uy!3*6&x3x6_ppru#1lhm(gku!z+s6=kc'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0','127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.ufsc.br']
 INTERNAL_IPS = ['127.0.0.1']
 
 # Application definition
