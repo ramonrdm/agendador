@@ -10,6 +10,7 @@ from django.contrib.admin.models import LogEntry
 
 admin.site.register(Atividade)
 
+
 @admin.register(Unidade)
 
 class UnidadeAdmin(admin.ModelAdmin):
@@ -337,6 +338,18 @@ class UserAdmin(UserAdmin):
         return form
 
 
+class GroupAdmin(admin.ModelAdmin):
+    form = forms.GroupAdminForm
+    filter_horizontal=['permissions']
+
+    def get_form(self, request, *args, **kwargs):
+        form = super(GroupAdmin, self).get_form(request, *args, **kwargs)
+        form.request = request
+        return form
+
+
 admin.site.unregister(User)
+admin.site.unregister(Group)
+admin.site.register(Group, GroupAdmin)
 admin.site.register(User, UserAdmin)
 admin.site.register(LogEntry)
