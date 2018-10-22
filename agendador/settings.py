@@ -12,6 +12,12 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+def get_secret(secret_name):
+    try:
+        with open('/run/secrets/{0}'.format(secret_name), 'r') as secret_file:
+            return secret_file.read()
+    except IOError:
+        return None
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
@@ -22,7 +28,7 @@ SECRET_KEY = '&vn=ld^l+t0bo3r_3uy!3*6&x3x6_ppru#1lhm(gku!z+s6=kc'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0','127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.ufsc.br']
 INTERNAL_IPS = ['127.0.0.1']
 
 # Application definition
@@ -73,31 +79,21 @@ WSGI_APPLICATION = 'agendador.wsgi.application'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-"""DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'submitlibras',
-        'USER': 'submitlibras',
-        'PASSWORD': '',
+        'NAME': get_secret('agendador_name_db'),
+        'USER': get_secret('agendador_user_db'),
+        'PASSWORD': get_secret('agendador_password_db'),
         'HOST': 'mysql.sites.ufsc.br',
         'PORT': '3306',
     }
 }
-"""
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+
 TEMPLATES = [
         {
             'BACKEND': 'django.template.backends.django.DjangoTemplates',
-            'DIRS': [
-                './agenda/admin/templates',
-                './agenda/templates',
-                os.path.join(BASE_DIR, 'templates')
-            ],
+            'DIRS': [],
             'APP_DIRS': True,
             'OPTIONS': {
                 'context_processors': [
@@ -133,11 +129,11 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
 LOGIN_REDIRECT_URL = '/'
 
-EMAIL_HOST="smtp.sistemas.ufsc.br"
-EMAIL_PORT=465
-EMAIL_HOST_USER=""
-EMAIL_HOST_PASSWORD=""
-EMAIL_USE_SSL=True
+EMAIL_HOST = "smtp.sistemas.ufsc.br"
+EMAIL_PORT = 465
+EMAIL_HOST_USER = get_secret('agendador_email_user')
+EMAIL_HOST_PASSWORD = get_secret('agendador_email_password')
+EMAIL_USE_SSL = True
 
 #Sessao agendador
 SESSION_COOKIE_AGE = 43200 # 12 horas * 60 minutos * 60 segundos
