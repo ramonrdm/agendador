@@ -243,7 +243,7 @@ class Reserva(models.Model):
     def __str__(self):
         return "Reserva em "+self.locavel.nome+" feita por "+self.usuario.username+" para um(a) "+self.atividade.nome
 
-    def __str__(self):
+    def __unicode__(self):
         return "Reserva em "+self.locavel.nome+" feita por "+self.usuario.username+" para um(a) "+self.atividade.nome
 
 class ReservaEspacoFisico(Reserva):
