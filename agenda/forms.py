@@ -23,6 +23,27 @@ import admin
 translated_week_names = dict(Sunday='domingo', Monday='segunda-feira', Tuesday='terça-feira', Wednesday='quarta-feira', Thursday='quinta-feira', Friday='sexta-feira', Saturday='sábado')
 shortened_week_names = ('seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom')
 
+
+
+class AtividadeAdminForm(forms.ModelForm):
+
+    class Meta:
+        model = Atividade
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super(AtividadeAdminForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        all_actvs = Atividade.objects.all()
+        cleaned_data = super(AtividadeAdminForm, self).clean()
+        for actv in all_actvs:
+            if actv.nome.lower() == cleaned_data['nome'].lower():
+                raise ValidationError(("Já existe atividade com esse nome"), code="existing_activity")
+
+    def save(self, *args, **kwargs):
+        return super(AtividadeAdminForm, self).save(*args, **kwargs)
+
 class ReservaAdminForm(forms.ModelForm):
     recorrente = forms.BooleanField(required=False)
     dataInicio = forms.DateField(required=False)
@@ -578,7 +599,6 @@ class ReservaAdminForm(forms.ModelForm):
             current_date = current_date + timedelta(days=1)
         instance.save()
 
-
 class ReservaEquipamentoAdminForm(ReservaAdminForm):
     class Meta:
         model = ReservaEquipamento
@@ -813,7 +833,6 @@ class LocavelAdminForm(forms.ModelForm):
                     old_responsable.is_staff = False
                     old_responsable.save()
         return instance
-
 
 class EquipamentoAdminForm(LocavelAdminForm):
 

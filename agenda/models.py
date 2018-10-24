@@ -51,6 +51,8 @@ class Atividade(models.Model):
     def __str__(self):
         return self.nome
 
+
+
 class Locavel(models.Model):
     class Meta:
         abstract = True
@@ -238,8 +240,11 @@ class Reserva(models.Model):
                 ):
                 errors['data'] = 'Já existem reservas para esse dia e hora'
 
-    def __unicode__(self):
-        return self.usuario.username+"/"+self.atividade.nome
+    def __str__(self):
+        return "Reserva em "+self.locavel.nome+" feita por "+self.usuario.username+" para um(a) "+self.atividade.nome
+
+    def __str__(self):
+        return "Reserva em "+self.locavel.nome+" feita por "+self.usuario.username+" para um(a) "+self.atividade.nome
 
 class ReservaEspacoFisico(Reserva):
     class Meta:
@@ -251,9 +256,10 @@ class ReservaEspacoFisico(Reserva):
     def clean(self):
         super(ReservaEspacoFisico, self).clean()
 
+'''
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
-
+'''
 
 class ReservaEquipamento(Reserva):
     locavel = models.ForeignKey(Equipamento, verbose_name='Locável', on_delete=models.PROTECT)
@@ -261,8 +267,10 @@ class ReservaEquipamento(Reserva):
     def clean(self):
         super(ReservaEquipamento, self).clean()
 
+'''
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
+'''
 
 class ReservaServico(Reserva):
     class Meta:
@@ -274,5 +282,7 @@ class ReservaServico(Reserva):
     def clean(self):
         super(ReservaServico, self).clean()
 
+'''
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
+'''

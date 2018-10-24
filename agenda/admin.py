@@ -8,7 +8,19 @@ from django.contrib.auth.admin import UserAdmin
 import forms
 from django.contrib.admin.models import LogEntry
 
-admin.site.register(Atividade)
+
+
+
+class AtividadeAdmin(admin.ModelAdmin):
+    form = forms.AtividadeAdminForm
+
+    def get_form(self, request, *args, **kwargs):
+        form = super(AtividadeAdmin, self).get_form(request, *args, **kwargs)
+        form.request = request
+        return form
+        
+admin.site.register(Atividade, AtividadeAdmin)
+
 
 
 @admin.register(Unidade)
