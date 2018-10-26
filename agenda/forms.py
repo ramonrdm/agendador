@@ -444,7 +444,7 @@ class ReservaAdminForm(forms.ModelForm):
 
             # If fisical aspects of the reserve have been changed we need to check for conflict, otherwise not
             check_conflict = False
-            dont_check_field = ['estado', 'atividade', 'ramal', 'finalidade', 'usuario', 'recorrente', 'dataInicio', 'dataFim']
+            dont_check_field = ['atividade', 'ramal', 'finalidade', 'usuario', 'recorrente', 'dataInicio', 'dataFim']
             # Check form variables
             for key in cleaned_data:
                 if (key in self.changed_data) and (key not in dont_check_field):
