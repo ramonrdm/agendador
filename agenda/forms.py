@@ -490,7 +490,7 @@ class ReservaAdminForm(forms.ModelForm):
         ending_date = cleaned_data['dataFim']
         starting_time = cleaned_data['horaInicio']
         ending_time = cleaned_data['horaFim']
-        dummy_activitie = Atividade.objects.create(nome='dummy', descricao='dummy')
+        dummy_activitie = Atividade(nome="dummy", descricao="dummy")
 
         reserve_days = self.recurrent_week_days()
 
@@ -514,15 +514,12 @@ class ReservaAdminForm(forms.ModelForm):
         error = False
         while current_date <= ending_date:
             if current_date.weekday() in reserve_days:
-                dummy_reserve = self.reserve_type.objects.create(data=current_date, horaInicio=starting_time, horaFim=ending_time, atividade=dummy_activitie, usuario=self.request.user, ramal=1, finalidade='1', locavel=reservable)
+                dummy_reserve = self.reserve_type(data=current_date, horaInicio=starting_time, horaFim=ending_time, atividade=dummy_activitie, usuario=self.request.user, ramal=1, finalidade='1', locavel=reservable)
                 error_dict = dict()
                 dummy_reserve.verificaChoque(error_dict, query)
-                dummy_reserve.delete()
                 if bool(error_dict):
                     error =  'Reservas nesse período causarão choque de horário.'
             current_date = current_date + timedelta(days=1)
-
-        dummy_activitie.delete()
         return error
 
     def save(self, *args, **kwargs):

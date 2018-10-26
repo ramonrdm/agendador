@@ -6,6 +6,7 @@ from material.frontend import urls as frontend_urls
 from agenda import views
 from django_cas_ng import views as views2
 from django.views import generic
+
 admin.autodiscover()
 
 urlpatterns = [
@@ -39,7 +40,6 @@ urlpatterns = [
     url(r"^calendar/(e|f|s)/(\d+)/(\d+)/(\d+)/(prev|next)/$", views._calendar, name="cute_calendar_"),
     url(r"^calendar/(e|f|s)/(\d+)/(\d+)/(\d+)/$", views._calendar, name="cute_calendar__"),
     url(r'^calendar/(e|f|s)/(\d+)/$', views._calendar, name='cute_calendar___'),
-    #dia, mes, ano, 
+    #dia, mes, ano,
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
