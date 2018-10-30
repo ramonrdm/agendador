@@ -370,6 +370,7 @@ class ReservaAdminForm(forms.ModelForm):
             for responsable in responsables:
                 responsable_title = 'Pedido de reserva de %s' % reservable.nome.encode("utf-8")
                 user_dict["responsable"] = responsable
+                user_dict["link"] = url
                 responsable_text = render_to_string("agenda/email_responsable.html", user_dict)
                 try:
                     send_mail(responsable_title, "", settings.EMAIL_HOST_USER, [responsable.email], html_message=responsable_text)
