@@ -15,6 +15,7 @@ from django.contrib.admin.sites import AdminSite
 from django.core.exceptions import ValidationError
 from django.contrib.admin import widgets
 from django.forms.widgets import Select
+from django.template.loader import render_to_string
 from widgets import *
 from django.contrib.auth.models import User, Group, Permission
 from django.db.models.fields.related import ManyToOneRel
@@ -346,50 +347,15 @@ class ReservaAdminForm(forms.ModelForm):
         else:
             recurrent_text = ''
 
+        user_dict = dict(user=user, reservable=reservable.nome.encode("utf-8"), date=date.strftime("%d/%m/%Y"), recurrent=recurrent_text, beginTime=start.strftime('%H:%M'), endTime=end.strftime("%H:%M"))
+
         # First we send an email to the user who asked for the reserve
         if status == 'A':
             email_title = 'Reserva de %s confirmada.' % reservable.nome.encode("utf-8")
-            email_text = '''
-                Olá, %s,
-                Sua reserva de %s para o dia %s%s, das %s às %s, foi confirmada.
-
-                -------
-                E-mail automático, por favor não responda.
-            ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'))
+            user_dict['suffix'] = "foi confirmada."
         elif status == 'E':
             email_title = 'Reserva de %s aguardando aprovação.' % reservable.nome.encode("utf-8")
-            email_text = '''
-                Olá, %s,
-                Sua reserva de %s para o dia %s%s, das %s às %s, está aguardando aprovação. Você receberá uma notificação quando o estado da sua reserva for atualizado.
-
-                -------
-                E-mail automático, por favor não responda.
-            ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'))
-        elif status == 'D':
-            email_title = 'Reserva de %s negada.' % reservable.nome.encode("utf-8")
-            email_text = '''
-                Olá, %s,
-                Sua reserva de %s para o dia %s%s, das %s às %s, foi negada.
-
-                -------
-                E-mail automático, por favor não responda.
-            ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'))
-        elif status == 'C':
-            email_title = 'Reserva de %s canceada.' % reservable.nome.encode("utf-8")
-            email_text = '''
-                Olá, %s,
-                Sua reserva de %s para o dia %s%s, das %s às %s, foi cancelada.
-
-                -------
-                E-mail automático, por favor não responda.
-            ''' % (user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'))
-        try:
-            send_mail(email_title, email_text, settings.EMAIL_HOST_USER, [user.email])
-        except:
-            messages.error(self.request, 'E-mail não enviado para solicitante.')
-
-        # If the user doesn't have permission we need to send a e-mail to the reservable responsable
-        if status == 'E':
+            user_dict['suffix'] = " está aguardando aprovação. Você receberá uma notificação quando o estado da sua reserva for atualizado."
             # Need to check reservable instance to genereate the link
             if isinstance(reservable, EspacoFisico):
                 reserve_type = 'reservaespacofisico'
@@ -402,19 +368,27 @@ class ReservaAdminForm(forms.ModelForm):
             url = "%sadmin/agenda/%s/%d/change/" % (base_url, reserve_type, instance.id)
 
             for responsable in responsables:
-                email_title = 'Pedido de reserva de %s' % reservable.nome.encode("utf-8")
-                email_text = '''
-                    Olá, %s,
-                    %s fez um pedido de reserva em %s, para o dia %s%s, das %s às %s. Use o link abaixo para analisar o pedido.
-                    %s
-
-                    -------
-                    E-mail automático, por favor não responda.
-                ''' % (responsable, user, reservable.nome.encode("utf-8"), date.strftime('%d/%m/%Y'), recurrent_text, start.strftime('%H:%M'), end.strftime('%H:%M'), url)
+                responsable_title = 'Pedido de reserva de %s' % reservable.nome.encode("utf-8")
+                user_dict["responsable"] = responsable
+                responsable_text = render_to_string("agenda/email_responsable.html", user_dict)
                 try:
-                    send_mail(email_title, email_text, settings.EMAIL_HOST_USER, [responsable.email])
+                    send_mail(responsable_title, responsable_text, settings.EMAIL_HOST_USER, [responsable.email])
                 except:
                     messages.error(self.request, 'E-mail não enviado para responsável')
+                    #print(responsable_text)
+        elif status == 'D':
+            email_title = 'Reserva de %s negada.' % reservable.nome.encode("utf-8")
+            user_dict['suffix'] = "foi negada."
+        elif status == 'C':
+            email_title = 'Reserva de %s canceada.' % reservable.nome.encode("utf-8")
+            user_dict['suffix'] = "foi cancelada."
+
+        email_text = render_to_string("agenda/email_user.html", user_dict)
+        try:
+            send_mail(email_title,"", settings.EMAIL_HOST_USER, [user.email], html_message=email_text)
+        except:
+            messages.error(self.request, 'E-mail não enviado para solicitante.')
+            # print(email_text)
 
     def clean(self):
         cleaned_data = super(ReservaAdminForm, self).clean()
