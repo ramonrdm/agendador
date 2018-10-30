@@ -372,7 +372,7 @@ class ReservaAdminForm(forms.ModelForm):
                 user_dict["responsable"] = responsable
                 responsable_text = render_to_string("agenda/email_responsable.html", user_dict)
                 try:
-                    send_mail(responsable_title, responsable_text, settings.EMAIL_HOST_USER, [responsable.email])
+                    send_mail(responsable_title, "", settings.EMAIL_HOST_USER, [responsable.email], html_message=responsable_text)
                 except:
                     messages.error(self.request, 'E-mail não enviado para responsável')
                     #print(responsable_text)
