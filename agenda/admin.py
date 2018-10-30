@@ -18,7 +18,7 @@ class AtividadeAdmin(admin.ModelAdmin):
         form = super(AtividadeAdmin, self).get_form(request, *args, **kwargs)
         form.request = request
         return form
-        
+
 admin.site.register(Atividade, AtividadeAdmin)
 
 
@@ -71,7 +71,8 @@ class UnidadeAdmin(admin.ModelAdmin):
 
 class ReservaAdmin(admin.ModelAdmin):
     list_display = ('usuario', 'locavel', 'data', 'ramal', 'finalidade', 'estado')
-    search_fields = ['finalidade', 'usuario__username', 'estado']
+    search_fields = ['finalidade', 'usuario__username']
+    list_filter=["estado"]
 
     class Media:
         js = ('agenda/js/reserve_form.js',)
