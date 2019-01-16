@@ -118,6 +118,10 @@ def sobre(request):
     print(reservas_fisico_mes)
     return render(request, "agenda/sobre.html")
 
+def manutencao(request):
+    return render(request, "agenda/manutencao.html")
+
+
 def ano(request, unidade=None ,year=None):
     # prev / next years
     if year: year = int(year)
