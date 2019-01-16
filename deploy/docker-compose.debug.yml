@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  agendador:
+    stdin_open: true
+    tty: true
+    build: ../.
+    volumes:
+      - ../.:/var/www/html/agendador
+    ports:
+      - 80:80
