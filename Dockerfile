@@ -5,11 +5,11 @@ RUN apt-get install -y apache2 libapache2-mod-wsgi python-mysqldb python-pip && 
 
 RUN pip install django==1.10.01
 
-ENV APACHE_RUN_USER www-data
-ENV APACHE_RUN_GROUP www-data
-ENV APACHE_LOG_DIR /var/log/apache2
-ENV APACHE_LOCK_DIR /var/lock/apache2
-ENV APACHE_PID_FILE /var/run/apache2.pid
+#ENV APACHE_RUN_USER www-data
+#ENV APACHE_RUN_GROUP www-data
+#ENV APACHE_LOG_DIR /var/log/apache2
+#ENV APACHE_LOCK_DIR /var/lock/apache2
+#ENV APACHE_PID_FILE /var/run/apache2.pid
 
 RUN mkdir /var/www/html/agendador/
 WORKDIR /var/www/html/agendador/

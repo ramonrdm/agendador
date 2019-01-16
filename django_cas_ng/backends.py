@@ -124,6 +124,21 @@ IssueInstant="{timestamp}">
 </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>"""
 
+SAML_ASSERTION_TEMPLATE = """
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+  <SOAP-ENV:Header/>
+  <SOAP-ENV:Body>
+    <samlp:Request xmlns:samlp="urn:oasis:names:tc:SAML:1.0:protocol" MajorVersion="1"
+      MinorVersion="1" RequestID="{request_id}"
+      IssueInstant="{timestamp}">
+      <samlp:AssertionArtifact>
+        {ticket}
+      </samlp:AssertionArtifact>
+    </samlp:Request>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+"""
+
 
 def get_saml_assertion(ticket):
     """
@@ -233,7 +248,7 @@ def _verify_cas3_saml(ticket, service):
         'pragma': 'no-cache',
         'accept': 'text/xml',
         'connection': 'keep-alive',
-        'content-type': 'text/xml; charset=utf-8',
+        'content-type': 'text/xml; ',
     }
     params = [('ticket', ticket), ('service', service), ('TARGET', service)]
 
@@ -248,13 +263,30 @@ def _verify_cas3_saml(ticket, service):
         '',
         headers,
     )
+
+    print "#############################"
+    print urllib_parse.urlencode(params)
+    print url
+
+    print "SAML"
+    print get_saml_assertion(ticket)
+    print ""
+    from urllib2 import URLError
+    try:
+        print urlopen(url, data=get_saml_assertion(ticket))
+    except URLError, e:
+        print e
+    print "-------"
     page = urlopen(url, data=get_saml_assertion(ticket))
+    print "###################################"
 
     try:
+
         user = None
         attributes = {}
         response = page.read()#.replace('\n','')
         #response = response.encode("utf-8")
+        print response
         tree = ElementTree.fromstring(response)
         #print response
         # Find the authentication status
@@ -278,7 +310,7 @@ def _verify_cas3_saml(ticket, service):
                     else:
                         attributes[at.attrib['AttributeName']] = values[0].text
                 """
-        return attributes['login'], attributes
+        return attributes['idPessoa'], attributes
     finally:
         page.close()
 
