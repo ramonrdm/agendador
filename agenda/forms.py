@@ -18,8 +18,11 @@ from django.forms.widgets import Select
 from django.template.loader import render_to_string
 from widgets import *
 from django.contrib.auth.models import User, Group, Permission
+from django.contrib.auth.forms import UserCreationForm
 from django.db.models.fields.related import ManyToOneRel
 import admin
+
+
 
 translated_week_names = dict(Sunday='domingo', Monday='segunda-feira', Tuesday='terça-feira', Wednesday='quarta-feira', Thursday='quinta-feira', Friday='sexta-feira', Saturday='sábado')
 shortened_week_names = ('seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom')
@@ -899,3 +902,10 @@ class GroupAdminForm(forms.ModelForm):
         instance = super(GroupAdminForm, self).save()
         self.save_m2m()
         return instance
+
+
+class RegisterForm(UserCreationForm):
+    email = forms.EmailField(max_length=254, help_text="Obrigatório. Informe um email válido")
+    class Meta:
+        model = User
+        fields = ("username", "email", "password1", "password2")

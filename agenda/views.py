@@ -10,10 +10,12 @@ from django.forms.models import modelformset_factory
 from django.template import RequestContext, Library
 from django.views.decorators import csrf
 from agenda.models import *
-from agenda.forms import ReservaEspacoFisicoAdminForm
+from agenda.forms import ReservaEspacoFisicoAdminForm, RegisterForm
 from django import forms
 from django.contrib.admin.sites import AdminSite
 from django.contrib.flatpages.models import FlatPage
+from django.contrib.auth import login, authenticate
+from django.shortcuts import render, redirect
 
 from datetime import date
 import admin
@@ -121,6 +123,32 @@ def sobre(request):
 def manutencao(request):
     return render(request, "agenda/manutencao.html")
 
+def normal_registration(request):
+    if request.method == "POST":
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect("index")
+    else:
+        form = RegisterForm()
+    return render(request, "agenda/registrar.html", {"form":form})
+
+def reset_pw(request):
+    message = ""
+    if request.method == "POST":
+        # aqui tinha que enviar o email pro cara com um token, tem que gerar um token etcc.#
+        
+        email = request.POST['email']
+        message = "Um email foi enviado para você"
+        try:
+            match = User.objects.get(email=email)
+        except User.DoesNotExist:
+            message = "não existe usuário com esse email"
+    return render(request, "agenda/pwreset_request.html", {"message":message})
 
 def ano(request, unidade=None ,year=None):
     # prev / next years

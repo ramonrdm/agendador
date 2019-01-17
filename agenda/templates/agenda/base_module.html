@@ -27,7 +27,9 @@
     <li><a href="{% url 'faq' %}">FAQ/Instruções<i class="material-icons">help</i></a></li>
     <li><a href="{% url 'sobre' %}">Sobre<i class="material-icons">info</i></a></li>
     {% if request.user.is_anonymous %}
-    <li><a href="{% url 'login' %}">Login<i class="material-icons">exit_to_app</i></a></li>
+    <li><a href="{% url 'login_normal' %}">Login<i class="material-icons">exit_to_app</i></a></li>
+    <li><a href="{% url 'register_normal' %}">Registrar<i class="material-icons">exit_to_app</i></a></li>
+    <li><a href="{% url 'cas_ng_login' %}">Login UFSC<i class="material-icons">exit_to_app</i></a></li>
     {% else %}
     <li><a href="{% url 'logout' %}">Logout<i class="material-icons">exit_to_app</i></a></li>
     {% endif %}
