@@ -16,7 +16,8 @@ from django.contrib.admin.sites import AdminSite
 from django.contrib.flatpages.models import FlatPage
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
-
+from django.utils.crypto import get_random_string
+from django.core.mail import send_mail
 from datetime import date
 import admin
 from forms import *
@@ -137,18 +138,28 @@ def normal_registration(request):
         form = RegisterForm()
     return render(request, "agenda/registrar.html", {"form":form})
 
-def reset_pw(request):
+def reset_pw_request(request):
     message = ""
     if request.method == "POST":
         # aqui tinha que enviar o email pro cara com um token, tem que gerar um token etcc.#
-        
         email = request.POST['email']
-        message = "Um email foi enviado para você"
-        try:
+        if (email == ""):
+            message = "Campo email é obrigatório"
+        else:
             match = User.objects.get(email=email)
-        except User.DoesNotExist:
-            message = "não existe usuário com esse email"
-    return render(request, "agenda/pwreset_request.html", {"message":message})
+            if (len([match]) == 1):
+                message = "Sucesso"
+                token_string = get_random_string(length=32)
+                token = RecoveryToken(token=token_string, user=match)
+                token.save()
+                #send_mail("Redefinição de senha", "", settings.EMAIL_HOST_USER, [email], html_message="ARRUMAR MENSAGEM, "+token)
+                print("mando email")
+            else:
+                message = "falho"
+    return render(request,"agenda/pwreset_request.html", {"message":message})
+
+def reset_pw(request):
+    return render(request, "")
 
 def ano(request, unidade=None ,year=None):
     # prev / next years

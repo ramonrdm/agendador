@@ -286,3 +286,13 @@ class ReservaServico(Reserva):
     def __unicode__(self):
         return self.usuario.username+"/"+self.atividade.nome
 '''
+
+
+class RecoveryToken(models.Model):
+    class Meta:
+        verbose_name = "Token de recuperação"
+        verbose_name_plural="Tokens de recuperação"
+        
+    token = models.CharField(max_length=32)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    request_time = models.DateTimeField(auto_now_add=True)
