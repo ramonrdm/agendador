@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^accounts/logincas/', views.manutencao, name="cas_ng_login"),
     url(r'^accounts/logout/', views.manutencao, name="cas_ng_logout"),
     url(r'^accounts/resetpwrequest/$', views.reset_pw_request, name="reset_password_request"),
-    url(r'^accounts/resetpw/(?P<token>)$', views.reset_pw, name="reset_password"),
+    url(r'^accounts/resetpw/(?P<token>\w+)/', views.reset_pw, name="reset_password"),
     #url(r'^admin/login/', views.manutencao, name="cas_ng_login"),
     url(r'^admin/', include(admin.site.urls)),
     url(r'', include(frontend_urls)),

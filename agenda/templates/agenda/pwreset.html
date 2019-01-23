@@ -10,18 +10,29 @@
 {% block content %}
 <div id="content" class="row">
     <div class="card">
-        <h2> Redefinir senha </h2>
-        <div class="card-content">
-        {{message}}
-          <form method="post">
-              {% csrf_token %}
-                <label for="senha1">Nova Senha</label>
-                <input id="senha1" name="senha1" type="password" class="form-control">
-                <label for="senha1">Repita a senha</label>
-                <input id="senha2" name="senha2" type="password" class="form-control">
-                <button type="submit">Redefinir</button>
-          </form>
-      </div>
+        {% if 'Ok' == status %}
+            <h2> Redefinir senha </h2>
+            <div class="card-content">
+            {{message}}
+              <form method="post">
+                  {% csrf_token %}
+                    <span style="color:red">{{ errorMsg }}</span>
+                    <label for="senha1">Nova Senha</label>
+                    <input id="senha1" name="senha1" type="password" class="form-control">
+                    <label for="senha1">Repita a senha</label>
+                    <input id="senha2" name="senha2" type="password" class="form-control">
+                    <button type="submit">Redefinir</button>
+              </form>
+            </div>
+        {% elif 'Bad Token' == status %}
+            <div class="card-content">
+                <h2> BAD TOKEN </h2>
+            </div>
+        {% else %}
+            <div class="card-content">
+                <h2> DONE </h2>
+            </div>
+        {%endif%}
   </div>
 </div>
 {% endblock %}

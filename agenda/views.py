@@ -158,8 +158,33 @@ def reset_pw_request(request):
                 message = "falho"
     return render(request,"agenda/pwreset_request.html", {"message":message})
 
-def reset_pw(request):
-    return render(request, "")
+def reset_pw(request, token):
+    status = "Ok"
+    try:
+        recoveryToken = RecoveryToken.objects.get(token=token)
+    except RecoveryToken.DoesNotExist:
+        status = "Bad Token"
+        return render(request, "agenda/pwreset.html", {"message":"", "status":status})
+
+    errorMsg = ""
+    if request.method == "POST":
+        pw1 = request.POST["senha1"]
+        pw2 = request.POST["senha2"]
+        if (pw1 == pw2):
+            status = "Done"
+            recoveryToken.user.set_password(pw1)
+            recoveryToken.user.save()
+            recoveryToken.used=True
+            recoveryToken.save()
+            return render(request, "agenda/pwreset.html", {"message":"", "status":status})
+        else:
+            errorMsg = "A confirmação deve ser igual a senha digitada. "
+            
+    if recoveryToken.used==True:
+        status = "Bad Token"
+        return render(request, "agenda/pwreset.html", {"message":"", "status":status})
+    else:
+        return render(request, "agenda/pwreset.html", {"message":errorMsg, "status":status})
 
 def ano(request, unidade=None ,year=None):
     # prev / next years
