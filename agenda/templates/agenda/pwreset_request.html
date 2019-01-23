@@ -12,7 +12,7 @@
     <div class="card">
         <h2> Recuperar/Criar Senha </h2>
         <div class="card-content">
-        {{message}}
+        <span {% if 'fail' == status %} style="color:red;" {% else %} style="color:green;" {% endif %} >{{message}}</span>
           <form method="post">
                 {% csrf_token %}
                 <label for="email">Email</label>

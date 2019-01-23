@@ -133,11 +133,13 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
 LOGIN_REDIRECT_URL = '/'
 
-EMAIL_HOST="smtp.sistemas.ufsc.br"
-EMAIL_PORT=465
-EMAIL_HOST_USER="reservas.ccs@sistemas.ufsc.br"
+
+EMAIL_HOST=""
+EMAIL_PORT=2200
+EMAIL_HOST_USER=""
 EMAIL_HOST_PASSWORD=""
 EMAIL_USE_SSL=True
+
 
 #Sessao agendador
 SESSION_COOKIE_AGE = 43200 # 12 horas * 60 minutos * 60 segundos

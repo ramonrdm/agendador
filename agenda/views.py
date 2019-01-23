@@ -140,23 +140,33 @@ def normal_registration(request):
 
 def reset_pw_request(request):
     message = ""
+    status = ""
     if request.method == "POST":
         # aqui tinha que enviar o email pro cara com um token, tem que gerar um token etcc.#
         email = request.POST['email']
         if (email == ""):
             message = "Campo email é obrigatório"
+            status = "fail"
         else:
-            match = User.objects.get(email=email)
-            if (len([match]) == 1):
-                message = "Sucesso"
-                token_string = get_random_string(length=32)
-                token = RecoveryToken(token=token_string, user=match)
-                token.save()
-                #send_mail("Redefinição de senha", "", settings.EMAIL_HOST_USER, [email], html_message="ARRUMAR MENSAGEM, "+token)
-                print("mando email")
-            else:
-                message = "falho"
-    return render(request,"agenda/pwreset_request.html", {"message":message})
+            try:
+                match = User.objects.get(email=email)
+            except User.DoesNotExist:
+                message = "Não existe usuário com esse email."
+                status = "fail"
+                return render(request, "agenda/pwreset_request.html", {"message":message, "status":status})
+
+            token_string = get_random_string(length=32)
+            recovT = RecoveryToken(token=token_string, user=match)
+            recovT.save()
+            base_url = request.build_absolute_uri('/')
+            url = "%saccounts/resetpw/%s" % (base_url, recovT.token)
+            text = render_to_string("agenda/pwreset_email.html", {"link":url})
+            # esse send mail só vai funcionar se o email lá estiver configurado certinho no settings.py#
+            send_mail("Redefinição de senha", "", settings.EMAIL_HOST_USER, [email], html_message=text)
+            message = "Um email foi enviado com um link para realizar a (re)definição da sua senha."
+            status = "success"
+
+    return render(request,"agenda/pwreset_request.html", {"message":message, "status":status})
 
 def reset_pw(request, token):
     status = "Ok"
@@ -179,7 +189,7 @@ def reset_pw(request, token):
             return render(request, "agenda/pwreset.html", {"message":"", "status":status})
         else:
             errorMsg = "A confirmação deve ser igual a senha digitada. "
-            
+
     if recoveryToken.used==True:
         status = "Bad Token"
         return render(request, "agenda/pwreset.html", {"message":"", "status":status})

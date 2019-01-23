@@ -3,13 +3,15 @@
 {% load static %}
 {% block title %}Agendador - Login{% endblock %}
 {% block js %}
+    <link rel='stylesheet' href="{% static 'agenda/css/login_register_pages.css' %}" />
     <script src="{% static 'material/js/jquery.js' %}"></script>
     <script src="{% static 'material/js/materialize.js' %}"></script>
 {% endblock %}
 
 {% block content %}
-    <div id="content-container" class="container p-none">
-        <div class="lgn-container col-lg-8">
+<div id="content" class="row">
+    <div class="card col">
+        <div class="card-content">
             <form id="login-form" method="post">
                 {% csrf_token %}
                 <table class="table">
@@ -31,9 +33,23 @@
                 {% endif %}
 
                 <input type="submit" value="Login"
-                       class="btn btn-primary pull-right" />
-                <a href='{%url "reset_password_request"%}' class="btn btn-primary pull-right">Clique aqui caso esqueceu sua senha ou nunca logou por esse modo</a>
+                        class="btn btn-primary grey lighten-5 black-text pull-right" />
+                <a href='{%url "reset_password_request"%}' class="btn tooltipped btn-primary grey lighten-5 black-text pull-right"
+                    data-position="bottom" data-tooltip="Clique aqui caso você esqueceu a senha ou sempre realizou logins pela ufsc">(Re)definir senha</a>
             </form>
         </div>
     </div>
+
+    <div class="card col">
+        <div class="card-content">
+            <p>
+                Login pela UFSC
+            </p>
+            <p>
+                <a href='{%url "cas_ng_login"%}'><img width="180" height="190" src='{% static "agenda/img/logoufsc.png" %}'/></a>
+            </p>
+        </div>
+    </div>
+
+</div>
 {% endblock content %}
