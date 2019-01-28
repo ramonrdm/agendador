@@ -7,19 +7,24 @@
     <script src="{% static 'material/js/materialize.js' %}"></script>
 {% endblock %}
 
+
+
+{% block page_title %}
+    <strong> Recuperar/Criar Senha </strong>
+{% endblock %}
+
 {% block content %}
 <div id="content" class="row">
     <div class="card">
-        <h2> Recuperar/Criar Senha </h2>
         <div class="card-content">
-        <span {% if 'fail' == status %} style="color:red;" {% else %} style="color:green;" {% endif %} >{{message}}</span>
-          <form method="post">
-                {% csrf_token %}
-                <label for="email">Email</label>
-                <input id="email" name="email" type="text" class="form-control">
-                <button type="submit">Enviar</button>
-          </form>
+            <span {% if 'fail' == status %} style="color:red;" {% else %} style="color:green;" {% endif %} >{{message}}</span>
+              <form style="" method="post">
+                    {% csrf_token %}
+                    <label for="email">Email</label>
+                    <input id="email" name="email" type="text" class="form-control">
+                    <button class="btn btn-primary grey lighten-5 black-text" type="submit">Solicitar</button>
+              </form>
+          </div>
       </div>
-  </div>
 </div>
 {% endblock %}
