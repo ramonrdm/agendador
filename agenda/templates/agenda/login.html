@@ -1,12 +1,19 @@
 {% extends "agenda/base_module.html" %}
 {% load i18n material_frontend %}
 {% load static %}
-{% block title %}Agendador - Login{% endblock %}
+{% block title %}Login{% endblock %}
 {% block js %}
     <link rel='stylesheet' href="{% static 'agenda/css/login_register_pages.css' %}" />
     <script src="{% static 'material/js/jquery.js' %}"></script>
     <script src="{% static 'material/js/materialize.js' %}"></script>
 {% endblock %}
+
+
+
+{% block page_title %}
+    <strong>Login</strong>
+{% endblock %}
+
 
 {% block content %}
 <div id="content" class="row">
@@ -35,7 +42,7 @@
                 <input type="submit" value="Login"
                         class="btn btn-primary grey lighten-5 black-text pull-right" />
                 <a href='{%url "reset_password_request"%}' class="btn tooltipped btn-primary grey lighten-5 black-text pull-right"
-                    data-position="bottom" data-tooltip="Clique aqui caso você esqueceu a senha ou sempre realizou logins pela ufsc">(Re)definir senha</a>
+                    data-position="bottom" data-tooltip="Clique aqui caso você esqueceu sua senha ou sempre realizou logins pela ufsc">(Re)definir senha</a>
             </form>
         </div>
     </div>

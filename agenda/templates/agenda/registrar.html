@@ -1,35 +1,35 @@
 {% extends "agenda/base_module.html" %}
 {% load i18n material_frontend %}
 {% load static %}
-{% block title %}Agendador - Registrar{% endblock %}
+{% block title %}Registrar{% endblock %}
 {% block js %}
     <script src="{% static 'material/js/jquery.js' %}"></script>
     <script src="{% static 'material/js/materialize.js' %}"></script>
 {% endblock %}
 
+
+{% block page_title %}
+    <strong>Registrar</strong>
+{% endblock %}
+
 {% block content %}
 <div id="content" class="row">
-    <div class="card">
-        <h2> Registrar </h2>
-        <div class="card-content">
-          <form method="post">
-                {% csrf_token %}
-                {% for field in form %}
-                      <p>
-                            {{ field.label_tag }}<br>
-                            {{ field }}
-                            {% if field.help_text %}
-                              <small style="color: grey">{{ field.help_text }}</small>
-                            {% endif %}
-                            {% for error in field.errors %}
-                              <p style="color: red">{{ error }}</p>
-                            {% endfor %}
-                      </p>
-                      <br>
-                {% endfor %}
-                <button type="submit">Sign up</button>
-          </form>
-      </div>
-  </div>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+              <p>
+                    {{ field.label_tag }}<br>
+                    {{ field }}
+                    {% if field.help_text %}
+                      <small style="color: grey">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                      <p style="color: red">{{ error }}</p>
+                    {% endfor %}
+              </p>
+              <br>
+        {% endfor %}
+        <button class="btn btn-primary black-text grey lighten-5" type="submit">Registrar</button>
+    </form>
 </div>
 {% endblock %}
