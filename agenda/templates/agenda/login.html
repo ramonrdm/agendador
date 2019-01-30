@@ -18,7 +18,7 @@
 {% block content %}
 <div id="content" class="row">
     <div class="col l6 m6 s6">
-        <div class="card">
+        <div class="card medium center-align">
             <div class="card-content">
                 <div class="card-title">
                      Acesso via e-mail e senha no sistema:
@@ -54,28 +54,30 @@
     </div>
 
     <div class="col l6 m6 s6">
-
-        <div class="card">
-            <p>
-                Acesso via IdUFSC:
-            </p>
-            <p>
+        <div class="card medium center-align">
+            <div class="card-content" >
+                <div class="card-title">
+                    Acesso via IdUFSC:
+                </div>
+            <p >
                 <a href='{%url "cas_ng_login"%}'><img width="180" height="190" src='{% static "agenda/img/logoufsc.png" %}'/></a>
             </p>
+            </div>
         </div>
     </div>
 
 
     <div class="col s12 m12 l12">
         <div class="card-panel">
-            <span>
-                Você pode acessar o sistema de duas formas,
-                utilizando o IdUFSC ou criando um usuário e senha novo.
-                Caso você já tenha usuário com IdUFSC seu usuário será seu
-                e-mail cadastrado na UFSC e você irá criar uma senha para o sistema de reservas.
+            <span class="center-align">
+                <p>Você pode acessar o sistema de duas formas,</p>
+                <p>utilizando o IdUFSC ou criando um usuário e senha novo.</p>
+                <p>Caso você já tenha usuário com IdUFSC seu usuário será seu</p>
+                <p>e-mail cadastrado na UFSC e você irá criar uma senha para o sistema de reservas.</p>
             </span>
         </div>
     </div>
     
 </div>
+
 {% endblock content %}

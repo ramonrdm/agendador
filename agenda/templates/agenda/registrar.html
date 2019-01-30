@@ -14,7 +14,13 @@
 
 {% block content %}
 <div id="content" class="row">
-    <form method="post">
+  <div class="col 12">
+    <div class="card">
+      <div class="card-title center-align">
+        Registrar um novo usuário:
+      </div>
+      <div class="card-content">
+        <form method="post">
         {% csrf_token %}
         {% for field in form %}
               <p>
@@ -31,5 +37,9 @@
         {% endfor %}
         <button class="btn btn-primary black-text grey lighten-5" type="submit">Registrar</button>
     </form>
+      </div>
+    </div>
+  </div>
+
 </div>
 {% endblock %}
