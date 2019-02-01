@@ -1,8 +1,6 @@
 Agendador
 =========
 
-ramon2
-
 Agendador de espaço físico
 
 + Cria espaço físico para agendamento de horário.
@@ -20,6 +18,11 @@ Agendador de espaço físico
     https://github.com/viewflow/django-material/
 
 Reponsavel Ramon Dutra Miranda
+
+Executando projeto via docker-compose:
+```
+$ docker-compose -f deploy/docker-compose.debug.yml up
+```
 
 Executando o projeto localmente:
 + Instale a virtualenv, execute:
