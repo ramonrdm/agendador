@@ -79,16 +79,25 @@ WSGI_APPLICATION = 'agendador.wsgi.application'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': get_secret('agendador_name_db'),
-        'USER': get_secret('agendador_user_db'),
-        'PASSWORD': get_secret('agendador_password_db'),
-        'HOST': 'mysql.sites.ufsc.br',
-        'PORT': '3306',
+if get_secret('agendador_name_db'):
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': get_secret('agendador_name_db'),
+            'USER': get_secret('agendador_user_db'),
+            'PASSWORD': get_secret('agendador_password_db'),
+            'HOST': 'mysql.sites.ufsc.br',
+            'PORT': '3306',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 
 TEMPLATES = [
         {
