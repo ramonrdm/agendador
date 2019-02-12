@@ -96,6 +96,7 @@ def login(request, next_page=None, required=False):
         message = "You are logged in as %s." % request.user.username
         messages.success(request, message)
         return HttpResponseRedirect(next_page)
+    
     ticket = request.GET.get('ticket')
     service = _service_url(request, next_page)
     if ticket:

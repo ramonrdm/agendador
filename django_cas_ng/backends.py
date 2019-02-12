@@ -75,7 +75,6 @@ def get_cas3_verification_response(ticket, service):
 def verify_cas3_response(response):
     user = None
     attributes = {}
-
     try:
         from xml.etree import ElementTree
     except ImportError:
@@ -110,34 +109,17 @@ def _verify_cas3(ticket, service):
     response = get_cas3_verification_response(ticket, service)
     return verify_cas3_response(response)
 
-
 SAML_ASSERTION_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-<SOAP-ENV:Header/>
-<SOAP-ENV:Body>
-<samlp:Request xmlns:samlp="urn:oasis:names:tc:SAML:1.0:protocol"
-MajorVersion="1"
-MinorVersion="1"
-RequestID="{request_id}"
-IssueInstant="{timestamp}">
-<samlp:AssertionArtifact>{ticket}</samlp:AssertionArtifact></samlp:Request>
-</SOAP-ENV:Body>
-</SOAP-ENV:Envelope>"""
-
-SAML_ASSERTION_TEMPLATE = """
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
   <SOAP-ENV:Header/>
   <SOAP-ENV:Body>
     <samlp:Request xmlns:samlp="urn:oasis:names:tc:SAML:1.0:protocol" MajorVersion="1"
       MinorVersion="1" RequestID="{request_id}"
       IssueInstant="{timestamp}">
-      <samlp:AssertionArtifact>
-        {ticket}
-      </samlp:AssertionArtifact>
+      <samlp:AssertionArtifact>{ticket}</samlp:AssertionArtifact>
     </samlp:Request>
   </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>
-"""
+</SOAP-ENV:Envelope>"""
 
 
 def get_saml_assertion(ticket):
@@ -265,6 +247,7 @@ def _verify_cas3_saml(ticket, service):
     )
 
     print "#############################"
+    print params
     print urllib_parse.urlencode(params)
     print url
 
@@ -275,6 +258,7 @@ def _verify_cas3_saml(ticket, service):
     try:
         print urlopen(url, data=get_saml_assertion(ticket))
     except URLError, e:
+        print "um erro::::"
         print e
     print "-------"
     page = urlopen(url, data=get_saml_assertion(ticket))
@@ -335,15 +319,15 @@ class CASBackend(object):
 
     def authenticate(self, ticket, service, request):
         """Verifies CAS ticket and gets or creates User object"""
-        #username, attributes = _verify(ticket, service)
-        username, attributes = _verify_cas3_saml(ticket, service)
+        username, attributes = _verify(ticket, service)
+        #username, attributes = _verify_cas3_saml(ticket, service)
 
         if attributes:
             request.session['attributes'] = attributes
         if not username:
             return None
         try:
-            user = User.objects.get(username=username)
+            user = User.objects.get(username=attributes["login"])
             created = False
         except User.DoesNotExist:
             # check if we want to create new users, if we don't fail auth
@@ -351,9 +335,9 @@ class CASBackend(object):
             if not create:
                 return None
             # user will have an "unusable" password
-            user = User.objects.create_user(username, attributes["email"], '')
+            user = User.objects.create_user(attributes["login"], attributes["email"], '')
             user.first_name = attributes["personName"]
-            user.last_name = attributes["idPessoa"]
+            user.last_name = username
             user.save()
             created = True
 

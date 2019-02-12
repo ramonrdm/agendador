@@ -9,3 +9,5 @@ services:
       - ../.:/var/www/html/agendador
     ports:
       - 80:80
+      - 443:443
+      

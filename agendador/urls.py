@@ -11,13 +11,13 @@ from django.contrib.auth import views as auth_views
 admin.autodiscover()
 
 urlpatterns = [
-    # url(r'^accounts/login/$', views2.login, name="cas_ng_login"),
+    #url(r'^accounts/login/$', views2.login, name="cas_ng_login"),
     # url(r'^accounts/logout/$', views2.logout, name="cas_ng_logout"),
     # url(r'^admin/login/$', views2.login, name="cas_ng_login"),
     # url(r'^accounts/login/', views.manutencao, name="cas_ng_login"),
     url(r'^accounts/register/', views.normal_registration, name="register_normal"),
     url(r'^accounts/login/', auth_views.login, {"template_name":"agenda/login.html"}, name="login_normal"),
-    url(r'^accounts/loginufsc/', views.manutencao, name="cas_ng_login"),
+    url(r'^accounts/loginufsc/', views2.login, name="cas_ng_login"),
     url(r'^accounts/logout/', views2.logout, name="cas_ng_logout"),
     url(r'^accounts/resetpwrequest/$', views.reset_pw_request, name="reset_password_request"),
     url(r'^accounts/resetpw/(?P<token>\w+)/', views.reset_pw, name="reset_password"),

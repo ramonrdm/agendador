@@ -46,9 +46,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
-    #'agenda',
     'agenda.apps.AgendaConfig',
-    'django_cas_ng',
 )
 
 MIDDLEWARE_CLASSES = (

@@ -17,6 +17,20 @@
 
 {% block content %}
 <div id="content" class="row">
+    
+    <div class="col l6 m6 s6">
+        <div class="card medium center-align">
+            <div class="card-content" >
+                <div class="card-title">
+                    Acesso via IdUFSC:
+                </div>
+            <p >
+                <a href='{%url "cas_ng_login"%}'><img width="180" height="190" src='{% static "agenda/img/logoufsc.png" %}'/></a>
+            </p>
+            </div>
+        </div>
+    </div>
+
     <div class="col l6 m6 s6">
         <div class="card medium center-align">
             <div class="card-content">
@@ -52,20 +66,6 @@
         </div>
 
     </div>
-
-    <div class="col l6 m6 s6">
-        <div class="card medium center-align">
-            <div class="card-content" >
-                <div class="card-title">
-                    Acesso via IdUFSC:
-                </div>
-            <p >
-                <a href='{%url "cas_ng_login"%}'><img width="180" height="190" src='{% static "agenda/img/logoufsc.png" %}'/></a>
-            </p>
-            </div>
-        </div>
-    </div>
-
 
     <div class="col s12 m12 l12">
         <div class="card-panel">
