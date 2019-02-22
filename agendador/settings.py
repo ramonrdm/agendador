@@ -62,6 +62,7 @@ MIDDLEWARE_CLASSES = (
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'django_cas_ng.backends.CASBackend',
+    'agenda.backends.EmailBackend',
 )
 
 SITE_ID = 1

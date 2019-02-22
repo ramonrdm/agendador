@@ -24,9 +24,12 @@
                 <div class="card-title">
                     Acesso via IdUFSC:
                 </div>
-            <p >
-                <a href='{%url "cas_ng_login"%}'><img width="180" height="190" src='{% static "agenda/img/logoufsc.png" %}'/></a>
-            </p>
+                <p>Click aqui </p>
+                <p>
+                    <a href='{%url "cas_ng_login"%}'>
+                    <img width="180" height="190" src='{% static "agenda/img/logoufsc.png" %}'/>
+                    </a>
+                </p>
             </div>
         </div>
     </div>
@@ -35,15 +38,15 @@
         <div class="card medium center-align">
             <div class="card-content">
                 <div class="card-title">
-                     Acesso via IdUFSC e senha do sistema de reservas:
+                     Acesso via e-mail e senha do sistema de reservas:
                 </div>
                 <form id="login-form" method="post">
                 {% csrf_token %}
                 <table class="table">
                     <tr>
-                        <td><label for="id_username">IdUFSC:</label></td>
-                        <td><input id="id_username" name="username"
-                                   type="text" class="form-control"></td>
+                        <td><label for="email">e-mail:</label></td>
+                        <td><input id="email" name="email"
+                                   type="email" class="form-control"></td>
                     </tr>
                     <tr>
                         <td><label for="id_password">Senha:</label></td>

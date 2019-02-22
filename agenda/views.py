@@ -551,3 +551,21 @@ def _calendar(request, tipo=None, espaco=None, year=None, month=None, change=Non
                 user=request.user, month_days=lst, mname=month_names[month-1],
                 tipo=tipo
                 ))
+
+def login_email(request, template_name=None):
+    if request.POST:
+
+        email = request.POST['email']
+        password = request.POST['password']
+
+        try:
+            username = User.objects.filter(email=email.lower())[0].username
+        except:
+            username = None
+
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request,user)
+        else:
+            return HttpResponseRedirect("Invalid username or password")
+    return render(request,"agenda/login.html")
