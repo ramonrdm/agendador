@@ -6,6 +6,12 @@
     <link rel='stylesheet' href="{% static 'agenda/css/login_register_pages.css' %}" />
     <script src="{% static 'material/js/jquery.js' %}"></script>
     <script src="{% static 'material/js/materialize.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+    $('.modal').modal();
+  });
+     
+    </script>
 {% endblock %}
 
 
@@ -21,14 +27,16 @@
     <div class="col l6 m6 s6">
         <div class="card medium center-align">
             <div class="card-content" >
-                <div class="card-title">
+                <div class="card-title" >
                     Acesso via IdUFSC:
                 </div>
-                <p>Click aqui </p>
                 <p>
-                    <a href='{%url "cas_ng_login"%}'>
-                    <img width="180" height="190" src='{% static "agenda/img/logoufsc.png" %}'/>
-                    </a>
+                    <img width="80" src='{% static "agenda/img/logoufsc.png" %}'/>
+
+               </p>
+               <p> - </p>
+                <p>
+                    <a  class="waves-effect waves-light btn-large" href='{%url "cas_ng_login"%}'>Acessar</a>
                 </p>
             </div>
         </div>
@@ -40,6 +48,14 @@
                 <div class="card-title">
                      Acesso via e-mail e senha do sistema de reservas:
                 </div>
+                <p><a class="waves-effect waves-light btn modal-trigger" href="#modal1">Acessar</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+                <h4>Login:</h4>
                 <form id="login-form" method="post">
                 {% csrf_token %}
                 <table class="table">
@@ -65,9 +81,7 @@
                 <a href='{%url "reset_password_request"%}' class="btn tooltipped btn-primary grey lighten-5 black-text pull-right"
                     data-position="bottom" data-tooltip="Clique aqui caso você esqueceu sua senha ou sempre realizou logins pela ufsc">(Re)definir senha</a>
             </form>
-            </div>
         </div>
-
     </div>
 
     <div class="col s12 m12 l12">
