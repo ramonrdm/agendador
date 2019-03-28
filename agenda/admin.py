@@ -360,7 +360,6 @@ class GroupAdmin(admin.ModelAdmin):
         form.request = request
         return form
 
-
 admin.site.unregister(User)
 admin.site.unregister(Group)
 admin.site.register(Group, GroupAdmin)

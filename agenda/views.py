@@ -10,7 +10,7 @@ from django.forms.models import modelformset_factory
 from django.template import RequestContext, Library
 from django.views.decorators import csrf
 from agenda.models import *
-from agenda.forms import ReservaEspacoFisicoAdminForm, RegisterForm
+from agenda.forms import ReservaEspacoFisicoAdminForm, RegisterForm, EstatisticaForm
 from django import forms
 from django.contrib.admin.sites import AdminSite
 from django.contrib.flatpages.models import FlatPage
@@ -120,6 +120,44 @@ def sobre(request):
     print(len(total_espacos))
     print(reservas_fisico_mes)
     return render(request, "agenda/sobre.html")
+
+
+def statistics(request):
+
+    if request.method == "POST":
+        form = EstatisticaForm(request.POST)
+        if form.is_valid():
+            reservas_equips = None
+            reservas_espfis = None
+            usuario = form.cleaned_data.get("usuario")
+            eq = request.POST.get("choice_1")
+            ef = request.POST.get("choice_2")
+            periodo_inicio = form.cleaned_data.get("periodo_inicio")
+            periodo_fim = form.cleaned_data.get("periodo_fim")
+            equipamento_choose = form.cleaned_data.get("equipamento_choose")
+            espacofisico_choose = form.cleaned_data.get("espacofisico_choose")
+
+            if eq == "equipamento":
+                reservas_equips = (ReservaEquipamento.objects.filter(estado="A"))
+
+            if ef == "espacofisico":
+                reservas_espfis = (ReservaEspacoFisico.objects.filter(estado="A"))
+
+            if reservas_equips:
+                reservas_equips = reservas_equips.filter(usuario=usuario, data__gte=periodo_inicio, data__lte=periodo_fim)
+                if equipamento_choose != "Todos" and reservas_equips:
+                    equip = Equipamento.objects.filter(nome=equipamento_choose)
+                    reservas_equips = reservas_equips.filter(locavel=equip)
+            if reservas_espfis:
+                reservas_espfis = reservas_espfis.filter(usuario=usuario, data__gte=periodo_inicio, data__lte=periodo_fim)
+                if espacofisico_choose != "Todos" and reservas_espfis:
+                    espfis = Equipamento.objects.filter(nome=espacofisico_choose)
+                    reservas_espfis = reservas_equips.filter(locavel=espfis)
+
+            return render(request, "agenda/estatistica_results.html", {"reservas_equips":reservas_equips, "reservsa_espfis":reservas_espfis})
+    else:
+        form = EstatisticaForm()
+    return render(request, "agenda/estatisticas.html", {"form":form})
 
 def manutencao(request):
     return render(request, "agenda/manutencao.html")

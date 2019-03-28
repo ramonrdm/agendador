@@ -1,0 +1,73 @@
+{% extends "agenda/base_module.html" %}
+{% load static %}
+<script src="{% static 'agenda/js/date.js' %}" ></script>
+{% block content %}
+<div id='content' class='row'>
+  <div class='col s12'>
+    <div class="card">
+      <div class="card-content">
+          <form action="#" method="post">
+              {% csrf_token %}
+              {% for field in form %}
+                {% if field.name == "usuario" %}
+                    <label for="id_usuario">Usuário:</label>
+                    {{ field }}
+                {% elif field.name == "equipamento_choose"%}
+                    <p>
+                        <input name="choice_1" value="equipamento" id="choice_1" type="checkbox"/>
+                        <label for="choice_1">Equipamento</label>
+                    </p>
+                    <p>{{ field }}</p>
+                {% elif field.name == "espacofisico_choose"%}
+                    <p>
+                        <input name="choice_2" value="espacofisico" id="choice_2" type="checkbox" />
+                        <label for="choice_2">Espaço Físico</span>
+                    </p>
+
+                    <p> {{ field }} </p>
+                {% else %}
+                    {{field}}
+                {% endif %}
+              {% endfor %}
+
+              <input type="submit" value="Verificar Estatísticas"
+                      class="btn btn-primary grey lighten-5 black-text pull-right" />
+          </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+
+
+$(document).ready(function() {
+    document.getElementById("id_equipamento_choose").parentNode.style.display='none';
+    document.getElementById("id_espacofisico_choose").parentNode.style.display='none';
+
+    $("#choice_1").on("change", function() {
+        if (this.checked) {
+            document.getElementById("id_equipamento_choose").parentNode.style.display="block";
+        } else {
+            document.getElementById("id_equipamento_choose").parentNode.style.display='none';
+        }
+    });
+
+    $("#choice_2").on("change", function() {
+        if (this.checked) {
+            document.getElementById("id_espacofisico_choose").parentNode.style.display="block";
+        } else {
+            document.getElementById("id_espacofisico_choose").parentNode.style.display='none';
+        }
+    });
+
+
+});
+
+</script>
+
+
+{% endblock %}

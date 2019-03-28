@@ -1,0 +1,21 @@
+{% extends "agenda/base_module.html" %}
+{% load i18n material_frontend %}
+{% load static %}
+{% block title %} Agendador - Estatisticas {% endblock %}
+{% block page_title %}
+    <strong>Estatísticas</strong>
+{% endblock %}
+{% block content %}
+<script src="{% static 'agenda/js/date.js' %}"></script>
+
+{% csrf_token %}
+
+<div class="row section">
+    <div>
+        {% for reserva in reservas_equips %}
+            {{reserva}} no dia {{reserva.data}}
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
