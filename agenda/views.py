@@ -122,13 +122,29 @@ def sobre(request):
     return render(request, "agenda/sobre.html")
 
 
-def statistics(request):
+def estatisticas(request):
+    unidadesN=Unidade.objects.all().count()
+    equipamentosN=Equipamento.objects.all().count()
+    espacosfisicosN=EspacoFisico.objects.all().count()
+    servicosN=Servico.objects.all().count()
 
+    if request.user:
+        if request.user.groups.filter(name="responsable").count() or request.user.is_superuser:
+            show_user_stats = True
+        else:
+            show_user_stats = False
+    else:
+        show_user_stats = False
+
+
+    form = EstatisticaForm()
     if request.method == "POST":
         form = EstatisticaForm(request.POST)
         if form.is_valid():
             reservas_equips = None
             reservas_espfis = None
+            reservas_e = []
+            reservas_ef = []
             usuario = form.cleaned_data.get("usuario")
             eq = request.POST.get("choice_1")
             ef = request.POST.get("choice_2")
@@ -137,27 +153,36 @@ def statistics(request):
             equipamento_choose = form.cleaned_data.get("equipamento_choose")
             espacofisico_choose = form.cleaned_data.get("espacofisico_choose")
 
+
+            #log
             if eq == "equipamento":
-                reservas_equips = (ReservaEquipamento.objects.filter(estado="A"))
-
+                #todas as reservas feitas pelo usuário que foram aceitas.
+                reservas_equips = ReservaEquipamento.objects.filter(estado="A", usuario=usuario, data__gte=periodo_inicio, data__lte=periodo_fim)
+                if equipamento_choose and reservas_equips:
+                    reservas_equips = reservas_equips.filter(locavel__in=equipamento_choose)
             if ef == "espacofisico":
-                reservas_espfis = (ReservaEspacoFisico.objects.filter(estado="A"))
+                #todas as reservas feitas pelo usuário que foram aceitas.
+                reservas_espfis = ReservaEspacoFisico.objects.filter(estado="A", usuario=usuario, data__gte=periodo_inicio, data__lte=periodo_fim)
+                if espacofisico_choose and reservas_espfis:
+                    reservas_espfis = reservas_espfis.filter(locavel__in=espacofisico_choose)
 
-            if reservas_equips:
-                reservas_equips = reservas_equips.filter(usuario=usuario, data__gte=periodo_inicio, data__lte=periodo_fim)
-                if equipamento_choose != "Todos" and reservas_equips:
-                    equip = Equipamento.objects.filter(nome=equipamento_choose)
-                    reservas_equips = reservas_equips.filter(locavel=equip)
-            if reservas_espfis:
-                reservas_espfis = reservas_espfis.filter(usuario=usuario, data__gte=periodo_inicio, data__lte=periodo_fim)
-                if espacofisico_choose != "Todos" and reservas_espfis:
-                    espfis = Equipamento.objects.filter(nome=espacofisico_choose)
-                    reservas_espfis = reservas_equips.filter(locavel=espfis)
+            if not equipamento_choose:
+                equipamento_choose = Equipamento.objects.all()
 
-            return render(request, "agenda/estatistica_results.html", {"reservas_equips":reservas_equips, "reservsa_espfis":reservas_espfis})
-    else:
-        form = EstatisticaForm()
-    return render(request, "agenda/estatisticas.html", {"form":form})
+            if not espacofisico_choose:
+                espacofisico_choose = EspacoFisico.objects.all()
+
+
+            #agrupar em um dicionario as reservas por equipamento.
+            for equip in equipamento_choose:
+                reservas_e.append((equip.nome, reservas_equips.filter(locavel=equip)))
+
+            for espfis in espacofisico_choose:
+                reservas_ef.append((espfis.nome, reservas_espfis.filter(locavel=espfis)))
+
+            return render(request, "agenda/estatistica_results.html", {"reservas_e":reservas_e, "reservas_ef":reservas_ef})
+
+    return render(request, "agenda/estatisticas.html", {"form":form, "show_per_user_statistics":show_user_stats,"unidades":unidadesN, "equipamentos":equipamentosN, "espacosfisicos":espacosfisicosN, "servicos":servicosN})
 
 def manutencao(request):
     return render(request, "agenda/manutencao.html")

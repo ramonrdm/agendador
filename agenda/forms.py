@@ -912,21 +912,19 @@ class RegisterForm(UserCreationForm):
 class EstatisticaForm(forms.Form):
 
 
-    equipamentos = Equipamento.objects.all()
-    espacofisico = EspacoFisico.objects.all()
-    eq_choices = []
-    ef_choices = []
-    eq_choices.append(("0", "Todos"))
-    ef_choices.append(("0", "Todos"))
-    for eq in equipamentos:
-        eq_choices.append((str(eq.id), eq.nome))
-    for ef in espacofisico:
-        ef_choices.append((str(ef.id), ef.nome))
-
-
+    # equipamentos = Equipamento.objects.all()
+    # espacofisico = EspacoFisico.objects.all()
+    # eq_choices = []
+    # ef_choices = []
+    # eq_choices.append(("0", "Todos"))
+    # ef_choices.append(("0", "Todos"))
+    # for eq in equipamentos:
+    #     eq_choices.append((str(eq.id), eq.nome))
+    # for ef in espacofisico:
+    #     ef_choices.append((str(ef.id), ef.nome))
 
     usuario = forms.ModelChoiceField(queryset=User.objects.all(), required=True)
     periodo_inicio = forms.DateField(widget=forms.DateInput(attrs={"class":"date_picker", "placeholder":"da data"}))
     periodo_fim = forms.DateField(widget=forms.DateInput(attrs={"class":"date_picker", "placeholder":"até a data"}))
-    equipamento_choose = forms.ChoiceField(choices=eq_choices, required=False)
-    espacofisico_choose = forms.ChoiceField(choices=ef_choices, required=False)
+    equipamento_choose = forms.ModelMultipleChoiceField(queryset=Equipamento.objects.all(), required=False, widget=FilteredSelectMultiple("equipamento_choose",False))
+    espacofisico_choose = forms.ModelMultipleChoiceField(queryset=EspacoFisico.objects.all(), required=False, widget=FilteredSelectMultiple("espacofisico_choose",False))
