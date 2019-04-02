@@ -145,6 +145,8 @@ def estatisticas(request):
             reservas_espfis = None
             reservas_e = []
             reservas_ef = []
+            horas_e = []
+            horas_ef= []
             usuario = form.cleaned_data.get("usuario")
             eq = request.POST.get("choice_1")
             ef = request.POST.get("choice_2")
@@ -160,28 +162,43 @@ def estatisticas(request):
                 reservas_equips = ReservaEquipamento.objects.filter(estado="A", usuario=usuario, data__gte=periodo_inicio, data__lte=periodo_fim)
                 if equipamento_choose and reservas_equips:
                     reservas_equips = reservas_equips.filter(locavel__in=equipamento_choose)
+
+                if not equipamento_choose:
+                    equipamento_choose = Equipamento.objects.all()
+
+                #agrupar em um dicionario as reservas por equipamento.
+                for equip in equipamento_choose:
+                    reservas_e.append((equip.nome, reservas_equips.filter(locavel=equip)))
+                    segundosTotal = 0
+                    for reserva in reservas_equips.filter(locavel=equip):
+                        segundosInicio = (reserva.horaInicio.hour*60 + reserva.horaInicio.minute) * 60 + reserva.horaInicio.second
+                        segundosFim = (reserva.horaFim.hour*60+reserva.horaFim.minute) * 60 + reserva.horaFim.second
+                        segundosTotal += segundosFim - segundosInicio
+                    horas_e.append((equip.nome, str(timedelta(seconds=segundosTotal))))
+
+
             if ef == "espacofisico":
                 #todas as reservas feitas pelo usuário que foram aceitas.
                 reservas_espfis = ReservaEspacoFisico.objects.filter(estado="A", usuario=usuario, data__gte=periodo_inicio, data__lte=periodo_fim)
                 if espacofisico_choose and reservas_espfis:
                     reservas_espfis = reservas_espfis.filter(locavel__in=espacofisico_choose)
 
-            if not equipamento_choose:
-                equipamento_choose = Equipamento.objects.all()
+                if not espacofisico_choose:
+                    espacofisico_choose = EspacoFisico.objects.all()
 
-            if not espacofisico_choose:
-                espacofisico_choose = EspacoFisico.objects.all()
+                for espfis in espacofisico_choose:
+                    reservas_ef.append((espfis.nome, reservas_espfis.filter(locavel=espfis)))
+                    segundosTotal = 0
+                    for reserva in reservas_espfis.filter(locavel=espfis):
+                        segundosInicio = (reserva.horaInicio.hour*60 + reserva.horaInicio.minute) * 60 + reserva.horaInicio.second
+                        segundosFim = (reserva.horaFim.hour*60+reserva.horaFim.minute) * 60 + reserva.horaFim.second
+                        segundosTotal += segundosFim - segundosInicio
+                    horas_ef.append((espfis.nome, str(timedelta(seconds=segundosTotal))))
 
 
-            #agrupar em um dicionario as reservas por equipamento.
-            for equip in equipamento_choose:
-                reservas_e.append((equip.nome, reservas_equips.filter(locavel=equip)))
-
-            for espfis in espacofisico_choose:
-                reservas_ef.append((espfis.nome, reservas_espfis.filter(locavel=espfis)))
-
-            return render(request, "agenda/estatistica_results.html", {"reservas_e":reservas_e, "reservas_ef":reservas_ef})
-
+            return render(request, "agenda/estatistica_results.html", {"reservas_e":reservas_e, "reservas_ef":reservas_ef, "horas_e":horas_e, "horas_ef":horas_ef})
+        else:
+            print(form.errors)
     return render(request, "agenda/estatisticas.html", {"form":form, "show_per_user_statistics":show_user_stats,"unidades":unidadesN, "equipamentos":equipamentosN, "espacosfisicos":espacosfisicosN, "servicos":servicosN})
 
 def manutencao(request):
