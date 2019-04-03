@@ -913,6 +913,12 @@ class RegisterForm(UserCreationForm):
 
 class EstatisticaForm(forms.Form):
 
+    def __init__(self, usr, *args, **kwargs):
+        super(EstatisticaForm, self).__init__(*args,**kwargs)
+        if not usr.is_superuser:
+            self.fields["equipamento_choose"].queryset = Equipamento.objects.filter(responsavel=usr)
+            self.fields["espacofisico_choose"].queryset = EspacoFisico.objects.filter(responsavel=usr)
+
     usuario = forms.ModelChoiceField(queryset=User.objects.all(), required=True, widget=AutocompleteWidget(query=User.objects.all(), model=User))
     periodo_inicio = forms.DateField(widget=forms.DateInput(attrs={"class":"date_picker", "placeholder":"da data"}), required=True)
     periodo_fim = forms.DateField(widget=forms.DateInput(attrs={"class":"date_picker", "placeholder":"até a data"}), required=True)
