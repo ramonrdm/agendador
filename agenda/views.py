@@ -140,7 +140,7 @@ def estatisticas(request):
         print(request.user)
         form = EstatisticaForm(usr=request.user)
         if request.method == "POST":
-            form = EstatisticaForm(request.POST, request.user)
+            form = EstatisticaForm(request.user, request.POST)
             if form.is_valid():
                 reservas_equips = None
                 reservas_espfis = None

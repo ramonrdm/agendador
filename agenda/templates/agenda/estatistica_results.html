@@ -18,7 +18,7 @@
                     <span class="card-title">{{nome}}</span>
                     {% for reserva in reservas %}
                         <p>
-                            {{reserva}} no dia {{reserva.data}}
+                            Reserva feita por <strong><u>{{reserva.usuario}}</u></strong> no dia {{reserva.data}}
                         </p>
                     {% endfor %}
                     </div>
@@ -38,7 +38,7 @@
                     <span class="card-title">{{nome}}</span>
                     {% for reserva in reservas %}
                         <p>
-                            {{reserva}} no dia {{reserva.data}}
+                            Reserva feita por <strong><u>{{reserva.usuario}}</u></strong> no dia {{reserva.data}}
                         </p>
                     {% endfor %}
                     </div>
