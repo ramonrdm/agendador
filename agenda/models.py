@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User, Group
 from django.contrib import admin
 from django.core.exceptions import ValidationError
-from datetime import date
+from datetime import date, timedelta
 
 class Unidade(models.Model):
     sigla = models.CharField(max_length=20, unique=True)
@@ -107,7 +107,8 @@ class EspacoFisico(Locavel):
 
 class Equipamento(Locavel):
     patrimonio = models.CharField(max_length=100, verbose_name='Patrimônio')
-
+    limite_horas = models.TimeField(verbose_name="Limite de Horas por Usuário", null=True)
+    periodo_limite = models.IntegerField(null=True)
     def clean(self):
         for char in self.patrimonio:
             if not char.isdigit():
@@ -181,12 +182,33 @@ class Reserva(models.Model):
                 self.verificaChoque(errors)
             self.verificaBloqueado(errors)
             self.verificaCoerencia(errors)
+            self.verificaLimite(errors)
             if self.usuario not in self.locavel.responsavel.all():
                 self.verificaAntecedencia(errors)
         except:
             pass
         if bool(errors):
             raise ValidationError(errors)
+
+    def verificaLimite(self, errors):
+        earliest_data = self.data - timedelta(days=self.locavel.periodo_limite)
+        reservas = (type(self)).objects.filter(estado="A", usuario=self.usuario, locavel=self.locavel, data__range=[earliest_data, self.data]).exclude(id=self.id)
+        print(earliest_data)
+        print(self.data)
+        if reservas:
+            soma_total = 0
+            max = (self.locavel.limite_horas.hour * 60 + self.locavel.limite_horas.minute) * 60 + self.locavel.limite_horas.second
+            for reserva in reservas:
+                segundosInicio = (reserva.horaInicio.hour*60 + reserva.horaInicio.minute) * 60 + reserva.horaInicio.second
+                segundosFim = (reserva.horaFim.hour*60+reserva.horaFim.minute) * 60 + reserva.horaFim.second
+                soma_total += (segundosFim-segundosInicio)
+
+            inicio = (self.horaInicio.hour * 60 + self.horaInicio.minute) * 60 + self.horaInicio.second
+            fim = (self.horaFim.hour * 60 + self.horaFim.minute) * 60 + self.horaFim.second
+            soma_total += (fim - inicio)
+
+            if soma_total > max:
+                errors["locavel"] = "Seu limite de horas de reserva para esse equipamento se estourou."
 
     def verificaCoerencia(self, errors):
         if date.today() > self.data:
