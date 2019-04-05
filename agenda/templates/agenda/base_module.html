@@ -25,8 +25,8 @@
 
     <li><a href="{% url 'index' %}">Site Principal<i class="material-icons">home</i></a></li>
     <li><a href="{% url 'faq' %}">FAQ/Instruções<i class="material-icons">help</i></a></li>
-    <li><a href="{% url 'sobre' %}">Sobre<i class="material-icons">info</i></a></li>
     <li><a href="{% url 'estatisticas' %}">Estatisticas<i class="material-icons">assessment</i></a></li>
+    <li><a href="{% url 'sobre' %}">Sobre<i class="material-icons">info</i></a></li>
     {% if request.user.is_anonymous %}
     <li><a href="{% url 'login_normal' %}">Login<i class="material-icons">exit_to_app</i></a></li>
     <!--<li><a href="{% url 'register_normal' %}">Registrar<i class="material-icons">exit_to_app</i></a></li> -->
