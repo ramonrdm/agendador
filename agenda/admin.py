@@ -13,6 +13,7 @@ from django.contrib.admin.models import LogEntry
 
 class AtividadeAdmin(admin.ModelAdmin):
     form = forms.AtividadeAdminForm
+    search_fields = ("nome",)
 
     def get_form(self, request, *args, **kwargs):
         form = super(AtividadeAdmin, self).get_form(request, *args, **kwargs)
@@ -29,6 +30,7 @@ class UnidadeAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">account_balance</i>'
     form = forms.UnidadeAdminForm
     list_display = ('sigla','unidadePai', 'get_responsavel')
+    search_fields = ("sigla",)
     def get_responsavel(self, obj):
         return ", ".join(responsavel.username for responsavel in obj.responsavel.all())
 
@@ -71,7 +73,7 @@ class UnidadeAdmin(admin.ModelAdmin):
 
 class ReservaAdmin(admin.ModelAdmin):
     list_display = ('usuario', 'locavel', 'data', 'ramal', 'finalidade', 'estado')
-    search_fields = ['finalidade', 'usuario__username']
+    search_fields = ('finalidade', 'usuario__username')
     list_filter=["estado"]
 
     class Media:
@@ -205,6 +207,8 @@ admin.site.register(ReservaServico, ReservaServicoAdmin)
 
 class LocavelAdmin(admin.ModelAdmin):
     list_display = ('nome','unidade','get_responsavel')
+    search_fields = ("nome", "unidade")
+
     def get_responsavel(self, obj):
         return ", ".join(responsavel.username for responsavel in obj.responsavel.all())
     get_responsavel.short_description = 'responsavel'
@@ -344,7 +348,6 @@ admin.site.register(Servico, ServicoAdmin)
 
 class UserAdmin(UserAdmin):
     form = forms.UserAdminForm
-
     def get_form(self, request, *args, **kwargs):
         form = super(UserAdmin, self).get_form(request, *args, **kwargs)
         form.request = request
@@ -354,7 +357,7 @@ class UserAdmin(UserAdmin):
 class GroupAdmin(admin.ModelAdmin):
     form = forms.GroupAdminForm
     filter_horizontal=['permissions']
-
+    search_fields = ["nome"]
     def get_form(self, request, *args, **kwargs):
         form = super(GroupAdmin, self).get_form(request, *args, **kwargs)
         form.request = request

@@ -180,18 +180,18 @@ class Reserva(models.Model):
         try:
             if self.estado!='D' and self.estado!='C':
                 self.verificaChoque(errors)
-            self.verificaBloqueado(errors)
             self.verificaCoerencia(errors)
-            self.verificaLimite(errors)
             if self.usuario not in self.locavel.responsavel.all():
+                self.verificaBloqueado(errors)
                 self.verificaAntecedencia(errors)
+                self.verificaLimite(errors)
         except:
             pass
         if bool(errors):
             raise ValidationError(errors)
 
     def verificaLimite(self, errors):
-        earliest_data = self.data - timedelta(days=self.locavel.periodo_limite)
+        earliest_data = self.data - timedelta(days=(self.locavel.periodo_limite-1))
         reservas = (type(self)).objects.filter(estado="A", usuario=self.usuario, locavel=self.locavel, data__range=[earliest_data, self.data]).exclude(id=self.id)
         print(earliest_data)
         print(self.data)
