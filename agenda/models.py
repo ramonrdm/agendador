@@ -193,8 +193,6 @@ class Reserva(models.Model):
     def verificaLimite(self, errors):
         earliest_data = self.data - timedelta(days=(self.locavel.periodo_limite-1))
         reservas = (type(self)).objects.filter(estado="A", usuario=self.usuario, locavel=self.locavel, data__range=[earliest_data, self.data]).exclude(id=self.id)
-        print(earliest_data)
-        print(self.data)
         if reservas:
             soma_total = 0
             max = (self.locavel.limite_horas.hour * 60 + self.locavel.limite_horas.minute) * 60 + self.locavel.limite_horas.second

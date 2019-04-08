@@ -136,8 +136,8 @@ def estatisticas(request):
     else:
         show_user_stats = False
 
-    if request.user:
-        print(request.user)
+    form = EstatisticaForm(usr=None)
+    if request.user.is_authenticated():
         form = EstatisticaForm(usr=request.user)
         if request.method == "POST":
             form = EstatisticaForm(request.user, request.POST)

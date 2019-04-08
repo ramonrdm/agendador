@@ -724,10 +724,8 @@ class SearchFilterForm(forms.Form):
 
     data = forms.DateField(input_formats=['%d/%m/%Y'], widget=SelectDateWidget())
     data.label = ''
-    horaInicio = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
-    horaInicio.label = ''
-    horaFim = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget())
-    horaFim.label = ''
+    horaInicio = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget(attrs={"label":"Hora Início"}))
+    horaFim = forms.TimeField(input_formats=['%H:%M'], widget=SelectTimeWidget(attrs={"label":"Hora Fim"}))
     tipo = forms.CharField(widget = forms.HiddenInput())
 
     def clean(self):
@@ -915,9 +913,10 @@ class EstatisticaForm(forms.Form):
 
     def __init__(self, usr, *args, **kwargs):
         super(EstatisticaForm, self).__init__(*args,**kwargs)
-        if not usr.is_superuser:
-            self.fields["equipamento_choose"].queryset = Equipamento.objects.filter(responsavel=usr)
-            self.fields["espacofisico_choose"].queryset = EspacoFisico.objects.filter(responsavel=usr)
+        if usr != None:
+            if not usr.is_superuser:
+                self.fields["equipamento_choose"].queryset = Equipamento.objects.filter(responsavel=usr)
+                self.fields["espacofisico_choose"].queryset = EspacoFisico.objects.filter(responsavel=usr)
 
     usuario = forms.ModelChoiceField(queryset=User.objects.all(), required=True, widget=AutocompleteWidget(query=User.objects.all(), model=User))
     periodo_inicio = forms.DateField(widget=forms.DateInput(attrs={"class":"date_picker", "placeholder":"da data"}), required=True)
