@@ -7,7 +7,11 @@ $(document).ready(function() {
 </script>
 {% endif %}
 <div class='select-time-widget-wrapper'>
-	<div class="input-field">
+    {% if attrs.class %}
+	<div class="input-field {{attrs.class}}">
+    {% else %}
+    <div class="input-field">
+    {% endif %}
 		{% if initial %}
 		<input class="ufsc_time validate" data-lang="pt-br" id="id_{{ name }}" name="{{ name }}" type="text" value="{{ initial }}">
 		{% else %}

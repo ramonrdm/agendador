@@ -812,6 +812,8 @@ class EquipamentoAdminForm(LocavelAdminForm):
     def __init__(self, *args, **kwargs):
         kwargs['reservable_type'] = Equipamento
         super(EquipamentoAdminForm, self).__init__(*args, **kwargs)
+        self.fields["limite_horas"].widget=SelectTimeWidget(attrs={"label":"Limite de", 'class':"class_limite_horas"})
+        self.fields["periodo_limite"].label = "A cada"
 
     def save(self, *args, **kwargs):
         return super(EquipamentoAdminForm, self).save(*args, **kwargs)
