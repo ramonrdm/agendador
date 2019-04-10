@@ -4,6 +4,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib import admin
 from django.core.exceptions import ValidationError
 from datetime import date, timedelta
+import datetime
 
 class Unidade(models.Model):
     sigla = models.CharField(max_length=20, unique=True)
@@ -107,8 +108,8 @@ class EspacoFisico(Locavel):
 
 class Equipamento(Locavel):
     patrimonio = models.CharField(max_length=100, verbose_name='Patrimônio')
-    limite_horas = models.TimeField(verbose_name="Limite de Horas por Usuário", null=True)
-    periodo_limite = models.IntegerField(null=True)
+    limite_horas = models.TimeField(null=True, blank=True, verbose_name="Limite de Horas por Usuário", default=datetime.time(0,0,0))
+    periodo_limite = models.IntegerField(default=0, blank=True, null=True)
     def clean(self):
         for char in self.patrimonio:
             if not char.isdigit():
