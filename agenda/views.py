@@ -547,8 +547,12 @@ def get_pending_reserves(request):
             aux_date += timedelta(days=1)
     else:   # a non recurrent reserve is being made case
             # no ending_date was passed as element of the request
-        reserves = reserve_set.filter(data=date).exclude(id=current_reserve_id)
-        conflict_reserves_ids, conflict_reserves_names = check_conflicts(reserves, starting_time, ending_time)
+
+        if current_reserve_id != "NaN":
+            reserves = reserve_set.filter(data=date).exclude(id=current_reserve_id)
+            conflict_reserves_ids, conflict_reserves_names = check_conflicts(reserves, starting_time, ending_time)
+        else:
+            pass
 
     if conflict_reserves_ids and conflict_reserves_names:
         data = {'conflict_reserves': True, 'conflict_reserves_ids': conflict_reserves_ids, 'conflict_reserves_names': conflict_reserves_names}
