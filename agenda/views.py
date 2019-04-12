@@ -86,9 +86,9 @@ def index(request, unidade=None):
 
     unidades = Unidade.objects.filter(unidadePai=unidade)
 
-    espacosFisicos = EspacoFisico.objects.filter(unidade=unidade).filter(invisivel=False)
-    equipamentos = Equipamento.objects.filter(unidade=unidade).filter(invisivel=False)
-    servicos = Servico.objects.filter(unidade=unidade).filter(invisivel=False)
+    espacosFisicos = EspacoFisico.objects.filter(unidade=unidade).filter(invisivel=False).order_by("nome")
+    equipamentos = Equipamento.objects.filter(unidade=unidade).filter(invisivel=False).order_by("nome")
+    servicos = Servico.objects.filter(unidade=unidade).filter(invisivel=False).order_by("nome")
 
     year = time.localtime()[0]
     current_year, current_month = time.localtime()[:2]
