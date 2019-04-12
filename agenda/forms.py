@@ -42,7 +42,7 @@ class AtividadeAdminForm(forms.ModelForm):
         all_actvs = Atividade.objects.all()
         cleaned_data = super(AtividadeAdminForm, self).clean()
         for actv in all_actvs:
-            if actv.nome.lower() == cleaned_data['nome'].lower():
+            if actv.nome.lower() == cleaned_data['nome'].lower() and self.instance.pk != actv.id:
                 raise ValidationError(("Já existe atividade com esse nome"), code="existing_activity")
 
     def save(self, *args, **kwargs):
