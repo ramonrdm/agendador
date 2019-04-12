@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404, render_to_response, redi
 from django.utils.safestring import mark_safe
 import time, calendar
 from datetime import date, datetime, timedelta
+from django.db.models.functions import Lower
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse, HttpResponseNotFound
@@ -86,9 +87,9 @@ def index(request, unidade=None):
 
     unidades = Unidade.objects.filter(unidadePai=unidade)
 
-    espacosFisicos = EspacoFisico.objects.filter(unidade=unidade).filter(invisivel=False).order_by("nome")
-    equipamentos = Equipamento.objects.filter(unidade=unidade).filter(invisivel=False).order_by("nome")
-    servicos = Servico.objects.filter(unidade=unidade).filter(invisivel=False).order_by("nome")
+    espacosFisicos = EspacoFisico.objects.filter(unidade=unidade).filter(invisivel=False).order_by(Lower("nome"))
+    equipamentos = Equipamento.objects.filter(unidade=unidade).filter(invisivel=False).order_by(Lower("nome"))
+    servicos = Servico.objects.filter(unidade=unidade).filter(invisivel=False).order_by(Lower("nome"))
 
     year = time.localtime()[0]
     current_year, current_month = time.localtime()[:2]
