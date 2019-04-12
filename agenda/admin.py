@@ -14,6 +14,7 @@ from django.contrib.admin.models import LogEntry
 class AtividadeAdmin(admin.ModelAdmin):
     form = forms.AtividadeAdminForm
     search_fields = ("nome",)
+    list_display = ("nome", "descricao")
 
     def get_form(self, request, *args, **kwargs):
         form = super(AtividadeAdmin, self).get_form(request, *args, **kwargs)
