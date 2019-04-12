@@ -262,10 +262,9 @@ class Reserva(models.Model):
                 errors['data'] = 'Já existem reservas para esse dia e hora'
 
     def __str__(self):
-        return "Reserva em "+self.locavel.nome+" feita por "+self.usuario.username+" para um(a) "+self.atividade.nome
-
+        return "Reserva em "+self.locavel.nome+" feita por "+self.usuario.username+" para um(a) "+self.atividade.nome+" para a data " + str(self.data)
     def __unicode__(self):
-        return "Reserva em "+self.locavel.nome+" feita por "+self.usuario.username+" para um(a) "+self.atividade.nome
+        return "Reserva em "+self.locavel.nome+" feita por "+self.usuario.username+" para um(a) "+self.atividade.nome+ " para a data " + str(self.data)
 
 class ReservaEspacoFisico(Reserva):
     class Meta:

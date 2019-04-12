@@ -3,7 +3,9 @@
 {% load static %}
 {% block head %}
     {{ block.super }}
-    <link rel='shortcut icon' type='image/x-icon' href='{% static "agenda/img/favico.ico" %}' />
+    {% block favicon %}
+        <link rel='shortcut icon' type='image/x-icon' href='{% static "agenda/img/favico.ico" %}' />
+    {% endblock %}
 {% endblock %}
 {% block js %}
     {{ block.super }}
