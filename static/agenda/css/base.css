@@ -12,3 +12,20 @@ img {
 .side-nav .userView .email {
 	display: none;
 }
+
+
+.class_limite_horas input {
+	width: 10%;
+}
+.class_limite_horas::after {
+	content: "horas";
+	color :#9e9e9e;
+}
+#id_periodo_limite_container input {
+	width: 10%;
+}
+
+#id_periodo_limite_container::after {
+	content:"dias por usuário";
+	color: #9e9e9e;
+}
