@@ -368,6 +368,7 @@ class GroupAdmin(admin.ModelAdmin):
 class LogEntryAdmin(admin.ModelAdmin):
 
     list_display = ("__str__", "action_time")
+    list_filter = ("user", "action_flag")
     def has_add_permission(self, request):
         return False
 
