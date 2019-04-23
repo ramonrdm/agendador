@@ -364,8 +364,22 @@ class GroupAdmin(admin.ModelAdmin):
         form.request = request
         return form
 
+
+class LogEntryAdmin(admin.ModelAdmin):
+
+    list_display = ("__str__", "action_time")
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser and request.method != 'POST'
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+admin.site.register(LogEntry, LogEntryAdmin)
 admin.site.unregister(User)
 admin.site.unregister(Group)
 admin.site.register(Group, GroupAdmin)
 admin.site.register(User, UserAdmin)
-admin.site.register(LogEntry)
