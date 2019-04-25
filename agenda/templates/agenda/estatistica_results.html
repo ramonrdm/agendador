@@ -9,8 +9,11 @@
 
 <script src="{% static 'agenda/js/date.js' %}"></script>
 {% csrf_token %}
+
+
 <div id='content' class='row'>
     <div class='col s12'>
+            {% if reservas_e %}
             <h4>Equipamentos: </h4>
             {% for nome, reservas in reservas_e %}
                 <div class="card">
@@ -31,6 +34,8 @@
                     </div>
                 </div>
             {% endfor %}
+            {% endif %}
+            {% if reservas_ef %}
             <h4>Espaços Físicos: </h4>
             {% for nome, reservas in reservas_ef %}
                 <div class="card">
@@ -51,6 +56,7 @@
                     </div>
                 </div>
             {% endfor %}
+            {% endif %}
     </div>
 </div>
 {% endblock %}
