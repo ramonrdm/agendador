@@ -686,6 +686,16 @@ class UnidadeAdminForm(forms.ModelForm):
         instance = super(UnidadeAdminForm, self).save(commit=False)
         instance.save()
 
+        link = self.cleaned_data['logoLink']
+        import urllib2
+
+        if link:
+            request = urllib2.Request(link)
+            img = urllib2.urlopen(request).read()
+            with open(settings.BASE_DIR+'/agenda/static/agenda/img/Unidades/'+self.cleaned_data["sigla"]+".jpg", 'w') as f: f.write(img)
+
+
+
         group = Group.objects.get_or_create(name='responsables')[0]
         # Add new responsables to group
         for user in new_responsables:
@@ -782,6 +792,14 @@ class LocavelAdminForm(forms.ModelForm):
         new_responsables = self.cleaned_data['responsavel']
         instance = super(LocavelAdminForm, self).save(commit=False)
         instance.save()
+
+        link = self.cleaned_data['fotoLink']
+        import urllib2
+
+        if link:
+            request = urllib2.Request(link)
+            img = urllib2.urlopen(request).read()
+            with open(settings.BASE_DIR+'/agenda/static/agenda/img/Locaveis/'+self.cleaned_data["nome"]+".jpg", 'w') as f: f.write(img)
 
         group = Group.objects.get_or_create(name='responsables')[0]
         # Add new responsables to group

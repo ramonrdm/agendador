@@ -22,7 +22,7 @@
 
 {% block userphoto %}
 {% if espaco.fotoLink %}
-<a href="#"><img class="circle" src="{{ espaco.fotoLink }}"></a>
+<a href="#"><img class="circle" src="{% static 'agenda/img/Locaveis/'%}{{espaco.nome}}.jpg"></a>
 {% elif tipo == 'f' %}
 <a href="#"><i class="circle material-icons medium">location_on</i></a>
 {% elif tipo == 'e' %}
@@ -34,10 +34,10 @@
 
 {% block content %}
 <div class="row">
-    <div id="calendar"> </div>  
+    <div id="calendar"> </div>
 </div>
 <script type="text/javascript">
-    
+
 jQuery(document).ready(function() {
    jQuery('#calendar').fullCalendar({
         monthNames:["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
@@ -69,7 +69,7 @@ jQuery(document).ready(function() {
         {% endfor %}
         ],
         eventAfterAllRender: function() {
-            $(".fc-day-top").each(function(index,value) {       
+            $(".fc-day-top").each(function(index,value) {
                 if(value.className.indexOf("fc-other-month") === -1) {
                     var a = $(value).children().text();
                     var x = ("0"+a).slice(-2);
@@ -85,7 +85,7 @@ jQuery(document).ready(function() {
             $('#fullCalModal').modal('open');
         }
 
-    });     
+    });
     setMonth();
     var m = jQuery(".fc-left").text();
     jQuery(".fc-header-toolbar").html("<div class='row'><a class='btn right col s3' href='{%url 'mes' tipo espaco.id year month 'next' %}'><i class='material-icons medium arrow_right'>arrow_forward</i><span class='text'>próximo</span></a><a class='btn left col s3' href='{%url 'mes' tipo espaco.id year month 'prev' %}'><i class='material-icons medium arrow_left'>arrow_back</i><span class='text'>anterior</span></a><div class='col s6'><h2>" + m + "</h2><a href='{% url 'locavel' tipo espaco.id %}' class='flow-text'>Detalhes do locável</a></div></div>");

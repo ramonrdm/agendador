@@ -49,7 +49,7 @@
 {% endblock %}
 {% block userphoto %}
 {% if unidade.logoLink %}
-    <a href="#"><img class="circle" src="{{ unidade.logoLink }}"></a>
+    <a href="#"><img class="circle" src="{% static 'agenda/img/Unidades/'%}{{unidade.sigla}}.jpg"></a>
 {% else %}
     <a href="#"><i class="circle medium material-icons">account_balance</i></a>
 {% endif %}
@@ -67,7 +67,7 @@
                 <div class="card-image">
                     <a href="{% url 'Reservas-UFSC' subUnidade.sigla %}">
                     {% if subUnidade.logoLink %}
-                    <img width="100" height="100" src="{{subUnidade.logoLink}}">
+                    <img width="100" height="100" src="{% static 'agenda/img/Unidades/'%}{{subUnidade.sigla}}.jpg">
                     {% else %}
                     <i width="100" height="100" class="large material-icons unit-default">account_balance</i>
                     {% endif %}

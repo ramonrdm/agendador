@@ -16,7 +16,7 @@
 {% endblock %}
 {% block userphoto %}
 {% if locavel.fotoLink %}
-<a href="#"><img class="circle" src="{{ locavel.fotoLink }}"></a>
+<a href="#"><img class="circle" src="{% static 'agenda/img/Locaveis/'%}{{locavel.nome}}.jpg"></a>
 {% elif tipo == 'f' %}
 <a href="#"><i class="circle material-icons medium">location_on</i></a>
 {% elif tipo == 'e' %}
@@ -34,7 +34,7 @@
                 <div id='locavel'>
                     {% if locavel.fotoLink %}
                     <div class='container image'>
-                        <img src="{{ locavel.fotoLink }}">
+                        <img src="{% static 'agenda/img/Locaveis/'%}{{locavel.nome}}.jpg">
                     </div>
                     {% endif %}
                     <div class='flow-text' id='info'>
