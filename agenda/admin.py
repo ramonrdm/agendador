@@ -74,7 +74,7 @@ class UnidadeAdmin(admin.ModelAdmin):
 
 class ReservaAdmin(admin.ModelAdmin):
     list_display = ('usuario', 'locavel', 'data', 'ramal', 'finalidade', 'estado')
-    search_fields = ('finalidade', 'usuario__username')
+    search_fields = ('finalidade', 'usuario__username', 'locavel__nome')
     list_filter=["estado"]
 
     class Media:
@@ -208,7 +208,7 @@ admin.site.register(ReservaServico, ReservaServicoAdmin)
 
 class LocavelAdmin(admin.ModelAdmin):
     list_display = ('nome','unidade','get_responsavel')
-    search_fields = ("nome", "unidade")
+    search_fields = ("nome", "unidade__nome")
 
     def get_responsavel(self, obj):
         return ", ".join(responsavel.username for responsavel in obj.responsavel.all())
