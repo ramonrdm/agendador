@@ -49,7 +49,7 @@
 {% endblock %}
 {% block userphoto %}
 {% if unidade.logoLink %}
-    <a href="#"><img class="circle" src="{% static 'agenda/img/Unidades/'%}{{unidade.sigla}}.jpg"></a>
+    <a href="#"><img class="circle" src="{{unidade.logoLink}}"></a>
 {% else %}
     <a href="#"><i class="circle medium material-icons">account_balance</i></a>
 {% endif %}

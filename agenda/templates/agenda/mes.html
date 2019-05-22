@@ -22,7 +22,7 @@
 
 {% block userphoto %}
 {% if espaco.fotoLink %}
-<a href="#"><img class="circle" src="{% static 'agenda/img/Locaveis/'%}{{espaco.nome}}.jpg"></a>
+<a href="#"><img class="circle" src="espaco.fotoLink"></a>
 {% elif tipo == 'f' %}
 <a href="#"><i class="circle material-icons medium">location_on</i></a>
 {% elif tipo == 'e' %}

@@ -1,5 +1,4 @@
 {% extends "agenda/base_module.html" %}
-{% load i18n material_frontend %}
 {% load static %}
 {% block title %} Agendador - Estatisticas {% endblock %}
 {% block page_title %}
@@ -8,17 +7,10 @@
 
 
 {% block content %}
-{% block js %}
-{{block.super}}
 <script src="{% static 'agenda/js/date.js' %}"></script>
 <script src="{% static 'agenda/js/autocomplete.js' %}"></script>
-{%endblock%}
 
 <style>
-html {
-    font-size: 14px; font-family: Arial, Helvetica, sans-serif;
-}
-
     input::placeholder {
        color: black;
     }
@@ -79,6 +71,50 @@ html {
                     </form>
                 </div>
             </div>
+        {% endif %}
+        {% if reservas_e %}
+        <h4>Equipamentos: </h4>
+        {% for nome, reservas in reservas_e %}
+            <div class="card">
+                <div class="card-content">
+                <span class="card-title">{{nome}}</span>
+                {% for reserva in reservas %}
+                    <p>
+                        Reserva feita por <strong><u>{{reserva.usuario}}</u></strong> no dia {{reserva.data}}
+                    </p>
+                {% endfor %}
+                </div>
+                <div class="card-action">
+                    {% for equipamento, horas in horas_e %}
+                        {% if equipamento == nome %}
+                            Total de horas: {{horas}}
+                        {% endif %}
+                    {% endfor%}
+                </div>
+            </div>
+        {% endfor %}
+        {% endif %}
+        {% if reservas_ef %}
+        <h4>Espaços Físicos: </h4>
+        {% for nome, reservas in reservas_ef %}
+            <div class="card">
+                <div class="card-content">
+                <span class="card-title">{{nome}}</span>
+                {% for reserva in reservas %}
+                    <p>
+                        Reserva feita por <strong><u>{{reserva.usuario}}</u></strong> no dia {{reserva.data}}
+                    </p>
+                {% endfor %}
+                </div>
+                <div class="card-action">
+                    {% for espacofisico, horas in horas_ef %}
+                        {% if espacofisico == nome %}
+                            Total de horas: {{horas}}
+                        {% endif %}
+                    {% endfor%}
+                </div>
+            </div>
+        {% endfor %}
         {% endif %}
     </div>
 </div>
