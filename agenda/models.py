@@ -282,7 +282,7 @@ class ReservaEspacoFisico(Reserva):
 '''
 
 class ReservaEquipamento(Reserva):
-    locavel = models.ForeignKey(Equipamento, verbose_name='Locável', on_delete=models.PROTECT)
+    locavel = models.ForeignKey(Equipamento, verbose_name='Equipamento', on_delete=models.PROTECT)
 
     def clean(self):
         super(ReservaEquipamento, self).clean()
@@ -297,7 +297,7 @@ class ReservaServico(Reserva):
         verbose_name = 'Reserva serviço'
         verbose_name_plural = 'Reserva serviços'
 
-    locavel = models.ForeignKey(Servico, verbose_name='Locável', on_delete=models.PROTECT)
+    locavel = models.ForeignKey(Servico, verbose_name='Serviço', on_delete=models.PROTECT)
 
     def clean(self):
         super(ReservaServico, self).clean()
