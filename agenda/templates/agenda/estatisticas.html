@@ -1,15 +1,29 @@
-{% extends "agenda/base_module.html" %}
+{% extends "agenda/index.html" %}
+{% load i18n material_frontend %}
 {% load static %}
 {% block title %} Agendador - Estatisticas {% endblock %}
+
+{% block js %}
+<script src="{% static 'material/js/jquery.js' %}"></script>
+<script src="{% static 'material/js/jquery.dataTables.js' %}"></script>
+<script src="{% static 'material/js/jquery.activeNavigation.js' %}"></script>
+<script src="{% static 'material/js/jquery.datetimepicker.full.js' %}"></script>
+<script src="{% static 'material/js/jquery.formset.js' %}"></script>
+<script src="{% static 'material/js/perfect-scrollbar.jquery.js' %}"></script>
+<script src="{% static 'material/js/dataTables.fixedHeader.js' %}"></script>
+<script src="{% static 'material/js/dataTables.responsive.js' %}"></script>
+<script src="{% static 'material/js/materialize.js' %}"></script>
+<script src="{% static 'material/js/materialize.forms.js' %}"></script>
+<script src="{% static 'material/js/materialize.frontend.js' %}"></script>
+<script src="{% static 'agenda/js/date.js' %}"></script>
+<script src="{% static 'agenda/js/autocomplete.js' %}"></script>
+{% endblock %}
+
 {% block page_title %}
     <strong>Estatísticas</strong>
 {% endblock %}
 
-
 {% block content %}
-<script src="{% static 'agenda/js/date.js' %}"></script>
-<script src="{% static 'agenda/js/autocomplete.js' %}"></script>
-
 <style>
     input::placeholder {
        color: black;
@@ -77,7 +91,6 @@
     </div>
 </div>
 
-
 <script>
 $(document).ready(function() {
     document.getElementById("id_equipamento_choose").parentNode.style.display='none';
@@ -118,6 +131,5 @@ $(document).ready(function() {
 
 });
 </script>
-
 
 {% endblock %}
