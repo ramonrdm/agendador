@@ -198,7 +198,7 @@ def estatisticas(request):
                         horas_ef.append((espfis.nome, str(timedelta(seconds=segundosTotal))))
 
 
-                return render(request, "agenda/estatisticas.html", {"form":form, "show_per_user_statistics":show_user_stats,"unidades":unidadesN, "equipamentos":equipamentosN, "espacosfisicos":espacosfisicosN, "servicos":servicosN, "reservas_e":reservas_e, "reservas_ef":reservas_ef, "horas_e":horas_e, "horas_ef":horas_ef})
+                return render(request, "agenda/estatistica_results.html", {"reservas_e":reservas_e, "reservas_ef":reservas_ef, "horas_e":horas_e, "horas_ef":horas_ef})
     return render(request, "agenda/estatisticas.html", {"form":form, "show_per_user_statistics":show_user_stats,"unidades":unidadesN, "equipamentos":equipamentosN, "espacosfisicos":espacosfisicosN, "servicos":servicosN})
 
 def manutencao(request):

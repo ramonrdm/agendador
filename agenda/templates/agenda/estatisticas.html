@@ -42,7 +42,7 @@
             <div class="card">
                 <div class="card-content">
                     <span class="card-title">Reservas por usuário</span>
-                    <form action="#" method="post">
+                    <form id="stats_form" action="/estatisticas/" method="post">
                         {% csrf_token %}
                         {% for field in form %}
                             {% if field.name == "equipamento_choose"%}
@@ -72,50 +72,8 @@
                 </div>
             </div>
         {% endif %}
-        {% if reservas_e %}
-        <h4>Equipamentos: </h4>
-        {% for nome, reservas in reservas_e %}
-            <div class="card">
-                <div class="card-content">
-                <span class="card-title">{{nome}}</span>
-                {% for reserva in reservas %}
-                    <p>
-                        Reserva feita por <strong><u>{{reserva.usuario}}</u></strong> no dia {{reserva.data}}
-                    </p>
-                {% endfor %}
-                </div>
-                <div class="card-action">
-                    {% for equipamento, horas in horas_e %}
-                        {% if equipamento == nome %}
-                            Total de horas: {{horas}}
-                        {% endif %}
-                    {% endfor%}
-                </div>
-            </div>
-        {% endfor %}
-        {% endif %}
-        {% if reservas_ef %}
-        <h4>Espaços Físicos: </h4>
-        {% for nome, reservas in reservas_ef %}
-            <div class="card">
-                <div class="card-content">
-                <span class="card-title">{{nome}}</span>
-                {% for reserva in reservas %}
-                    <p>
-                        Reserva feita por <strong><u>{{reserva.usuario}}</u></strong> no dia {{reserva.data}}
-                    </p>
-                {% endfor %}
-                </div>
-                <div class="card-action">
-                    {% for espacofisico, horas in horas_ef %}
-                        {% if espacofisico == nome %}
-                            Total de horas: {{horas}}
-                        {% endif %}
-                    {% endfor%}
-                </div>
-            </div>
-        {% endfor %}
-        {% endif %}
+        <div id="results">
+        </div>
     </div>
 </div>
 
@@ -139,6 +97,22 @@ $(document).ready(function() {
         } else {
             document.getElementById("id_espacofisico_choose").parentNode.style.display='none';
         }
+    });
+
+    $("#stats_form").submit(function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: $("#stats_form").attr("method"),
+            url: $("#stats_form").attr("action"),
+            data: $("#stats_form").serialize(),
+            success: function(data) {
+                $("#results").empty();
+                $("#results").append(data);
+            },
+            error: function(data) {
+                alert("mmh");
+            }
+        });
     });
 
 
