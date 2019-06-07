@@ -636,7 +636,7 @@ def _calendar(request, tipo=None, espaco=None, year=None, month=None, change=Non
                 tipo=tipo
                 ))
 
-def login_email(request, template_name=None):
+def login_email(request, next='', template_name=None):
     if request.POST:
 
         email = request.POST['email']
@@ -647,9 +647,12 @@ def login_email(request, template_name=None):
         except:
             username = None
 
-        user = authenticate(username=username, password=password)
+        user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request,user)
         else:
             return HttpResponseRedirect("Invalid username or password")
-    return render(request,"agenda/login.html")
+    if request.GET.get('next', '') != '':
+        #return HttpResponseRedirect(request.GET.get('next', ''))
+        return render(request,"agenda/login.html", {'next': request.GET.get('next', '')})
+    return render(request,"agenda/login.html", {'next': request.GET.get('next', '')})

@@ -56,7 +56,7 @@
     <div id="modal1" class="modal">
         <div class="modal-content">
                 <h4>Login:</h4>
-                <form id="login-form" method="post">
+                <form id="login-form" method="post" action="{% url 'login_normal' %}">
                 {% csrf_token %}
                 <table class="table">
                     <tr>
@@ -78,6 +78,7 @@
 
                 <input type="submit" value="Login"
                         class="btn btn-primary grey lighten-5 black-text pull-right" />
+                <input type="hidden" name="next" value="{{ request.GET.next }}" />        
                 <a href='{%url "reset_password_request"%}' class="btn tooltipped btn-primary grey lighten-5 black-text pull-right"
                     data-position="bottom" data-tooltip="Clique aqui caso você esqueceu sua senha ou sempre realizou logins pela ufsc">(Re)definir senha</a>
             </form>
