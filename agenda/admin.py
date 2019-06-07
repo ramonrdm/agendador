@@ -369,6 +369,7 @@ class LogEntryAdmin(admin.ModelAdmin):
 
     list_display = ("__str__", "action_time")
     list_filter = ("user", "action_flag")
+    search_fields = ["object_repr"]
     def has_add_permission(self, request):
         return False
 

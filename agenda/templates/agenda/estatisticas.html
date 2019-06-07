@@ -1,24 +1,30 @@
-{% extends "agenda/base_module.html" %}
+{% extends "agenda/index.html" %}
 {% load i18n material_frontend %}
 {% load static %}
 {% block title %} Agendador - Estatisticas {% endblock %}
+
+{% block js %}
+<script src="{% static 'material/js/jquery.js' %}"></script>
+<script src="{% static 'material/js/jquery.dataTables.js' %}"></script>
+<script src="{% static 'material/js/jquery.activeNavigation.js' %}"></script>
+<script src="{% static 'material/js/jquery.datetimepicker.full.js' %}"></script>
+<script src="{% static 'material/js/jquery.formset.js' %}"></script>
+<script src="{% static 'material/js/perfect-scrollbar.jquery.js' %}"></script>
+<script src="{% static 'material/js/dataTables.fixedHeader.js' %}"></script>
+<script src="{% static 'material/js/dataTables.responsive.js' %}"></script>
+<script src="{% static 'material/js/materialize.js' %}"></script>
+<script src="{% static 'material/js/materialize.forms.js' %}"></script>
+<script src="{% static 'material/js/materialize.frontend.js' %}"></script>
+<script src="{% static 'agenda/js/date.js' %}"></script>
+<script src="{% static 'agenda/js/autocomplete.js' %}"></script>
+{% endblock %}
+
 {% block page_title %}
     <strong>Estatísticas</strong>
 {% endblock %}
 
-
 {% block content %}
-{% block js %}
-{{block.super}}
-<script src="{% static 'agenda/js/date.js' %}"></script>
-<script src="{% static 'agenda/js/autocomplete.js' %}"></script>
-{%endblock%}
-
 <style>
-html {
-    font-size: 14px; font-family: Arial, Helvetica, sans-serif;
-}
-
     input::placeholder {
        color: black;
     }
@@ -50,7 +56,7 @@ html {
             <div class="card">
                 <div class="card-content">
                     <span class="card-title">Reservas por usuário</span>
-                    <form action="#" method="post">
+                    <form id="stats_form" action="/estatisticas/" method="post">
                         {% csrf_token %}
                         {% for field in form %}
                             {% if field.name == "equipamento_choose"%}
@@ -80,9 +86,10 @@ html {
                 </div>
             </div>
         {% endif %}
+        <div id="results">
+        </div>
     </div>
 </div>
-
 
 <script>
 $(document).ready(function() {
@@ -105,9 +112,24 @@ $(document).ready(function() {
         }
     });
 
+    $("#stats_form").submit(function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: $("#stats_form").attr("method"),
+            url: $("#stats_form").attr("action"),
+            data: $("#stats_form").serialize(),
+            success: function(data) {
+                $("#results").empty();
+                $("#results").append(data);
+            },
+            error: function(data) {
+                alert("mmh");
+            }
+        });
+    });
+
 
 });
 </script>
-
 
 {% endblock %}
