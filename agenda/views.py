@@ -635,13 +635,12 @@ def _calendar(request, tipo=None, espaco=None, year=None, month=None, change=Non
                 user=request.user, month_days=lst, mname=month_names[month-1],
                 tipo=tipo
                 ))
-
-def login_email(request, next='', template_name=None):
+                
+def login_email(request, template_name=None):
     if request.POST:
-
         email = request.POST['email']
         password = request.POST['password']
-
+        next = request.POST["next"]
         try:
             username = User.objects.filter(email=email.lower())[0].username
         except:
@@ -652,7 +651,6 @@ def login_email(request, next='', template_name=None):
             login(request,user)
         else:
             return HttpResponseRedirect("Invalid username or password")
-    if request.GET.get('next', '') != '':
-        #return HttpResponseRedirect(request.GET.get('next', ''))
-        return render(request,"agenda/login.html", {'next': request.GET.get('next', '')})
-    return render(request,"agenda/login.html", {'next': request.GET.get('next', '')})
+        if next:
+            return redirect(next)
+    return render(request,"agenda/login.html", {'next': request.GET.get("next", "")})
