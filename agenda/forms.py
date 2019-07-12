@@ -743,6 +743,11 @@ class SearchFilterForm(forms.Form):
 
 class LocavelAdminForm(forms.ModelForm):
 
+    class Media:
+        css = {
+            "all": ("admin/css/locavel_form_fields.css", )
+        }
+
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request')
         self.reservable_type = kwargs.pop('reservable_type')

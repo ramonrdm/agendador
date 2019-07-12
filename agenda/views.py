@@ -635,7 +635,6 @@ def _calendar(request, tipo=None, espaco=None, year=None, month=None, change=Non
                 user=request.user, month_days=lst, mname=month_names[month-1],
                 tipo=tipo
                 ))
-                
 def login_email(request, template_name=None):
     if request.POST:
         email = request.POST['email']
