@@ -1,9 +1,27 @@
 version: "3.1"
 
+secrets:
+  agendador_email_password:
+    external: true
+  agendador_email_user:
+    external: true
+  agendador_name_db:
+    external: true
+  agendador_password_db:
+    external: true
+  agendador_user_db:
+    external: true
+
 services:
-  agendador:
-    stdin_open: true
-    tty: true
-    image: ramonufsc/agendador:latest
-    ports:
-     - 40100:80
+ agendador:
+  stdin_open: true
+  tty: true
+  image: ramonufsc/agendador:latest
+  secrets:
+    - agendador_email_password
+    - agendador_email_user
+    - agendador_name_db
+    - agendador_password_db
+    - agendador_user_db
+  ports:
+   - 40100:80
