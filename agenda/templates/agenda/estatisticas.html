@@ -69,7 +69,7 @@
                             {% elif field.name == "espacofisico_choose"%}
                                 <p>
                                     <input name="choice_2" value="espacofisico" id="choice_2" type="checkbox" />
-                                    <label for="choice_2">Espaço Físico</span>
+                                    <label for="choice_2">Espaço Físico</label>
                                 </p>
 
                             <p>{{ field }}</p>
@@ -95,7 +95,6 @@
 $(document).ready(function() {
     document.getElementById("id_equipamento_choose").parentNode.style.display='none';
     document.getElementById("id_espacofisico_choose").parentNode.style.display='none';
-
     $("#choice_1").on("change", function() {
         if (this.checked) {
             document.getElementById("id_equipamento_choose").parentNode.style.display="block";
