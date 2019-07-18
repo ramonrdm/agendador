@@ -943,7 +943,7 @@ class EstatisticaForm(forms.Form):
                 self.fields["equipamento_choose"].queryset = Equipamento.objects.filter(responsavel=usr)
                 self.fields["espacofisico_choose"].queryset = EspacoFisico.objects.filter(responsavel=usr)
 
-    usuario = forms.ModelChoiceField(queryset=User.objects.all(), required=True, widget=AutocompleteWidget(query=User.objects.all(), model=User))
+    usuario = forms.ModelMultipleChoiceField(queryset=User.objects.all(), required=False)
     periodo_inicio = forms.DateField(widget=forms.DateInput(attrs={"class":"date_picker", "placeholder":"da data"}), required=True)
     periodo_fim = forms.DateField(widget=forms.DateInput(attrs={"class":"date_picker", "placeholder":"ate a data"}), required=True)
     equipamento_choose = forms.ModelMultipleChoiceField(queryset=Equipamento.objects.all(), required=False, widget=FilteredSelectMultiple("equipamento_choose",False))
