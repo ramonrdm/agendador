@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 docker build -t agendador:1.2.0 ../.
 
-docker tag ramonufsc/agendador:1.2.0 ramonufsc/latest
+docker tag ramonufsc/agendador:1.2.0 ramonufsc/agendador:latest
 
 docker push ramonufsc/agendador:1.2.0
 
